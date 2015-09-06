@@ -16,6 +16,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".provider.ListProvider"
+            android:authorities="com.sumugu.liubo.lc.provider.ListProvider"
+            android:exported="false" />
+        <provider
+            android:name=".provider.ItemProvider"
+            android:authorities="com.sumugu.liubo.lc.provider.ItemProvider"
+            android:exported="false" />
+
+        <activity
+            android:name=".ListLineActivity"
+            android:label="@string/title_activity_list_line" >
+        </activity>
+        <activity
+            android:name=".ListActivity"
+            android:label="@string/title_activity_list" >
+        </activity>
+        <activity
+            android:name=".ItemLineActivity"
+            android:label="@string/title_activity_item_line" >
+        </activity>
     </application>
 
 </manifest>

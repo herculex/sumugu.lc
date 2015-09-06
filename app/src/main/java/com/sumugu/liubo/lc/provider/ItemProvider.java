@@ -21,18 +21,18 @@ public class ItemProvider extends ContentProvider {
     private static final String TAG=ItemProvider.class.getSimpleName();
     private DbHelper mDbHelper;
 
-    //URI Æ¥ÅäÆ÷
+    //URI åŒ¹é…å™¨
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static
     {
-        sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE,ItemContract.ITEM_DIR);    //¶à¸ö½á¹û
-        sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE+"/#",ItemContract.ITEM_ITEM); //Ò»¸ö½á¹û
+        sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE,ItemContract.ITEM_DIR);    //å¤šä¸ªç»“æœ
+        sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE+"/#",ItemContract.ITEM_ITEM); //ä¸€ä¸ªç»“æœ
     }
 
     @Override
     public boolean onCreate() {
 
-        //³õÊ¼»¯³ÉÔ±±äÁ¿
+        //åˆå§‹åŒ–æˆå‘˜å˜é‡
         mDbHelper = new DbHelper(getContext());
         Log.d(TAG,"sumugu,onCreate,mDbHelper.");
         return true;
@@ -56,12 +56,12 @@ public class ItemProvider extends ContentProvider {
         }
 
         String orderBy = (TextUtils.isEmpty(sortOrder))?ItemContract.DEFAULT_SORT:sortOrder;
-        //²éÑ¯¶øÒÑ£¬ËùÒÔ´ò¿ªÖ»¶ÁÊı¾İ¿â
+        //æŸ¥è¯¢è€Œå·²ï¼Œæ‰€ä»¥æ‰“å¼€åªè¯»æ•°æ®åº“
         SQLiteDatabase sqLiteDatabase = mDbHelper.getReadableDatabase();
-        //²éÑ¯½á¹û£¬·µ»ØÓÎ±ê
+        //æŸ¥è¯¢ç»“æœï¼Œè¿”å›æ¸¸æ ‡
         Cursor cursor = queryBuilder.query(sqLiteDatabase,projection,selection,selectionArgs,null,null,orderBy);
 
-        //ÓÃÓÚuriµÄ×¢²á±ä¸ü
+        //ç”¨äºuriçš„æ³¨å†Œå˜æ›´
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         Log.d(TAG,"sumugu,queried records:"+cursor.getCount());
@@ -87,15 +87,15 @@ public class ItemProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         Uri uriRet=null;
 
-        //ÅĞ¶ÏÕıÈ·µÄUri£¬±ØĞëÊÇCONTENT_URI,²»±ØÖ¸¶¨ID,¼ÈÊÇDIR
+        //åˆ¤æ–­æ­£ç¡®çš„Uriï¼Œå¿…é¡»æ˜¯CONTENT_URI,ä¸å¿…æŒ‡å®šID,æ—¢æ˜¯DIR
         if(sUriMatcher.match(uri)!=ItemContract.ITEM_DIR){
             throw new IllegalArgumentException("sumugu,Illegal uri:"+uri);
         }
 
-        //ÒòÎªÊÇ²åÈë¶¯×÷£¬ĞèÒª¿ÉĞ´µÄÊı¾İ¿â
+        //å› ä¸ºæ˜¯æ’å…¥åŠ¨ä½œï¼Œéœ€è¦å¯å†™çš„æ•°æ®åº“
         SQLiteDatabase sqLiteDatabase = mDbHelper.getWritableDatabase();
 
-        //¿ªÊ¼²åÈë£¬»ñÈ¡·µ»ØµÄID£¬ÓÃÓÚÅĞ¶Ï³É¹¦£¬-1¾ÍÊÇÊ§°Ü
+        //å¼€å§‹æ’å…¥ï¼Œè·å–è¿”å›çš„IDï¼Œç”¨äºåˆ¤æ–­æˆåŠŸï¼Œ-1å°±æ˜¯å¤±è´¥
         long rowId=sqLiteDatabase.insertWithOnConflict(ItemContract.TABLE,null,values,SQLiteDatabase.CONFLICT_IGNORE);
 
         if (rowId!=-1)
@@ -104,7 +104,7 @@ public class ItemProvider extends ContentProvider {
             uriRet = ContentUris.withAppendedId(uri,id);
             Log.d(TAG,"sumugu,inserted uri:"+uriRet);
 
-            //Í¨ÖªÓÃÓÚÕâ¸öuriµÄÊı¾İÒÑ¾­¸ü¸Ä
+            //é€šçŸ¥ç”¨äºè¿™ä¸ªuriçš„æ•°æ®å·²ç»æ›´æ”¹
             getContext().getContentResolver().notifyChange(uri,null);
         }
         return uriRet;
@@ -117,10 +117,10 @@ public class ItemProvider extends ContentProvider {
         switch (sUriMatcher.match(uri))
         {
             case ItemContract.ITEM_DIR:
-                where = (null == selection)?"1":selection;  //É¾³ıÈ«²¿£¨ÓĞÌõ¼ş£©
+                where = (null == selection)?"1":selection;  //åˆ é™¤å…¨éƒ¨ï¼ˆæœ‰æ¡ä»¶ï¼‰
                 break;
             case ItemContract.ITEM_ITEM:
-                long id= ContentUris.parseId(uri);  //»ñÈ¡uriµÄD²¿·Ö£¬¾ÍÊÇID£¬É¾³ıÖ¸¶¨IDµÄÌõÄ¿
+                long id= ContentUris.parseId(uri);  //è·å–uriçš„Déƒ¨åˆ†ï¼Œå°±æ˜¯IDï¼Œåˆ é™¤æŒ‡å®šIDçš„æ¡ç›®
                 where = ItemContract.Column.ITEM_ID+"="+id
                         +(TextUtils.isEmpty(selection)?"":" and ( "+selection+" )");
                 break;
@@ -128,13 +128,13 @@ public class ItemProvider extends ContentProvider {
                 throw new IllegalArgumentException("sumugu,Illegal URI:"+uri);
         }
 
-        //ÒªÉ¾³ı£¬Ò»ÑùĞèÒª¿ÉĞ´µÄÊı¾İ¿âÊµÀı
+        //è¦åˆ é™¤ï¼Œä¸€æ ·éœ€è¦å¯å†™çš„æ•°æ®åº“å®ä¾‹
         SQLiteDatabase sqLiteDatabase = mDbHelper.getWritableDatabase();
-        //¿ªÊ¼É¾³ı£¬·µ»Ø½á¹û£¨É¾³ıÌõÄ¿µÄÊıÁ¿£©
+        //å¼€å§‹åˆ é™¤ï¼Œè¿”å›ç»“æœï¼ˆåˆ é™¤æ¡ç›®çš„æ•°é‡ï¼‰
         ret = sqLiteDatabase.delete(ItemContract.TABLE,where,selectionArgs);
         if(ret>0)
         {
-            //³É¹¦É¾³ı£¬Í¨ÖªÊ¹ÓÃÕâ¸öuriµÄÊı¾İÒÑ¾­¸üĞÂ
+            //æˆåŠŸåˆ é™¤ï¼Œé€šçŸ¥ä½¿ç”¨è¿™ä¸ªuriçš„æ•°æ®å·²ç»æ›´æ–°
             getContext().getContentResolver().notifyChange(uri,null);
         }
         Log.d(TAG,"sumugu,deleted records:"+ret);
@@ -147,7 +147,7 @@ public class ItemProvider extends ContentProvider {
 
         switch(sUriMatcher.match(uri)){
             case ItemContract.ITEM_DIR:
-                //²»Ö¸¶¨id£¬Òò´ËÎÒÃÇÒªÇåµã¸üĞÂµÄĞĞÊı
+                //ä¸æŒ‡å®šidï¼Œå› æ­¤æˆ‘ä»¬è¦æ¸…ç‚¹æ›´æ–°çš„è¡Œæ•°
                 where = selection;
                 break;
             case ItemContract.ITEM_ITEM:
@@ -160,13 +160,13 @@ public class ItemProvider extends ContentProvider {
                 throw new IllegalArgumentException("Illegal uri:"+uri);
         }
 
-        //·²ÊÂÒªĞŞ¸ÄÊı¾İ¿â£¬¶¼ĞèÒª¿ÉĞ´µÄÊı¾İ¿âÊµÀı
+        //å‡¡äº‹è¦ä¿®æ”¹æ•°æ®åº“ï¼Œéƒ½éœ€è¦å¯å†™çš„æ•°æ®åº“å®ä¾‹
         SQLiteDatabase sqLiteDatabase = mDbHelper.getWritableDatabase();
-        //·µ»ØĞŞ¸ÄÌõÄ¿µÄÊıÁ¿
+        //è¿”å›ä¿®æ”¹æ¡ç›®çš„æ•°é‡
         int ret = sqLiteDatabase.update(ItemContract.TABLE, values, where, selectionArgs);
 
         if(ret>0){
-            //Í¨ÖªuriÊı¾İÒÑ¾­¸ü¸Ä
+            //é€šçŸ¥uriæ•°æ®å·²ç»æ›´æ”¹
             getContext().getContentResolver().notifyChange(uri, null);
         }
         Log.d(TAG,"sumugu,updated records:"+ret);

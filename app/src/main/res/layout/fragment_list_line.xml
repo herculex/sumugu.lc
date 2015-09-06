@@ -1,0 +1,36 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ListLineFragment">
+
+<TextView
+        android:id="@+id/list_item_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/list_item_text_created_at"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/list_item_text_title"
+        android:layout_alignBottom="@+id/list_item_text_title"
+        android:layout_alignParentRight="true"
+        android:text="10 minutes ago"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/secondary_text_light"/>
+
+    <TextView
+        android:id="@+id/list_item_text_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/list_item_text_created_at"
+        android:autoLink="web"
+        android:focusable="false"
+        android:linksClickable="true"
+        android:text="Something you made!or DO SAMETHING!"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+</FrameLayout>

@@ -45,7 +45,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 "%s int," +
                 "%s int," +
                 "%s int," +
-                "%s int",
+                "%s int" +
+                ")",
                 ItemContract.TABLE,
                 ItemContract.Column.ITEM_ID,
                 ItemContract.Column.ITEM_TITLE,

@@ -28,13 +28,13 @@ public class ItemContract extends DbContract {
 
     // provider specific constants
     // content://com.sumugu.liubo.lc.ItemProvider/item
-    public static final String AUTHORITY="com.sumugu.liubo.lc.ItemProvider";
+    public static final String AUTHORITY="com.sumugu.liubo.lc.provider.ItemProvider";
     public static final Uri CONTENT_URI=Uri.parse("content://"+AUTHORITY+"/"+TABLE); //CONTENT_URI=content://com.sumugu.liubo.lc.ItemProvider/item
     public static final int ITEM_ITEM=1;
     public static final int ITEM_DIR=2;
-    //单个条目
+    //鍗曚釜鏉＄洰
     public static final String ITEM_TYPE_ITEM="vnd.android.cursor.item/vnd.com.sumugu.liubo.lc.provider.item";
-    //所有条目的目录
+    //鎵�鏈夋潯鐩殑鐩綍
     public static final String ITEM_TYPE_DIR="vnd.android.cursor.dir/vnd.com.sumugu.liubo.lc.provider.item";
 
 }

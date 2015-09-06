@@ -1,25 +1,23 @@
 package com.sumugu.liubo.lc;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity {
+public class ItemLineActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_item_line);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_item_line, menu);
         return true;
     }
 
@@ -31,21 +29,10 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-        switch (id)
-        {
-            case R.id.action_listline:
-                startActivity(new Intent(this,ListLineActivity.class));
-                return true;
-            case R.id.action_unlock:
-                Toast.makeText(this,"not link",Toast.LENGTH_LONG).show();
-                return true;
-            default:
-                return false;
+        if (id == R.id.action_settings) {
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 }

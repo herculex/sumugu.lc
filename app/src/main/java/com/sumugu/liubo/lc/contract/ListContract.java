@@ -26,7 +26,7 @@ public class ListContract extends DbContract {
 
     // provider specific constants
     // content://com.sumugu.liubo.lc.ListProvider/list
-    public static final String AUTHORITY="com.sumugu.liubo.lc.ListProvider";
+    public static final String AUTHORITY="com.sumugu.liubo.lc.provider.ListProvider";
     public static final Uri CONTENT_URI=Uri.parse("content://"+AUTHORITY+"/"+TABLE); //CONTENT_URI=content://com.sumugu.liubo.lc.ListProvider/list
     public static final int LIST_ITEM=1;
     public static final int LIST_DIR=2;
