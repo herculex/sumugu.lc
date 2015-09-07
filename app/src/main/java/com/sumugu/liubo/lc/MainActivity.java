@@ -5,7 +5,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Random;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -14,6 +17,12 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Random rand = new Random();
+        String sms = String.valueOf(rand.nextInt(999)+1);
+        String call = String.valueOf(rand.nextInt(999)+1);
+
+        ((TextView) findViewById(R.id.textMissing)).setText("Sms:"+sms+" Call:"+call);
     }
 
     @Override
@@ -42,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(new Intent(this,ListLineActivity.class));
                 return true;
             case R.id.action_unlock:
-                Toast.makeText(this,"not link",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"not link yet!",Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return false;

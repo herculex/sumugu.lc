@@ -1,109 +1,140 @@
 package com.sumugu.liubo.lc;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.ClipData;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.contract.ListContract;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ItemLineFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ItemLineFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ItemLineFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class ItemLineFragment extends android.app.ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String TAG = ItemLineFragment.class.getSimpleName();
+    //
+    //数据：要绑定显示的列表内容，标题TITLE，内容CONTENT，创建时间CREATED_AT，是否完成IS_FINISHED，有闹钟HAS_CLOCK，闹钟时间ALARM_CLOCK。
+    private static final String[] FROM = {ItemContract.Column.ITEM_TITLE,ItemContract.Column.ITEM_CONTENT,ItemContract.Column.ITEM_CREATED_AT,
+    ItemContract.Column.ITEM_IS_FINISHED,ItemContract.Column.ITEM_HAS_CLOCK,ItemContract.Column.ITEM_ALARM_CLOCK};
 
-    private OnFragmentInteractionListener mListener;
+    //视图：绑定到布局中具体对应的控件
+    private static final int[] TO = {R.id.item_item_text_title,R.id.item_item_text_content,R.id.item_item_text_created_at,
+    R.id.item_item_check_is_finished,R.id.item_item_check_has_clock};
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ItemLineFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ItemLineFragment newInstance(String param1, String param2) {
-        ItemLineFragment fragment = new ItemLineFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private static final int LOADER_ID=12;  //这个是一个任意的ID，它帮助我们确保装载器回调的是我们发起的那个。
 
-    public ItemLineFragment() {
-        // Required empty public constructor
-    }
+    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private static final SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
+        @Override
+        public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+            long timestamp;
+            int check;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            //自定义绑定  将时间戳转换成相对时间。无奈SQLite的数据类型很少。
+            switch(view.getId()){
+                case R.id.item_item_text_created_at:
+                    timestamp=cursor.getLong(columnIndex);
+                    CharSequence relTime = DateUtils.getRelativeTimeSpanString(timestamp);
+                    ((TextView) view).setText(relTime);
+                    return true;
+                case R.id.item_item_check_is_finished:
+                    check=cursor.getInt(columnIndex);
+                    if(check==1) {
+                        ((CheckBox) view).setChecked(true);
+                    }
+                    return true;
+                case R.id.item_item_check_has_clock:
+                    check=cursor.getInt(columnIndex);
+                    if(check==1) {
+                        ((CheckBox) view).setChecked(true);
+                    }
+                default:
+                    return false;
+            }
         }
+    };
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //获取ListLineFragment，点击List后发送过来的数据，LIST_ID.
+        long listId = getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,-1);
+//        Toast.makeText(getActivity(),String.valueOf (listId),Toast.LENGTH_LONG).show();
+
+        setEmptyText("加载 "+String.valueOf(listId)+":Loading Items ...");
+
+        //将一个自定义列表布局文件（fragment_item_line.xml），并按FROM数据 TO视图 的映射关系对应加载数据
+        mSimpleCursorAdapter = new SimpleCursorAdapter(getActivity(),R.layout.fragment_item_line,null,FROM,TO,0);
+
+        mSimpleCursorAdapter.setViewBinder(VIEW_BINDER);
+
+        setListAdapter(mSimpleCursorAdapter);
+
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_item_line, container, false);
+    public void onResume() {
+        super.onResume();
+
+//        updateItemLine(); TODO
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+
+        //TODO on click item to finish it
+        Toast.makeText(getActivity(),String.valueOf(id),Toast.LENGTH_LONG).show();//显示ITEM的ID值。
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(id!=LOADER_ID)
+            return null;
+        Log.d(TAG, "onCreateLoader");
+        //CursorLoader 加载来自内容提供器的数据 ItemProvider,通过URI获取列表。要根据LIST_ID,修改第二参数 获取LIST_ID值
+        String where = ItemContract.Column.ITEM_LIST_ID +"=" +String.valueOf(getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,-1));
+
+        return new CursorLoader(getActivity(),ItemContract.CONTENT_URI,null,where,null,ItemContract.DEFAULT_SORT);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if(null == cursor) {
+            setEmptyText("发生了想象不到的事情！");
+            Log.d(TAG, "cursor is NULL!!");
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+        else {
+            int count = cursor.getCount();
+            setEmptyText(count==0 ? "什么都没有，点击 + 添加。":"");
+            Log.d(TAG, "onLoadFinished with cursor:" + cursor.getCount());
         }
+
+        mSimpleCursorAdapter.swapCursor(cursor);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSimpleCursorAdapter.swapCursor(null);
     }
 
 }

@@ -39,7 +39,7 @@ public class ListLineFragment extends android.app.ListFragment implements Loader
     private static final String[] FROM = {ListContract.Column.LIST_TITLE,ListContract.Column.LIST_CONTENT,ListContract.Column.LIST_CREATED_AT};
 
     //视图：绑定到布局中具体对应的控件
-    private static final int[] TO = {R.id.list_item_text_title,R.id.list_item_text_created_at,R.id.list_item_text_content};
+    private static final int[] TO = {R.id.list_item_text_title,R.id.list_item_text_content,R.id.list_item_text_created_at};
 
     private static final int LOADER_ID=11;  //这个是一个任意的ID，它帮助我们确保装载器回调的是我们发起的那个。
 
@@ -80,93 +80,12 @@ public class ListLineFragment extends android.app.ListFragment implements Loader
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
-        //TODO: 点击List条目后，打开改List下的Item列表，就是ItemLineActivity。
-        //获取详情片段
-//        DetailsFragment fragment = (DetailsFragment)getFragmentManager().findFragmentById(R.id.fragment_details);
-//
-//        //详情片段可见吗？
-//        if(fragment!=null && fragment.isVisible()){
-//            fragment.updateView(id);
-//        }else
-//        {
-        //TODO:
             startActivity(new Intent(getActivity(),ItemLineActivity.class).putExtra(ListContract.Column.LIST_ID, id));
-//        }
-    }
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-
-//    private OnFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListLineFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListLineFragment newInstance(String param1, String param2) {
-        ListLineFragment fragment = new ListLineFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     public ListLineFragment() {
         // Required empty public constructor
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-/*        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }*/
-
-    }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_list_line, container, false);
-//    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -179,14 +98,15 @@ public class ListLineFragment extends android.app.ListFragment implements Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-//		Log.d(TAG,"onLoadFinished with cursor: "+cursor.getCount());
-//		mAdapter.swapCursor(cursor);
-
-//		Log.d(TAG,"onLoadFinished with cursor:"+cursor.getCount());
-        if(null == cursor)
-            Log.d(TAG,"cursor is NULL!!");
-        else
-            Log.d(TAG,"onLoadFinished with cursor:"+cursor.getCount());
+        if(null == cursor) {
+            setEmptyText("发生了想象不到的事情！");
+            Log.d(TAG, "cursor is NULL!!");
+        }
+        else {
+            int count = cursor.getCount();
+            setEmptyText(count==0 ? "什么都没有，点击 + 添加。":"");
+            Log.d(TAG, "onLoadFinished with cursor:" + cursor.getCount());
+        }
 
         mSimpleCursorAdapter.swapCursor(cursor);
     }
@@ -196,19 +116,5 @@ public class ListLineFragment extends android.app.ListFragment implements Loader
         mSimpleCursorAdapter.swapCursor(null);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        public void onFragmentInteraction(Uri uri);
-//    }
 
 }

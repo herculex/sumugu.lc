@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.sumugu.liubo.lc.ItemLineActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/action_additem"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/item_addList"
+        app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/action_purgeitem"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/item_purgeList"></item>
 </menu>

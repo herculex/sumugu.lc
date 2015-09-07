@@ -28,15 +28,23 @@
 
         <activity
             android:name=".ListLineActivity"
-            android:label="@string/title_activity_list_line" >
+            android:label="@string/title_activity_list_line"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".ListActivity"
-            android:label="@string/title_activity_list" >
+            android:label="@string/title_activity_list"
+            android:parentActivityName=".ListLineActivity">
         </activity>
         <activity
             android:name=".ItemLineActivity"
-            android:label="@string/title_activity_item_line" >
+            android:label="@string/title_activity_item_line"
+            android:parentActivityName=".ListLineActivity">
+        </activity>
+        <activity
+            android:name=".ItemActivity"
+            android:label="@string/title_activity_item"
+            android:parentActivityName=".ItemLineActivity">
         </activity>
     </application>
 

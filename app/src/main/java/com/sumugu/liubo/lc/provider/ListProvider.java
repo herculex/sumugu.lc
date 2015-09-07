@@ -90,7 +90,7 @@ public class ListProvider extends ContentProvider {
         Uri uriRet=null;
 
         //判断正确的Uri，必须是CONTENT_URI,不必指定ID,既是DIR
-        if(sUriMatcher.match(uri)!=ListContract.LIST_ITEM){
+        if(sUriMatcher.match(uri)!=ListContract.LIST_DIR){
             throw new IllegalArgumentException("sumugu,Illegal uri:"+uri);
         }
 

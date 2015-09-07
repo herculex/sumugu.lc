@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.contract.ListContract;
 
@@ -54,6 +55,11 @@ public class ListFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        String title = mEditTextTitle.getText().toString();
+        String content = mEditTextContent.getText().toString();
+
+        Log.d(TAG, "onClicked to commit.");
+        new PostTask().execute(title,content);
 
     }
 
@@ -99,6 +105,12 @@ public class ListFragment extends Fragment implements View.OnClickListener {
                 Log.e(TAG,e.toString());
                 return e.toString();
             }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
         }
     }
 

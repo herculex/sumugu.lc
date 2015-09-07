@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.contract.ListContract;
 
 
@@ -42,8 +43,9 @@ public class ListLineActivity extends ActionBarActivity {
                 Toast.makeText(this,"BITE ME!",Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_purgelist:
-                int row = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
-                Toast.makeText(this,"OMG,Deleted ALL of "+row,Toast.LENGTH_LONG).show();
+                int row_list = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
+                int row_item = getContentResolver().delete(ItemContract.CONTENT_URI,null,null);
+                Toast.makeText(this,row_list+" lists were gone! "+row_item+"  items too.",Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return false;

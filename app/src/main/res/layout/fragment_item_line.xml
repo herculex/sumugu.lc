@@ -1,9 +1,54 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ItemLineFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <CheckBox
+        android:id="@+id/item_item_check_has_clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+    <CheckBox
+        android:id="@+id/item_item_check_is_finished"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/item_item_text_title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/item_item_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBottom="@+id/item_item_check_has_clock"
+        android:layout_toRightOf="@+id/item_item_check_is_finished"
+        android:layout_toEndOf="@+id/item_item_check_is_finished" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/item_item_text_created_at"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/item_item_text_title"
+        android:layout_alignBottom="@+id/item_item_text_title"
+        android:layout_alignParentRight="true"
+        android:text="10 minutes ago"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/secondary_text_light"/>
+
+    <TextView
+        android:id="@+id/item_item_text_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:focusable="false"
+        android:linksClickable="true"
+        android:text="Content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@+id/item_item_check_has_clock"
+        android:layout_toRightOf="@+id/item_item_check_is_finished"
+        android:layout_toEndOf="@+id/item_item_check_is_finished" />
+
+</RelativeLayout>
