@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LC(原型α)</string>
+    <string name="app_name">LC-原型α2</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">设置</string>
@@ -18,4 +18,5 @@
     <string name="hint_content">内容：请输入 </string>
     <string name="button_add">提交</string>
     <string name="title_activity_item">新增事项</string>
+    <string name="buttong_unlock">解锁屏幕</string>
 </resources>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sumugu.liubo.lc" >
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -9,7 +14,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,23 +36,38 @@
         <activity
             android:name=".ListLineActivity"
             android:label="@string/title_activity_list_line"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" >
         </activity>
         <activity
             android:name=".ListActivity"
             android:label="@string/title_activity_list"
-            android:parentActivityName=".ListLineActivity">
+            android:parentActivityName=".ListLineActivity" >
         </activity>
         <activity
             android:name=".ItemLineActivity"
             android:label="@string/title_activity_item_line"
-            android:parentActivityName=".ListLineActivity">
+            android:parentActivityName=".ListLineActivity" >
         </activity>
         <activity
             android:name=".ItemActivity"
             android:label="@string/title_activity_item"
-            android:parentActivityName=".ItemLineActivity">
+            android:parentActivityName=".ItemLineActivity" >
         </activity>
+
+        <receiver
+            android:name=".lockscreen.LockScreenReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".lockscreen.LockScreenService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
