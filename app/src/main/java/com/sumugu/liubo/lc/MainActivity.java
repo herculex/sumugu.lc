@@ -2,14 +2,17 @@ package com.sumugu.liubo.lc;
 
 import android.app.KeyguardManager;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +25,8 @@ import java.util.Random;
 
 
 public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener{
+
+    private final String TAG=MainActivity.class.getSimpleName();
 
     // User-interface
     private Button btnUnlock;
@@ -47,15 +52,20 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
 
         Random rand = new Random();
         String sms = String.valueOf(rand.nextInt(999)+1);
         String call = String.valueOf(rand.nextInt(999)+1);
 
-        ((TextView) findViewById(R.id.textMissing)).setText("Sms:"+sms+" Call:"+call);
-
+        ((TextView) findViewById(R.id.textMissing)).setText("Sms:" + sms + " Call:" + call);
+     
         //
+        makeFullScreen();
+        //        
+        // 
         init();
 
         // unlock screen in case of app get killed by system
@@ -83,8 +93,8 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
             } catch (Exception e) {
             }
-
         }
+
     }
     private void init() {
         mLockscreenUtils = new LockScreenUtils();
@@ -98,6 +108,28 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
             }
         });
     }
+    private void makeFullScreen(){
+
+        //makeFullScreen
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+//        Toast.makeText(this,"SDK:"+String.valueOf(Build.VERSION.SDK_INT),Toast.LENGTH_LONG).show();
+
+        if(Build.VERSION.SDK_INT <19)
+        {
+            Log.d(TAG, "sumugu,HIDE NAVIGATION.");
+            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+        else //View.SYSTEM_UI_FLAG_IMMERSIVE is only on API 19+
+        {
+            Log.d(TAG,"sumugu,IMMERSIVE.");
+            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE);
+//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
     // Handle events of calls and unlock screen if necessary
     private class StateListener extends PhoneStateListener {
         @Override
@@ -153,7 +185,18 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
     }
     // Lock home button
     public void lockHomeButton() {
-        mLockscreenUtils.lock(MainActivity.this);
+
+        //2015.09.11稍微改动了下，如果有物理菜单键/导航键，则会激活错误的OverlayDialog打开，否则不开（如继续打开会影响隐藏虚拟菜单键/导航键）。备注，使用错误的View，不懂会不会同一个影响？
+        if(ViewConfiguration.get(this).hasPermanentMenuKey())
+        {
+            Log.d(TAG, "sumugu,有物理菜单键");
+            mLockscreenUtils.lock(MainActivity.this, true);
+        }
+        else {
+            Log.d(TAG, "sumugu,没有物理菜单键");
+            mLockscreenUtils.lock(MainActivity.this, false);
+        }
+
     }
 
     // Unlock home button and wait for its callback

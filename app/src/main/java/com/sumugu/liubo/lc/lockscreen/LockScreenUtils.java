@@ -28,10 +28,11 @@ public class LockScreenUtils {
     }
 
     // Display overlay dialog with a view to prevent home button click
-    public void lock(Activity activity) {
+    public void lock(Activity activity,boolean hasPerkey) {
         if (mOverlayDialog == null) {
             mOverlayDialog = new OverlayDialog(activity);
-            mOverlayDialog.show();
+            if(hasPerkey)
+                mOverlayDialog.show();
             mLockStatusChangedListener = (OnLockStatusChangedListener) activity;
         }
     }

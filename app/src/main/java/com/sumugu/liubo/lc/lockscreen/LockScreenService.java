@@ -1,5 +1,6 @@
 package com.sumugu.liubo.lc.lockscreen;
 
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
