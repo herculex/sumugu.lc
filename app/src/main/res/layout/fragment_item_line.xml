@@ -53,4 +53,13 @@
         android:layout_toRightOf="@+id/item_item_check_is_finished"
         android:layout_toEndOf="@+id/item_item_check_is_finished" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clock:2015.09.14"
+        android:id="@+id/item_item_text_clock"
+        android:layout_alignTop="@+id/item_item_text_title"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
 </RelativeLayout>
