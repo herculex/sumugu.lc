@@ -57,7 +57,9 @@ public class ItemLineFragment extends android.app.ListFragment implements Loader
                     timestamp = cursor.getLong(columnIndex);
                     if(timestamp!=0) {
 //                    String formatTime = DateFormat.format("yyyy:MM:dd kk:mm:ss",timestamp).toString();
-                        CharSequence time = DateUtils.formatDateTime(getActivity(), timestamp, DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+
+                        CharSequence time = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss",timestamp).toString();
+//                        CharSequence time = DateUtils.formatDateTime(getActivity(), timestamp, DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
                         ((TextView) view).setText(time);
                     }
                     return true;
