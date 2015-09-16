@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -74,8 +75,14 @@
             android:name=".alarmclock.AlarmReceiver"
             android:enabled="true"
             android:exported="false"
-            android:process=":remote">
+            android:process=":remote" >
         </receiver>
+
+        <service
+            android:name=".notification.NotifyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

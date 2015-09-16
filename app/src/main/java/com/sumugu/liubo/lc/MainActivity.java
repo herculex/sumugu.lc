@@ -1,8 +1,14 @@
 package com.sumugu.liubo.lc;
 
 import android.app.KeyguardManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
@@ -30,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
     // User-interface
     private Button btnUnlock;
+    private Button btnShowNotify;
 
     // Member variables
     private LockScreenUtils mLockscreenUtils;
@@ -63,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         ((TextView) findViewById(R.id.textMissing)).setText("Sms:" + sms + " Call:" + call);
      
         //
-        makeFullScreen();
+//        makeFullScreen();
         //        
         // 
         init();
@@ -107,7 +114,66 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
                 unlockHomeButton();
             }
         });
+
+        btnShowNotify = (Button) findViewById(R.id.btnShowNotify);
+        btnShowNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                googleNotify();
+            }
+        });
+
     }
+
+    //Only for prototype test and demo
+    private void googleNotify()
+    {
+        //Same ID , Only one notify.
+        Random random = new Random();
+        int mId=random.nextInt(900);
+
+        //API 11 ,android 3.0
+        Notification.Builder mBuilder =
+                new Notification.Builder(this)
+                        .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)    //必要条件1/3，小图标
+                        .setContentTitle("My notification")                     //必要条件2/3，标题
+                        .setContentText("Hello World!")                         //必要条件3/3，内容
+                        .setTicker("Here we go!")
+//                      .setVibrate(new long[] {350,0,100,350})                 //自定义震动的模式
+                        .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);    //默认的铃声和震动模式
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        //API 16 , android 4.1.2
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(mId, mBuilder.build());
+    }
+
     private void makeFullScreen(){
 
         //makeFullScreen

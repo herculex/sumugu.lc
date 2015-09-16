@@ -16,11 +16,20 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/buttong_unlock"
+    android:id="@+id/buttonUnclock"
+    android:layout_below="@+id/textMissing"
+    android:layout_centerHorizontal="true" />
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/buttong_unlock"
-        android:id="@+id/buttonUnclock"
-        android:layout_below="@+id/textMissing"
-        android:layout_centerHorizontal="true" />
+        android:text="@string/button_showNotify"
+        android:id="@+id/btnShowNotify"
+        android:layout_below="@+id/buttonUnclock"
+        android:layout_alignLeft="@+id/buttonUnclock"
+        android:layout_alignStart="@+id/buttonUnclock" />
 
 </RelativeLayout>
