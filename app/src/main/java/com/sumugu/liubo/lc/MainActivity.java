@@ -7,12 +7,13 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
+import com.sumugu.liubo.lc.missing.MissingUtils;
 
 import java.util.Random;
 
@@ -63,16 +65,42 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
         setContentView(R.layout.activity_main);
 
-        Random rand = new Random();
-        String sms = String.valueOf(rand.nextInt(999)+1);
-        String call = String.valueOf(rand.nextInt(999)+1);
+//        Random rand = new Random();
+//        String sms = String.valueOf(rand.nextInt(999)+1);
+//        String call = String.valueOf(rand.nextInt(999)+1);
 
-        ((TextView) findViewById(R.id.textMissing)).setText("Sms:" + sms + " Call:" + call);
+        MissingUtils missingUtils = new MissingUtils();
+        String sms = String.valueOf(missingUtils.getNewSmsCount(this));
+        String mms = String.valueOf(missingUtils.getNewMmsCount(this));
+        String call = String.valueOf(missingUtils.getMissCallCount(this));
+
+        String missingCount = "Sms:" + sms +" Mms:"+ mms + " Call:" + call;
+
+        //换行符 \n
+        String smsText = "\n nothing!";
+
+        Cursor cursor = missingUtils.getNewSms(this);
+//        if(cursor!=null && cursor.getCount()>0)
+//        {
+//        }
+        //显示头条未读短信内容，仅供原型阿尔法2。这里已经完成读取短信内容，就可以去完成讲未读短信内容插入到Clear里。
+        if(cursor.moveToFirst())
+        {
+            smsText = "\n person:"+cursor.getString(cursor.getColumnIndex("person"));
+            smsText += "\n address:"+cursor.getString(cursor.getColumnIndex("address"));
+            smsText += "\n body:"+cursor.getString(cursor.getColumnIndex("body"));
+            smsText += "\n date:"+ DateFormat.format("yyyy-MM-dd kk:hh:ss",cursor.getLong(cursor.getColumnIndex("date")));
+            smsText += "\n type:"+cursor.getString(cursor.getColumnIndex("type"));
+        }
+
+        ((TextView) findViewById(R.id.textMissing)).setText(missingCount+smsText);
+
+
      
         //
 //        makeFullScreen();
         //        
-        // 
+                //
         init();
 
         // unlock screen in case of app get killed by system
