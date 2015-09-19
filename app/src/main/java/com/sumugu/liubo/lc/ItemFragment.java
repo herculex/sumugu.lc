@@ -48,8 +48,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_item, container, false);
 
         //找到控件并赋值
+//        mEditTitle = (EditText)view.findViewById(R.id.editItemTitle); //阿尔法3已删除
         mEditContent = (EditText)view.findViewById(R.id.editItemContent);
-        mEditTitle = (EditText)view.findViewById(R.id.editItemTitle);
         mButtonCommit = (Button)view.findViewById(R.id.buttonItemCommit);
         mButtonCommit.setOnClickListener(this);
 
@@ -59,30 +59,27 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        String title = mEditTitle.getText().toString();
-        String content = mEditContent.getText().toString();
-
         Log.d(TAG, "onClicked to commit.");
         new PostTask().execute();
     }
     private final class PostTask extends AsyncTask<String,Void,String>
     {
-        String title = mEditTitle.getText().toString();
+        String title = "sumugu_default_string"; //阿尔法3，默认Item的标题    //TODO
         String content = mEditContent.getText().toString();
 
         @Override
         protected String doInBackground(String... params) {
             //TODO: 建设设置项目是否完备
 
-            if(TextUtils.isEmpty(mEditContent.getText()) || TextUtils.isEmpty(mEditContent.getText()))
+            if(TextUtils.isEmpty(content))
             {
-                return "至少输入标题吧";
+                return "需要输入内容！";
             }
 
-            //新增List条目
+            //新增Item条目
             try
             {
-                long listId = getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,-1);
+                long listId = getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,-1);   //获取发送过来意图中的LIST_ID值，默认-1
 
                 ContentValues values = new ContentValues();
                 values.clear();
@@ -93,6 +90,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 values.put(ItemContract.Column.ITEM_TITLE,title);
                 values.put(ItemContract.Column.ITEM_CONTENT,content);
                 values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
+                values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
+                values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
 
                 values.put(ItemContract.Column.ITEM_LIST_ID,listId);
 
@@ -100,10 +99,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 Uri uri = getActivity().getContentResolver().insert(ItemContract.CONTENT_URI, values);
                 if(uri!=null){
                     Log.d(TAG, String.format("%s:%s", values.getAsString(ItemContract.Column.ITEM_TITLE), values.getAsString(ItemContract.Column.ITEM_CONTENT)));
-                    return "Successfully posted!";
+                    return "马上就可以看见！";
                 }
                 else
-                    return "What's wrong!";
+                    return "发生可怕的事情！";
 
             }catch (Exception e)
             {
