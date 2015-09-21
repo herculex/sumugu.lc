@@ -8,12 +8,18 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.DateUtils;
 
 import com.sumugu.liubo.lc.MainActivity;
+import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
+import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.util.Calendar;
 import java.util.Random;
 
 public class NotifyService extends IntentService {
@@ -30,13 +36,35 @@ public class NotifyService extends IntentService {
     }
 
     private String mTitle,mText,mTicker;
+    long mItemId;
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        mText=intent.getStringExtra("text");
-        mTitle=intent.getStringExtra("title");
-        mTicker=intent.getStringExtra("ticker");
+        //获取过来的Intent的参数ItemID
+        mItemId = intent.getLongExtra("mItemId",0); //奇葩，为什么获取不得？？
+        mText = intent.getStringExtra("mItemId");
+        mTitle = intent.getStringExtra("title");
+
+        //定义各种以下用到的变量
+        AlarmUntils alarmUntils = new AlarmUntils();
+        Calendar calendar = Calendar.getInstance();
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
+
+        //找出Item的各项内容
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if(!cursor.moveToFirst()) {
+            return;
+        }
+
+        String text = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+        long createdAt = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT));
+        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+
+        mText = text;
+        mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
+        mTicker = "你有一项任务需要马上完成！-L.C.阿尔法3";
+
         show();
     }
 

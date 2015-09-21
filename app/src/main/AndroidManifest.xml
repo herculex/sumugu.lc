@@ -88,8 +88,8 @@
 
         <activity
             android:name=".ItemDetailActivity"
-            android:label="@string/title_activity_item_detail"
-            android:theme="@style/AlertDialog.AppCompat.Light">
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:label="@string/title_activity_item_detail">
         </activity>
     </application>
 

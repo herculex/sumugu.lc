@@ -37,11 +37,11 @@ public class ItemLineFragment extends android.app.ListFragment implements Loader
     //
     //数据：要绑定显示的列表内容，标题TITLE（阿尔法3删除），内容CONTENT，创建时间CREATED_AT，是否完成IS_FINISHED，有闹钟HAS_CLOCK，闹钟时间ALARM_CLOCK。
     private static final String[] FROM = {ItemContract.Column.ITEM_CONTENT,ItemContract.Column.ITEM_CREATED_AT,
-    ItemContract.Column.ITEM_IS_FINISHED,ItemContract.Column.ITEM_HAS_CLOCK,ItemContract.Column.ITEM_ALARM_CLOCK};
+    ItemContract.Column.ITEM_HAS_CLOCK,ItemContract.Column.ITEM_ALARM_CLOCK};
 
     //视图：绑定到布局中具体对应的控件
     private static final int[] TO = {R.id.item_item_text_content,R.id.item_item_text_created_at,
-    R.id.item_item_check_is_finished,R.id.item_item_check_has_clock,R.id.item_item_text_clock};
+    R.id.item_item_check_has_clock,R.id.item_item_text_clock};
 
     private static final int LOADER_ID=12;  //这个是一个任意的ID，它帮助我们确保装载器回调的是我们发起的那个。
 
