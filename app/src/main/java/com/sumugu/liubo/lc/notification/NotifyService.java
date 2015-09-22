@@ -35,20 +35,17 @@ public class NotifyService extends IntentService {
         super(TAG);
     }
 
+    //标题，内容，提示
     private String mTitle,mText,mTicker;
     long mItemId;
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        //获取过来的Intent的参数ItemID
-        mItemId = intent.getLongExtra("mItemId",0); //奇葩，为什么获取不得？？
-        mText = intent.getStringExtra("mItemId");
-        mTitle = intent.getStringExtra("title");
+        //获取过来的Intent的参数ItemID，来的是Long类型，必须用LongExtra接收，否则null了，就是取默认值。
+        mItemId = intent.getLongExtra(ItemContract.Column.ITEM_ID,-1);
 
         //定义各种以下用到的变量
-        AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar = Calendar.getInstance();
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
 
         //找出Item的各项内容
@@ -63,7 +60,7 @@ public class NotifyService extends IntentService {
 
         mText = text;
         mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
-        mTicker = "你有一项任务需要马上完成！-L.C.阿尔法3";
+        mTicker = "你有一项任务需要马上完成！来自lc.alpha.3.";
 
         show();
     }

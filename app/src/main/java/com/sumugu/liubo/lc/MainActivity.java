@@ -1,11 +1,13 @@
 package com.sumugu.liubo.lc;
 
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -25,6 +27,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.contract.ListContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
 import com.sumugu.liubo.lc.missing.MissingUtils;
@@ -32,13 +36,15 @@ import com.sumugu.liubo.lc.missing.MissingUtils;
 import java.util.Random;
 
 
-public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener{
+public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
 
     private final String TAG=MainActivity.class.getSimpleName();
 
     // User-interface
     private Button btnUnlock;
-    private Button btnShowNotify;
+    private Button btnGotoFinish;
+    private Button btnClearAll;
+    private TextView textViewMissingContent;
 
     // Member variables
     private LockScreenUtils mLockscreenUtils;
@@ -64,6 +70,13 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
 
         setContentView(R.layout.activity_main);
+        btnGotoFinish = (Button)findViewById(R.id.btn_goto_finish);
+        btnUnlock = (Button)findViewById(R.id.btn_unlock_screen);
+        btnClearAll = (Button)findViewById(R.id.btn_clear_all);
+
+        btnUnlock.setOnClickListener(this);
+        btnGotoFinish.setOnClickListener(this);
+        btnClearAll.setOnClickListener(this);
 
         //
 //        makeFullScreen();
@@ -122,6 +135,39 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
             Log.d(TAG,"sumugu,IMMERSIVE.");
             this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE);
 //            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId())
+        {
+            case R.id.btn_goto_finish:
+                startActivity(new Intent(this,ComboItemLineActivity.class));
+                return;
+            case R.id.btn_unlock_screen:
+                unlockHomeButton();
+                return;
+            case R.id.btn_clear_all:
+//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//                builder.setMessage("真的要删光光？")
+//                        .setCancelable(false)
+//                        .setPositiveButton("是的", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+                                int row_list = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
+                                int row_item = getContentResolver().delete(ItemContract.CONTENT_URI,null,null);
+                                Toast.makeText(MainActivity.this, "删光光了，待会出错就重启机子吧，哈哈哈！", Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//                        .setNegativeButton("不是的", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                dialog.cancel();
+//                            }
+//                        });
+//                AlertDialog alert = builder.create();
+//                alert.show();
+                return;
         }
     }
 
@@ -235,7 +281,7 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -244,27 +290,8 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-        switch (id)
-        {
-            case R.id.action_listline:
-                //
-                startActivity(new Intent(this,ListLineActivity.class));
-                return true;
-            case R.id.action_unlock:
-                //阿尔法3，解锁
-                unlockHomeButton();
-                return true;
-            default:
-                return false;
-        }
+        return true;
     }
 
 }

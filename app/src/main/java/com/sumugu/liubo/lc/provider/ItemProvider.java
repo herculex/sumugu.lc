@@ -96,12 +96,12 @@ public class ItemProvider extends ContentProvider {
         SQLiteDatabase sqLiteDatabase = mDbHelper.getWritableDatabase();
 
         //开始插入，获取返回的ID，用于判断成功，-1就是失败
-        long rowId=sqLiteDatabase.insertWithOnConflict(ItemContract.TABLE,null,values,SQLiteDatabase.CONFLICT_IGNORE);
+        long rowId = sqLiteDatabase.insertWithOnConflict(ItemContract.TABLE,null,values,SQLiteDatabase.CONFLICT_IGNORE);
 
         if (rowId!=-1)
         {
             long id=values.getAsLong(ItemContract.Column.ITEM_ID);
-            uriRet = ContentUris.withAppendedId(uri,id);
+            uriRet = ContentUris.withAppendedId(uri,rowId);
             Log.d(TAG,"sumugu,inserted uri:"+uriRet);
 
             //通知用于这个uri的数据已经更改

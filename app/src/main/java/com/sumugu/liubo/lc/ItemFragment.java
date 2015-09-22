@@ -32,7 +32,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
     private static final String TAG=ItemFragment.class.getSimpleName();
 
     //存放释放的控件的变量
-    private EditText mEditTitle;
+//    private EditText mEditTitle;    //阿尔法3已删除
     private EditText mEditContent;
     private Button mButtonCommit;
 
@@ -64,7 +64,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
     }
     private final class PostTask extends AsyncTask<String,Void,String>
     {
-        String title = "sumugu_default_string"; //阿尔法3，默认Item的标题    //TODO
+        String title = "default_alpha_list"; //阿尔法3，默认Item的标题    //TODO
         String content = mEditContent.getText().toString();
 
         @Override
@@ -79,19 +79,20 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
             //新增Item条目
             try
             {
-                long listId = getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,-1);   //获取发送过来意图中的LIST_ID值，默认-1
+                long listId = getActivity().getIntent().getLongExtra(ListContract.Column.LIST_ID,0);   //获取发送过来意图中的LIST_ID值，默认0
 
                 ContentValues values = new ContentValues();
                 values.clear();
                 Random rand = new Random();
-                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，看是否是自动产生ID值
-
+                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
                 values.put(ItemContract.Column.ITEM_ID,idValue);
+
                 values.put(ItemContract.Column.ITEM_TITLE,title);
                 values.put(ItemContract.Column.ITEM_CONTENT,content);
                 values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
                 values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
                 values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
+                values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
 
                 values.put(ItemContract.Column.ITEM_LIST_ID,listId);
 
@@ -115,6 +116,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            mEditContent.setText("");
+
             Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
         }
     }
