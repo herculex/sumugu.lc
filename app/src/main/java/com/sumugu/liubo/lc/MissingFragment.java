@@ -129,8 +129,7 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
             uri = getActivity().getContentResolver().insert(ItemContract.CONTENT_URI,values);
             if(uri!=null)
             {
-                String id = uri.getLastPathSegment();
-                long itemId = Long.parseLong(id);
+                long itemId = Long.parseLong(idValue);
                 alarmUntils.SetAlarmClock(getActivity(),calendar,true,60*1000,itemId);
             }
         }
