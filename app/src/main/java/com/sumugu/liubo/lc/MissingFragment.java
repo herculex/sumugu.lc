@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.CallLog;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -98,84 +99,67 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
 
     private void addToItems()
     {
-        //换行符 \n
-
-        Uri uri = ItemContract.CONTENT_URI;
-        ContentValues values = new ContentValues();
-        Calendar calendar = Calendar.getInstance();
-        AlarmUntils alarmUntils = new AlarmUntils();
-
         MissingUtils missingUtils = new MissingUtils();
+
         //获取短信
         Cursor cursor = missingUtils.getNewSms(getActivity());
         while (cursor.moveToNext())
         {
-            calendar.setTimeInMillis(new Date().getTime());
-            values.clear();
 
             String title = cursor.getString(cursor.getColumnIndex("address"));
-            String content = "回复短信："+title+","+cursor.getString(cursor.getColumnIndex("body"));
-            Random rand = new Random();
-            String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
-            values.put(ItemContract.Column.ITEM_ID,idValue);
-            values.put(ItemContract.Column.ITEM_LIST_ID, 0);
-            values.put(ItemContract.Column.ITEM_TITLE, title);
-            values.put(ItemContract.Column.ITEM_CONTENT, content);
-            values.put(ItemContract.Column.ITEM_CREATED_AT, calendar.getTimeInMillis());
-            values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
-            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
-            calendar.add(Calendar.MINUTE, 5);
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, calendar.getTimeInMillis());
-            uri = getActivity().getContentResolver().insert(ItemContract.CONTENT_URI,values);
-            if(uri!=null)
-            {
-                long itemId = Long.parseLong(idValue);
-                alarmUntils.SetAlarmClock(getActivity(),calendar,true,60*1000,itemId);
-            }
+            String body = cursor.getString(cursor.getColumnIndex("body"));
+            if(title==null)
+                title="无显示号码 ";
+            if(body==null)
+                body="无内容 ";
+            String content = "回复短信："+title+","+body;
+
+            add(title,content);
         }
 
         //获取电话
         cursor = missingUtils.getMissCall(getActivity());
         while (cursor.moveToNext())
         {
-            calendar.setTimeInMillis(new Date().getTime());
-            values.clear();
-
-            String title = cursor.getString(cursor.getColumnIndex("cache_name"));
-            if(title.isEmpty())
+            String title = cursor.getString(0);
+            String number = cursor.getString(1);
+            if(title==null)
                 title = "陌生人 ";
-            String content = "回复电话："+title+","+cursor.getString(cursor.getColumnIndex("number"));
-            Random rand = new Random();
-            String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
-            values.put(ItemContract.Column.ITEM_ID,idValue);
-            values.put(ItemContract.Column.ITEM_LIST_ID, 0);
-            values.put(ItemContract.Column.ITEM_TITLE, title);
-            values.put(ItemContract.Column.ITEM_CONTENT, content);
-            values.put(ItemContract.Column.ITEM_CREATED_AT, calendar.getTimeInMillis());
-            values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
-            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
-            calendar.add(Calendar.MINUTE, 5);
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, calendar.getTimeInMillis());
-            uri = getActivity().getContentResolver().insert(ItemContract.CONTENT_URI,values);
-            if(uri!=null)
-            {
-                String id = uri.getLastPathSegment();
-                long itemId = Long.parseLong(id);
-                alarmUntils.SetAlarmClock(getActivity(),calendar,true,60,itemId);
-            }
+            if(number==null)
+                number = "无显示号码 ";
+            String content = "回复电话："+title+","+number;
+
+            add(title,content);
         }
-        //
-//        if(cursor!=null && cursor.getCount()>0)
-//        {
-//        }
-        //显示头条未读短信内容，仅供原型阿尔法2。这里已经完成读取短信内容，就可以去完成讲未读短信内容插入到Clear里。
-//        if(cursor.moveToFirst())
-//        {
-//            smsText = "\n person:"+cursor.getString(cursor.getColumnIndex("person"));
-//            smsText += "\n address:"+cursor.getString(cursor.getColumnIndex("address"));
-//            smsText += "\n body:"+cursor.getString(cursor.getColumnIndex("body"));
-//            smsText += "\n date:"+ DateFormat.format("yyyy-MM-dd kk:hh:ss", cursor.getLong(cursor.getColumnIndex("date")));
-//            smsText += "\n type:"+cursor.getString(cursor.getColumnIndex("type"));
-//        }
+    }
+
+    private void add(String title,String content)
+    {
+        AlarmUntils alarmUntils = new AlarmUntils();
+        Uri uri = ItemContract.CONTENT_URI;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(new Date().getTime());
+        ContentValues values = new ContentValues();
+
+        Random rand = new Random();
+        String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
+
+        values.clear();
+        values.put(ItemContract.Column.ITEM_ID,idValue);
+        values.put(ItemContract.Column.ITEM_LIST_ID, 0);
+        values.put(ItemContract.Column.ITEM_TITLE, title);
+        values.put(ItemContract.Column.ITEM_CONTENT, content);
+        values.put(ItemContract.Column.ITEM_CREATED_AT, calendar.getTimeInMillis());
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
+        values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+        calendar.add(Calendar.MINUTE, 5);
+        values.put(ItemContract.Column.ITEM_ALARM_CLOCK, calendar.getTimeInMillis());
+        uri = getActivity().getContentResolver().insert(uri,values);
+        if(uri!=null)
+        {
+            long itemId = Long.parseLong(idValue);
+            alarmUntils.SetAlarmClock(getActivity(),calendar,true,60,itemId);
+        }
     }
 }
