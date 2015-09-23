@@ -79,7 +79,7 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         btnClearAll.setOnClickListener(this);
 
         //
-//        makeFullScreen();
+        makeFullScreen();
         //        
                 //
         init();

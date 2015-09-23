@@ -29,6 +29,8 @@ import java.util.Random;
 
 public class MissingFragment extends Fragment implements View.OnClickListener {
 
+    private static final String TAG=MissingFragment.class.getSimpleName();
+
     public MissingFragment() {
         // Required empty public constructor
     }
@@ -46,8 +48,14 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
 
         MissingUtils missingUtils = new MissingUtils();
         int sms,mms,call;
-        sms = missingUtils.getNewSmsCount(getActivity());
+
 //        mms = missingUtils.getNewMmsCount(getActivity());
+//        取消彩信
+//        if(mms>0)
+//        {
+//            missingCount += " 彩信："+mms;
+//        }
+        sms = missingUtils.getNewSmsCount(getActivity());
         call = missingUtils.getMissCallCount(getActivity());
 
         String missingCount = "";
@@ -55,11 +63,7 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
         {
             missingCount = "短信："+sms;
         }
-//        取消彩信
-//        if(mms>0)
-//        {
-//            missingCount += " 彩信："+mms;
-//        }
+
         if(call>0)
         {
             missingCount += " 电话："+call;
@@ -70,10 +74,12 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
             textView.setText(missingCount);
             button.setText(missingCount);
         }
-
+        else
+        {
+            button.setEnabled(false);
+        }
 
         return view;
-
     }
 
 
