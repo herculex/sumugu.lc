@@ -14,8 +14,11 @@ import android.nfc.Tag;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
+import android.widget.RemoteViews;
 
+import com.sumugu.liubo.lc.ItemDetailActivity;
 import com.sumugu.liubo.lc.MainActivity;
+import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
@@ -61,12 +64,16 @@ public class NotifyService extends IntentService {
         mText = text;
         mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
         mTicker = "你有一项任务需要马上完成！来自lc.alpha.3.";
-
         show();
+
     }
 
     private void show()
     {
+        Intent intentItemDetail = new Intent(this, ItemDetailActivity.class);
+        intentItemDetail.putExtra(ItemContract.Column.ITEM_ID, mItemId);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intentItemDetail,PendingIntent.FLAG_UPDATE_CURRENT);
+
         //
         //Follow codes mainly from Example of Google Notifications | Android Developers | 2015.09.15
         //truly helpful!
@@ -75,18 +82,21 @@ public class NotifyService extends IntentService {
         Random random = new Random();
         int mId=random.nextInt(900);
 
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.fragment_item_detail);
         //API 11 ,android 3.0
         Notification.Builder mBuilder =
                 new Notification.Builder(this)
-                        .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)    //必要条件1/3，小图标 -android.R.drawable.ic_lock_idle_alarm
+                        .setSmallIcon(R.mipmap.ic_notification)                 //必要条件1/3，小图标 -android.R.drawable.ic_lock_idle_alarm
                         .setContentTitle(mTitle)                                //必要条件2/3，标题 -"My notification"
                         .setContentText(mText)                                  //必要条件3/3，内容 -"Hello World!"
                         .setTicker(mTicker)
+//                      .setContent(remoteViews)                                //自定义通知样式
 //                      .setVibrate(new long[] {350,0,100,350})                 //自定义震动的模式
                         .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);    //默认的铃声和震动模式
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        Intent resultIntent = new Intent(this, ItemDetailActivity.class);
+        resultIntent.putExtra(ItemContract.Column.ITEM_ID,mItemId);
 
         //API 16 , android 4.1.2
 
@@ -113,7 +123,7 @@ public class NotifyService extends IntentService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
+        mNotificationManager.notify((int) mItemId, mBuilder.build());
     }
 
 }
