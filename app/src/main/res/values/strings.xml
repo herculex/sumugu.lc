@@ -19,7 +19,7 @@
     <string name="button_add">提交</string>
     <string name="title_activity_item">新增事项</string>
     <string name="buttong_unlock">解锁屏幕</string>
-    <string name="text_hint_no_clock">未设置闹钟</string>
+    <string name="text_hint_no_clock">未设置提醒</string>
     <string name="button_showNotify">显示通知</string>
     <string name="title_activity_item_detail">事项详情</string>
     <string name="title_activity_combo_item_line">整理事项</string>
