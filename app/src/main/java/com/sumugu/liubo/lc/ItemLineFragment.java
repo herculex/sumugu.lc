@@ -70,50 +70,6 @@ public class ItemLineFragment extends android.app.ListFragment implements Loader
                     ((TextView) view).setText(relTime);
                     return true;
 
-//                case R.id.item_item_check_is_finished:
-//
-//                    final CheckBox checkBox=(CheckBox)view;
-//                    checkBox.setChecked(cursor.getInt(columnIndex) == 1 ? true : false);
-//
-//                    //获取Item的ID值
-//                    final long itemId=cursor.getInt(0);
-//                    //设置Checkbox的点击事件
-//                    checkBox.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-////                            Toast.makeText(getActivity(),itemId+"m:+"+columnIndex+" make me ok!",Toast.LENGTH_LONG).show();
-////                            Toast.makeText(getActivity(),+cursor.getInt(0)+"m:+"+columnIndex+" make me ok!",Toast.LENGTH_LONG).show();
-////                            注册的事件，里不应该用cursor，因为onItemClick被点击后，cursor会被定位，导致所有的checkbox的onclick都是同一个游标的位置，所以游标变量不应该放在改注册的事件里
-////
-//                            //原型，获取Item的闹钟
-//                            Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(itemId));
-//                            Cursor itemcursor = getActivity().getContentResolver().query(uri, null, null, null, null);
-//                            if(!itemcursor.moveToFirst())
-//                                return;
-//                            long clocktime = itemcursor.getLong(itemcursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-//                            Calendar calendar = Calendar.getInstance();
-//                            calendar.setTimeInMillis(clocktime);
-//                            //取消Item的闹钟
-//                            String strCancel = new AlarmUntils().CancelAlarmClock(getActivity(), calendar);
-//                            Log.d(TAG, "sumugu,cancel lock:" + String.valueOf(itemId) + ":" + strCancel);
-//
-//                            //原型，设置完成状态，并清除闹钟
-//                            ContentValues values = new ContentValues();
-//                            values.put(ItemContract.Column.ITEM_IS_FINISHED, ((CheckBox)v).isChecked()?1:0);
-//                            values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
-//                            values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
-//
-//                            int count = getActivity().getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId)), values, null, null);
-//                            if(count>0)
-//                            {
-//                                Toast.makeText(getActivity(),String.valueOf(count)+"finished!"+itemId,Toast.LENGTH_LONG).show();
-//                            }
-//                        }
-//                    });
-//                    return true;
-
-
-
                 default:
                     return false;
             }
@@ -157,38 +113,6 @@ public class ItemLineFragment extends android.app.ListFragment implements Loader
         Intent intentDetail = new Intent(getActivity(),ItemDetailActivity.class);
         intentDetail.putExtra(ItemContract.Column.ITEM_ID,id);
         getActivity().startActivity(intentDetail);
-
-        //原型，点击条目一样，设置完成或取消完成
-//        CheckBox checkBox = (CheckBox)v.findViewById(R.id.item_item_check_is_finished);
-//
-//        ContentValues values = new ContentValues();
-//        values.put(ItemContract.Column.ITEM_IS_FINISHED, checkBox.isChecked() ? 0 : 1);
-//
-//        int count = getActivity().getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), values, null, null);
-
-        //原型，点击条目快速设置5分钟提醒
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(new Date());
-//        calendar.add(Calendar.MINUTE, 1);
-//        String strDate = calendar.get(Calendar.YEAR) + "年" + calendar.get(Calendar.MONTH) + "月" + calendar.get(Calendar.DATE) + "日"
-//                + calendar.get(Calendar.HOUR) + "时" + calendar.get(Calendar.MINUTE) + "分" + calendar.get(Calendar.SECOND) + "秒";
-//        Log.d(TAG, "sumugu,setting clock:" + strDate);
-//
-//        ContentValues values =new ContentValues();
-//        values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
-//        values.put(ItemContract.Column.ITEM_HAS_CLOCK,1);
-//        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,calendar.getTimeInMillis());
-//
-//        //更新数据库Item表对应的Item的信息，设置闹钟
-//        int count = getActivity().getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(id)),values,null,null);
-//        if(count>0)
-//            Log.d(TAG,"sumugu,clock updated in Db."+String.valueOf(id)+":"+strDate);
-//
-//        //设置闹钟
-//        AlarmUntils alarmUntils = new AlarmUntils();
-//        String strClock = alarmUntils.SetAlarmClock(getActivity(), calendar, true, 10);
-//        Log.d(TAG,"sumugu,clock installed."+strClock);
-
 
     }
 

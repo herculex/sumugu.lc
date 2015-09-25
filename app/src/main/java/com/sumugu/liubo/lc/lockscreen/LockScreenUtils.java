@@ -69,7 +69,7 @@ public class LockScreenUtils {
             params.height = 0;
             params.gravity = Gravity.BOTTOM;
             getWindow().setAttributes(params);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     0xffffff);
             setOwnerActivity(activity);
             setCancelable(false);

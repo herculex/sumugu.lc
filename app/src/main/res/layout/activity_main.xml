@@ -30,5 +30,10 @@
         android:text="CLEAR ALL"
         android:id="@+id/btn_clear_all"/>
 
-
+    <fragment
+        android:id="@+id/fragment_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:name="com.sumugu.liubo.lc.ItemLineFragment"
+        tools:layout="@layout/fragment_item_line"/>
 </LinearLayout>
