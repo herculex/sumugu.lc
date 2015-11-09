@@ -78,6 +78,8 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         btnGotoFinish.setOnClickListener(this);
         btnClearAll.setOnClickListener(this);
 
+        ((Button)findViewById(R.id.btn_swipe_face)).setOnClickListener(this);
+
         //
         makeFullScreen();
         //        
@@ -167,6 +169,9 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 //                        });
 //                AlertDialog alert = builder.create();
 //                alert.show();
+                return;
+            case R.id.btn_swipe_face:
+                startActivity(new Intent(this,MainListActivity.class));
                 return;
         }
     }

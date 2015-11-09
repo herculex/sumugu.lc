@@ -20,7 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -89,11 +89,16 @@
         <activity
             android:name=".ItemDetailActivity"
             android:label="@string/title_activity_item_detail"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
         <activity
             android:name=".ComboItemLineActivity"
             android:label="@string/title_activity_combo_item_line" >
+        </activity>
+        <activity
+            android:name=".MainListActivity"
+            android:label="@string/title_activity_main_list"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
     </application>
 

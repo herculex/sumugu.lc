@@ -15,6 +15,11 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="SwipeFace"
+        android:id="@+id/btn_swipe_face"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:text="Go to Finish"
         android:id="@+id/btn_goto_finish" />
 

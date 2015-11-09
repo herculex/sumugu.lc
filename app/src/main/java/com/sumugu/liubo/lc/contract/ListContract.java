@@ -16,7 +16,7 @@ public class ListContract extends DbContract {
 
     //Columns specific constants
     public class Column{
-        public static final String LIST_ID= BaseColumns._ID;
+        public static final String LIST_ID= BaseColumns._ID; //"_id"
         public static final String LIST_TITLE="list_title";
         public static final String LIST_CONTENT="list_content";
         public static final String LIST_CREATED_AT="list_created_at";

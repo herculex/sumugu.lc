@@ -15,7 +15,7 @@ public class ItemContract extends DbContract {
 
     //Columns specific constants
     public class Column{
-        public static final String ITEM_ID = BaseColumns._ID;
+        public static final String ITEM_ID = BaseColumns._ID; // "_id"
         public static final String ITEM_TITLE="item_title";
         public static final String ITEM_CONTENT="item_content";
         public static final String ITEM_CREATED_AT="item_created_at";
