@@ -105,7 +105,7 @@
             android:layout_alignParentTop="true"
             />
         <TextView
-            android:id="@+id/control"
+            android:id="@+id/mainlist_control"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@drawable/white"
@@ -118,13 +118,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/title_list"
-            android:layout_above="@id/control"></ListView>
+            android:layout_above="@id/mainlist_control"></ListView>
         <TextView
             android:id="@android:id/empty"
             android:text="什么鬼都没有！找找吧"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/title_list"
-            android:layout_above="@id/control"/>
+            android:layout_above="@id/mainlist_control"/>
     </RelativeLayout>
 </com.daimajia.swipe.SwipeLayout>

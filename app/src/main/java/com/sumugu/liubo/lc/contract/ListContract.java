@@ -21,7 +21,7 @@ public class ListContract extends DbContract {
         public static final String LIST_CONTENT="list_content";
         public static final String LIST_CREATED_AT="list_created_at";
         public static final String LIST_IS_FINISHED="list_is_finished";
-        public static final String LIST_INDEX="list_index";
+//        public static final String LIST_INDEX="list_index";
 
     }
 

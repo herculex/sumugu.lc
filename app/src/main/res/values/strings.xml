@@ -15,7 +15,7 @@
     <string name="item_listline">ListLine</string>
     <string name="title_activity_item_line">事项列表</string>
     <string name="hint_title">标题：请输入 </string>
-    <string name="hint_content">内容：请输入 </string>
+    <string name="hint_content">准备干点什么呢？ </string>
     <string name="button_add">提交</string>
     <string name="title_activity_item">新增事项</string>
     <string name="buttong_unlock">解锁屏幕</string>

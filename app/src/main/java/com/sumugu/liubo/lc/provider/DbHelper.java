@@ -38,9 +38,10 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_table_list);
 
         String sql_create_table_item = String.format("create table %s (" +
-                "%s int primary key," +
+                "%s text primary key," +
                 "%s text," +
                 "%s text," +
+                "%s int," +
                 "%s int," +
                 "%s int," +
                 "%s int," +
@@ -55,7 +56,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 ItemContract.Column.ITEM_IS_FINISHED,
                 ItemContract.Column.ITEM_HAS_CLOCK,
                 ItemContract.Column.ITEM_ALARM_CLOCK,
-                ItemContract.Column.ITEM_LIST_ID
+                ItemContract.Column.ITEM_LIST_ID,
+                ItemContract.Column.ITEM_INDEX
         );
         Log.d(TAG,"sumugu,onCreate with SQL:"+sql_create_table_item);
         db.execSQL(sql_create_table_item);

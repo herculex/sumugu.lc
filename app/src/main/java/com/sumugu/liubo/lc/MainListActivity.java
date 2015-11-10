@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,13 +22,26 @@ import android.widget.Toast;
 import com.daimajia.swipe.SwipeLayout;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
-public class MainListActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainListActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
     static final String[]  PROJECTION = new String[] {ItemContract.Column.ITEM_ID,ItemContract.Column.ITEM_CONTENT};
     static final String SELECTION = "";
 
     CursorAdapter cursorAdapter;
     SwipeLayout mainList;
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.mainlist_control:
+//                Toast.makeText(MainListActivity.this, "helo", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainListActivity.this,ItemActivity.class));
+                return;
+            default:
+                return;
+        }
+    }
 
     class ViewHolder{
         TextView display_text;
@@ -47,6 +61,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_list);
 
+        findViewById(R.id.mainlist_control).setOnClickListener(this);
 
         mainList = (SwipeLayout)findViewById(R.id.main_list);
         mainList.setShowMode(SwipeLayout.ShowMode.PullOut);

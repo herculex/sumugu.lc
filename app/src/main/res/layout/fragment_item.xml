@@ -2,27 +2,102 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ItemFragment">
 
+    <TextView
+        android:id="@+id/panel_adding_ctl_title"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:text="新增"
+        android:layout_alignParentTop="true"
+        android:gravity="center"/>
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/panel_adding_ctl"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/panel_adding_ctl_title">
+        <LinearLayout
+            android:id="@+id/panel_adding_ctl_layer_bottom"
+            android:layout_width="200dp"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/panel_adding_ctl_cancel"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="取消"
+                android:gravity="center"
+                android:background="@color/red"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panel_adding_ctl_layer_top"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/panel_adding_ctl_commit"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="创建"
+                android:background="#4cd964"
+                />
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/panel_setting_ctl"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/panel_adding_ctl">
+        <LinearLayout
+            android:id="@+id/panel_setting_ctl_layer_bottom"
+            android:layout_width="200dp"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:weightSum="1">
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="今天"
+                android:layout_weight="0.3"
+                android:background="@color/red"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer2"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="明天"
+                android:layout_weight="0.4"
+                android:background="#f7e79c"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer3"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="后天"
+                android:layout_weight="0.3"
+                android:background="#4cd964"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panel_setting_ctl_layer_top"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="设置提醒"
+                android:background="#2196f3"/>
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
+
     <EditText
         android:id="@+id/editItemContent"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/hint_content"
         android:inputType="textMultiLine"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/buttonItemCommit"
-        android:layout_toStartOf="@+id/buttonItemCommit"
+        android:layout_below="@+id/panel_setting_ctl"
         android:focusableInTouchMode="true">
     </EditText>
-
-    <Button
-        android:id="@+id/buttonItemCommit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_add"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

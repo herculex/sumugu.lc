@@ -4,6 +4,7 @@ package com.sumugu.liubo.lc;
 import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,11 +18,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.contract.ListContract;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 
 /**
@@ -35,6 +38,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 //    private EditText mEditTitle;    //阿尔法3已删除
     private EditText mEditContent;
     private Button mButtonCommit;
+
+    private SwipeLayout swipePanelAdding,swipePanelSetting;
 
     public ItemFragment() {
         // Required empty public constructor
@@ -50,8 +55,21 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         //找到控件并赋值
 //        mEditTitle = (EditText)view.findViewById(R.id.editItemTitle); //阿尔法3已删除
         mEditContent = (EditText)view.findViewById(R.id.editItemContent);
-        mButtonCommit = (Button)view.findViewById(R.id.buttonItemCommit);
-        mButtonCommit.setOnClickListener(this);
+
+        //
+        swipePanelAdding = (SwipeLayout)view.findViewById(R.id.panel_adding_ctl);
+        swipePanelAdding.setShowMode(SwipeLayout.ShowMode.LayDown);
+        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Left, swipePanelAdding.findViewById(R.id.panel_adding_ctl_layer_bottom));
+        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Right, null);
+        swipePanelAdding.findViewById(R.id.panel_adding_ctl_commit).setOnClickListener(this);
+        swipePanelAdding.findViewById(R.id.panel_adding_ctl_cancel).setOnClickListener(this);
+
+
+        //
+        swipePanelSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
+        swipePanelSetting.setShowMode(SwipeLayout.ShowMode.LayDown);
+        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left, swipePanelSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
+        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Right,null);
 
         return view;
     }
@@ -59,8 +77,17 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "onClicked to commit.");
-        new PostTask().execute();
+        switch (v.getId()) {
+            case R.id.panel_adding_ctl_commit:
+                Log.d(TAG, "onClicked to commit.");
+                new PostTask().execute();
+                return;
+            case R.id.panel_adding_ctl_cancel:
+                startActivity(new Intent(getActivity(),MainListActivity.class));
+                return;
+            default:
+                return;
+        }
     }
     private final class PostTask extends AsyncTask<String,Void,String>
     {
@@ -83,8 +110,11 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
                 ContentValues values = new ContentValues();
                 values.clear();
-                Random rand = new Random();
-                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
+
+//                Random rand = new Random();
+//                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
+
+                String idValue = UUID.randomUUID().toString();  //alpha 4,UUID replaced int for the value of id.
                 values.put(ItemContract.Column.ITEM_ID,idValue);
 
                 values.put(ItemContract.Column.ITEM_TITLE,title);
@@ -93,6 +123,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
                 values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+                values.put(ItemContract.Column.ITEM_INDEX,0);   //TODO 需要默认0，以后列表可以排序再处理
 
                 values.put(ItemContract.Column.ITEM_LIST_ID,listId);
 
