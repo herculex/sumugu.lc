@@ -16,7 +16,7 @@
         android:layout_below="@id/panel_adding_ctl_title">
         <LinearLayout
             android:id="@+id/panel_adding_ctl_layer_bottom"
-            android:layout_width="200dp"
+            android:layout_width="100dp"
             android:layout_height="fill_parent">
             <TextView
                 android:id="@+id/panel_adding_ctl_cancel"

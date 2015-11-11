@@ -44,7 +44,8 @@ public class ItemProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(ItemContract.TABLE);
 
-        switch (sUriMatcher.match(uri))
+        int res = sUriMatcher.match(uri);
+        switch (res)
         {
             case ItemContract.ITEM_DIR:
                 break;
@@ -52,7 +53,9 @@ public class ItemProvider extends ContentProvider {
                 queryBuilder.appendWhere(ItemContract.Column.ITEM_ID +"="+uri.getLastPathSegment());
                 break;
             default:
-                throw new IllegalArgumentException("sumugu,Illegal URI:"+uri);
+//                throw new IllegalArgumentException("sumugu,Illegal URI:"+uri);
+                queryBuilder.appendWhere(ItemContract.Column.ITEM_ID +"='"+uri.getLastPathSegment()+"'");
+                break;
         }
 
         String orderBy = (TextUtils.isEmpty(sortOrder))?ItemContract.DEFAULT_SORT:sortOrder;

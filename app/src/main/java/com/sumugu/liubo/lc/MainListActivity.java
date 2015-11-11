@@ -24,7 +24,7 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 
 public class MainListActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
-    static final String[]  PROJECTION = new String[] {ItemContract.Column.ITEM_ID,ItemContract.Column.ITEM_CONTENT};
+    static final String[]  PROJECTION = new String[] {ItemContract.Column.ITEM_ID,ItemContract.Column.ITEM_CONTENT,ItemContract.Column.ITEM_IS_FINISHED};
     static final String SELECTION = "";
 
     CursorAdapter cursorAdapter;
@@ -47,13 +47,15 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
         TextView display_text;
         TextView archire_text;
         TextView delete_text;
-        ImageView magnifier2_image;
-        ImageView star2_image;
-        ImageView trash2_image;
         View starboot;
         View bottom_wrapper;
         View bottom_wrapper_2;
         SwipeLayout swipeLayout;
+        TextView timercancel;
+        TextView timer1;
+        TextView timer2;
+        TextView timer3;
+        TextView itemId;
     }
 
     @Override
@@ -126,13 +128,12 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 holder.display_text = (TextView)view.findViewById(R.id.displayText);
                 holder.archire_text = (TextView)view.findViewById(R.id.archive);
                 holder.delete_text = (TextView)view.findViewById(R.id.delete);
-                holder.magnifier2_image = (ImageView)view.findViewById(R.id.magnifier2);
-                holder.star2_image = (ImageView)view.findViewById(R.id.star2);
-                holder.trash2_image = (ImageView)view.findViewById(R.id.trash2);
                 holder.starboot = view.findViewById(R.id.starbott);
                 holder.bottom_wrapper = view.findViewById(R.id.bottom_wrapper);
                 holder.bottom_wrapper_2 = view.findViewById(R.id.bottom_wrapper_2);
                 holder.swipeLayout = (SwipeLayout)view.findViewById(R.id.swipe_sample1);
+                
+                holder.itemId = (TextView)view.findViewById(R.id.displayItemId);
 
                 view.setTag(holder);
                 return view;
@@ -142,16 +143,29 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
             public void bindView(View view, Context context, Cursor cursor) {
                 ViewHolder holder=(ViewHolder)view.getTag();
 
+                int isfinished = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
                 String name = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
-                holder.display_text.setText(name);
+                holder.display_text.setText((isfinished==1 ? "[已完成] ":"")+name);
+                final String itemid = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                holder.itemId.setText(itemid);
 
                 holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
                 holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, holder.bottom_wrapper);
                 holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.bottom_wrapper_2);
 
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Top,holder.starboot);   //貌似焦点获取不到，只swipe listview 上下
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom,holder.starboot);    //貌似焦点获取不到，只swipe listview 上下
+                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Top, holder.starboot);   //貌似焦点获取不到，只swipe listview 上下
+                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, holder.starboot);    //貌似焦点获取不到，只swipe listview 上下
 
+                holder.swipeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainListActivity.this,ItemDetailActivity.class);
+                        intent.putExtra(ItemContract.Column.ITEM_ID,itemid);
+                        startActivity(intent);
+//                        Toast.makeText(MainListActivity.this, itemid, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                
                 holder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
                     @Override
                     public void onDoubleClick(SwipeLayout layout, boolean surface) {
@@ -167,24 +181,6 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                     public boolean onLongClick(View v) {
                         Toast.makeText(MainListActivity.this, "longClick on surface", Toast.LENGTH_SHORT).show();
                         return true;
-                    }
-                });
-                holder.star2_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(MainListActivity.this, "click the star", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                holder.trash2_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(MainListActivity.this, "Click the trash", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                holder.magnifier2_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(MainListActivity.this, "click the magnifier", Toast.LENGTH_SHORT).show();
                     }
                 });
                 holder.archire_text.setOnClickListener(new View.OnClickListener() {

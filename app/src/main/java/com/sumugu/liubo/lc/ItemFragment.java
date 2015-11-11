@@ -56,7 +56,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 //        mEditTitle = (EditText)view.findViewById(R.id.editItemTitle); //阿尔法3已删除
         mEditContent = (EditText)view.findViewById(R.id.editItemContent);
 
-        //
+        //新增控制板
         swipePanelAdding = (SwipeLayout)view.findViewById(R.id.panel_adding_ctl);
         swipePanelAdding.setShowMode(SwipeLayout.ShowMode.LayDown);
         swipePanelAdding.addDrag(SwipeLayout.DragEdge.Left, swipePanelAdding.findViewById(R.id.panel_adding_ctl_layer_bottom));
@@ -65,11 +65,13 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         swipePanelAdding.findViewById(R.id.panel_adding_ctl_cancel).setOnClickListener(this);
 
 
-        //
+        //设置提醒控制板
         swipePanelSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
         swipePanelSetting.setShowMode(SwipeLayout.ShowMode.LayDown);
         swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left, swipePanelSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
         swipePanelSetting.addDrag(SwipeLayout.DragEdge.Right,null);
+
+        swipePanelSetting.open(SwipeLayout.DragEdge.Left);//--不听使唤
 
         return view;
     }

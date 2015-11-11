@@ -21,7 +21,7 @@
             <TextView
                 android:id="@+id/archive"
                 android:textColor="#fff"
-                android:text="搞定它了"
+                android:text="搞定了"
                 android:layout_weight="0.5"
                 android:gravity="center"
                 android:background="@drawable/red"
@@ -30,7 +30,7 @@
 
             <TextView
                 android:id="@+id/delete"
-                android:text="删除"
+                android:text="删除？"
                 android:background="@drawable/dark_gray"
                 android:gravity="center"
                 android:clickable="true"
@@ -44,33 +44,42 @@
             android:id="@+id/bottom_wrapper_2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/magnifier2"
-                android:src="@drawable/magnifier"
-                android:layout_width="70dp"
+            <TextView
+                android:id="@id/panel_setting_ctl_timer3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#f7e79c"
                 android:paddingLeft="25dp"
                 android:paddingRight="25dp"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/star2"
-                android:src="@drawable/star"
-                android:layout_width="70dp"
+                android:gravity="center"
+                android:text="后天"/>
+            <TextView
+                android:id="@id/panel_setting_ctl_timer2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#4cd964"
                 android:paddingLeft="25dp"
                 android:paddingRight="25dp"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/trash2"
-                android:src="@drawable/trash"
-                android:layout_width="70dp"
-                android:background="@drawable/red"
+                android:gravity="center"
+                android:text="明天"/>
+            <TextView
+                android:id="@id/panel_setting_ctl_timer1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/red"
                 android:paddingLeft="25dp"
                 android:paddingRight="25dp"
-                android:layout_height="match_parent" />
+                android:gravity="center"
+                android:text="今天"/>
+            <TextView
+                android:id="@id/panel_setting_ctl_timercancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:gravity="center"
+                android:text="取消"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -94,14 +103,26 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/displayText"
-            android:padding="10dp"
-            android:background="@drawable/white"
-            android:tag="Hover"
-            android:text="别玩梦想，死的很惨的。－2015.10.19"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/displayText"
+                android:padding="10dp"
+                android:background="@drawable/white"
+                android:tag="Hover"
+                android:text="别玩梦想，死的很惨的。－2015.10.19"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"/>
+            <TextView
+                android:id="@+id/displayItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="UUID_itemId_value"
+                />
+        </LinearLayout>
     </com.daimajia.swipe.SwipeLayout>
 </LinearLayout>

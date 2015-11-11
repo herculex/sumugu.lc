@@ -1,74 +1,121 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ItemDetailFragment">
+    android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ItemFragment">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Content"
-        android:id="@+id/text_item_content_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/panel_finish_ctl_title"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:text="摆平它了？"
+        android:layout_alignParentTop="true"
+        android:gravity="center"/>
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/panel_finish_ctl"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/panel_finish_ctl_title">
+        <LinearLayout
+            android:id="@+id/panel_finish_ctl_layer_bottom"
+            android:layout_width="100dp"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/panel_finish_ctl_delete"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="删除？"
+                android:gravity="center"
+                android:background="@color/red"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panel_finish_ctl_layer_top"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/panel_finish_ctl_commit"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="Yeah！"
+                android:background="#4cd964"
+                />
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/panel_setting_ctl"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/panel_finish_ctl">
+        <LinearLayout
+            android:id="@+id/panel_setting_ctl_layer_bottom"
+            android:layout_width="220dp"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:weightSum="1">
+            <TextView
+                android:id="@+id/panel_setting_ctl_timercancel"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="取消"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="今天"
+                android:layout_weight="0.25"
+                android:background="@color/red"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer2"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="明天"
+                android:layout_weight="0.25"
+                android:background="#f7e79c"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer3"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="后天"
+                android:layout_weight="0.25"
+                android:background="#4cd964"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panel_setting_ctl_layer_top"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/panel_setting_ctl_timertext"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="设置提醒"
+                android:background="#2196f3"/>
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/panel_finish_ctl_createdAt"
+        android:tag="createdAt"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:gravity="right"
+        android:text="创建于2015.11.11 10:52"
+        android:layout_below="@id/panel_setting_ctl"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"/>
+    <EditText
+        android:id="@+id/editItemContent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="createdAt"
-        android:id="@+id/text_item_created_at_detail"
-        android:layout_below="@+id/text_item_content_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/text_hint_no_clock"
-        android:id="@+id/text_item_alarmclock_detail"
-        android:layout_below="@+id/text_item_content_detail"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1分钟后"
-        android:id="@+id/btn_1minute_detail"
-        android:layout_below="@+id/text_item_created_at_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5分钟后"
-        android:id="@+id/btn_5minutes_detail"
-        android:layout_alignTop="@+id/btn_15minutes_detail"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="15分钟后"
-        android:id="@+id/btn_15minutes_detail"
-        android:layout_below="@+id/text_item_alarmclock_detail"
-        android:layout_alignRight="@+id/text_item_alarmclock_detail"
-        android:layout_alignEnd="@+id/text_item_alarmclock_detail" />
-    <Button
-        android:id="@+id/btn_item_delete_detail"
-        android:text="删除"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_item_finish_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="宣布完成"
-        android:id="@+id/btn_item_finish_detail"
-        android:layout_below="@+id/btn_1minute_detail"
-        android:layout_alignRight="@+id/btn_15minutes_detail"
-        android:layout_alignEnd="@+id/btn_15minutes_detail"
-        android:layout_alignLeft="@+id/btn_5minutes_detail"
-        android:layout_alignStart="@+id/btn_5minutes_detail" />
+        android:ems="10"
+        android:hint="@string/hint_content"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/panel_finish_ctl_createdAt"
+        android:focusableInTouchMode="true">
+    </EditText>
 </RelativeLayout>

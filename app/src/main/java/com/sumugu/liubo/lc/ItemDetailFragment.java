@@ -1,7 +1,5 @@
 package com.sumugu.liubo.lc;
 
-import android.app.Activity;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,15 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
+import com.daimajia.swipe.SwipeLayout;
 import com.sumugu.liubo.lc.contract.ItemContract;
-
-import java.util.Calendar;
-import java.util.Date;
 
 
 /**
@@ -30,15 +24,12 @@ import java.util.Date;
 public class ItemDetailFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = ItemDetailFragment.class.getSimpleName();
-    private TextView textContent;
-    private TextView textCreatedAt;
-    private TextView textAlarmClock;
-    private Button button1minute;
-    private Button button5minutes;
-    private Button button15minutes;
-    private Button buttonFinish;
-    private Button buttonDelete;
-    private long mItemId=-1;
+    private TextView itemContent;
+    private TextView createdAtText;
+    private TextView timerText;
+
+    private SwipeLayout swipelayoutFinish,swipelayoutSetting;
+    private String mItemId="";
 
     public ItemDetailFragment() {
         // Required empty public constructor
@@ -55,35 +46,52 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_item_detail, container, false);
         //find all views
-        textAlarmClock = (TextView)view.findViewById(R.id.text_item_alarmclock_detail);
-        textContent = (TextView)view.findViewById(R.id.text_item_content_detail);
-        textCreatedAt = (TextView)view.findViewById(R.id.text_item_created_at_detail);
-        button15minutes = (Button)view.findViewById(R.id.btn_15minutes_detail);
-        button1minute = (Button)view.findViewById(R.id.btn_1minute_detail);
-        button5minutes = (Button)view.findViewById(R.id.btn_5minutes_detail);
-        buttonFinish = (Button)view.findViewById(R.id.btn_item_finish_detail);
-        buttonDelete = (Button)view.findViewById(R.id.btn_item_delete_detail);
-        //
-        buttonDelete.setOnClickListener(this);
-        buttonFinish.setOnClickListener(this);
-        button15minutes.setOnClickListener(this);
-        button5minutes.setOnClickListener(this);
-        button1minute.setOnClickListener(this);
+        timerText = (TextView)view.findViewById(R.id.panel_setting_ctl_timertext);
+        itemContent = (TextView)view.findViewById(R.id.editItemContent);
+        createdAtText = (TextView)view.findViewById(R.id.panel_finish_ctl_createdAt);
+
         //
         Intent intent = getActivity().getIntent();
-        mItemId = intent.getLongExtra(ItemContract.Column.ITEM_ID, -1);
+        mItemId = intent.getStringExtra(ItemContract.Column.ITEM_ID);
         updateView(mItemId);
         //
+
+
+        //完成控制板
+        swipelayoutFinish = (SwipeLayout)view.findViewById(R.id.panel_finish_ctl);
+        swipelayoutFinish.setShowMode(SwipeLayout.ShowMode.PullOut);
+        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Left, swipelayoutFinish.findViewById(R.id.panel_finish_ctl_layer_bottom));
+        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Right, null);
+
+        //完成控制板的各项OnClick
+        swipelayoutFinish.findViewById(R.id.panel_finish_ctl_commit).setOnClickListener(this);
+        swipelayoutFinish.findViewById(R.id.panel_finish_ctl_delete).setOnClickListener(this);
+
+
+        //设置提醒控制板
+        swipelayoutSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
+        swipelayoutSetting.setShowMode(SwipeLayout.ShowMode.PullOut);
+        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Left, swipelayoutSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
+        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Right, null);
+
+        //设置提醒控制板的各项OnClick
+        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timercancel).setOnClickListener(this);
+        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer1).setOnClickListener(this);
+        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer2).setOnClickListener(this);
+        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer3).setOnClickListener(this);
+
         return view;
     }
-    private void updateView(long id)
+    private void updateView(String id)
     {
-        if(id==-1) {
-            textContent.setText("什么都没有！");
+        if(id=="" || id.isEmpty()) {
+            itemContent.setText("什么都没有！");
             return;
         }
         //根据ItemID查询结果
-        Uri uri = ContentUris.withAppendedId(ItemContract.CONTENT_URI, id);
+//        Uri uri = ContentUris.withAppendedId(ItemContract.CONTENT_URI, id);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,id);
+
         Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
         if(!cursor.moveToFirst())
             return;
@@ -96,35 +104,36 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         long isFinished = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
         //设置各项UI内容
-        textContent.setText(content);
-        textCreatedAt.setText(DateUtils.getRelativeTimeSpanString(createdAt));
+        itemContent.setText(content);
+        createdAtText.setText(DateUtils.getRelativeTimeSpanString(createdAt));
         if(alarmclock>0) {
-            textAlarmClock.setText(android.text.format.DateFormat.format("yyyy-MM-dd kk:mm:ss", alarmclock));
+            timerText.setText(android.text.format.DateFormat.format("yyyy-MM-dd kk:mm:ss", alarmclock));
         }
     }
     @Override
     public void onClick(View v) {
 
-        //设置闹钟
-        //单位：分钟
         switch (v.getId()) {
-            case R.id.btn_1minute_detail:
+            case R.id.panel_setting_ctl_timercancel:
+                //TODO
+                return;
+            case R.id.panel_setting_ctl_timer1:
                 setAlarmClock(1);   //1分钟后提醒
                 backToItemLine();
                 return;
-            case R.id.btn_5minutes_detail:
+            case R.id.panel_setting_ctl_timer2:
                 setAlarmClock(5);   //5分钟后提醒
                 backToItemLine();
                 return;
-            case R.id.btn_15minutes_detail:
+            case R.id.panel_setting_ctl_timer3:
                 setAlarmClock(15);  //15分钟后提醒
                 backToItemLine();
                 return;
-            case R.id.btn_item_finish_detail:
+            case R.id.panel_finish_ctl_commit:
                 finishItem();       //完成
                 backToItemLine();
                 return;
-            case R.id.btn_item_delete_detail:
+            case R.id.panel_finish_ctl_delete:
                 deleteItem();       //删除
                 backToItemLine();
                 return;
@@ -135,63 +144,64 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
 
     private void backToItemLine()
     {
-        startActivity(new Intent(getActivity(),ComboItemLineActivity.class));
+//        startActivity(new Intent(getActivity(),ComboItemLineActivity.class));
+        startActivity(new Intent(getActivity(),MainListActivity.class));
     }
 
     private void setAlarmClock(int interval) {
 
-        //定义各种以下用到的变量
-        AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar = Calendar.getInstance();
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
-
-        //step 1，找出已经设置的闹钟提醒，并取消之。
-        cancelAlarmClock();
-
-        //step 2，设置新的闹钟并更新纪录。
-        //设置新闹钟
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, interval);
-
-        //重复提醒，间隔1分钟
-        String result = alarmUntils.SetAlarmClock(getActivity(),calendar,true,60*1000,mItemId);
-
-        //step 3，更新记录的闹钟信息
-        ContentValues values = new ContentValues();
-        values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
-        values.put(ItemContract.Column.ITEM_HAS_CLOCK,1);
-        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,calendar.getTimeInMillis());
-
-        int count = getActivity().getContentResolver().update(uri,values,null,null);
-
-        Toast.makeText(getActivity(), "已经设置" + interval + "后再见！", Toast.LENGTH_SHORT).show();
+//        //定义各种以下用到的变量
+//        AlarmUntils alarmUntils = new AlarmUntils();
+//        Calendar calendar = Calendar.getInstance();
+//        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
+//
+//        //step 1，找出已经设置的闹钟提醒，并取消之。
+//        cancelAlarmClock();
+//
+//        //step 2，设置新的闹钟并更新纪录。
+//        //设置新闹钟
+//        calendar.setTime(new Date());
+//        calendar.add(Calendar.MINUTE, interval);
+//
+//        //重复提醒，间隔1分钟
+//        String result = alarmUntils.SetAlarmClock(getActivity(),calendar,true,60*1000,mItemId);
+//
+//        //step 3，更新记录的闹钟信息
+//        ContentValues values = new ContentValues();
+//        values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
+//        values.put(ItemContract.Column.ITEM_HAS_CLOCK,1);
+//        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,calendar.getTimeInMillis());
+//
+//        int count = getActivity().getContentResolver().update(uri,values,null,null);
+//
+//        Toast.makeText(getActivity(), "已经设置" + interval + "后再见！", Toast.LENGTH_SHORT).show();
 
     }
 
     private void cancelAlarmClock()
     {
-        //定义各种以下用到的变量
-        AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar = Calendar.getInstance();
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
-
-        //找出已经设置的闹钟提醒，并取消之。
-        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
-        if(!cursor.moveToFirst()) {
-            return;
-        }
-
-        int hasAlarm = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
-        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-
-        if(hasAlarm>0)
-        {
-            // /取消闹钟
-            calendar.setTimeInMillis(alarmClock);
-            String result = alarmUntils.CancelAlarmClock(getActivity(),calendar,mItemId);
-//            Toast.makeText(ItemDetailActivity.this, result, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "sumugu:" + result);
-        }
+//        //定义各种以下用到的变量
+//        AlarmUntils alarmUntils = new AlarmUntils();
+//        Calendar calendar = Calendar.getInstance();
+//        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mItemId));
+//
+//        //找出已经设置的闹钟提醒，并取消之。
+//        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+//        if(!cursor.moveToFirst()) {
+//            return;
+//        }
+//
+//        int hasAlarm = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+//        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+//
+//        if(hasAlarm>0)
+//        {
+//            // /取消闹钟
+//            calendar.setTimeInMillis(alarmClock);
+//            String result = alarmUntils.CancelAlarmClock(getActivity(),calendar,mItemId);
+////            Toast.makeText(ItemDetailActivity.this, result, Toast.LENGTH_SHORT).show();
+//            Log.d(TAG, "sumugu:" + result);
+//        }
     }
 
     private void finishItem() {
@@ -200,7 +210,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
 
         Uri uri = ItemContract.CONTENT_URI;
         String where = ItemContract.Column.ITEM_ID + "=?";
-        String[] params = new String[] {String.valueOf(mItemId)};
+        String[] params = new String[] {mItemId};
 
         //step 1，查处闹钟并取消掉
         cancelAlarmClock();
@@ -217,7 +227,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         if(count>0)
         {
             Toast.makeText(getActivity(), "继续努力！", Toast.LENGTH_SHORT).show();
-            Log.d(TAG,"sumugu:finish item"+String.valueOf(mItemId));
+            Log.d(TAG,"sumugu:finish item"+mItemId);
         }
     }
 
@@ -227,7 +237,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         cancelAlarmClock();
 
         //创建访问内容提供器的URI
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId));
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,mItemId);
 
         //step 2，删除指定ID的纪录
         int count = getActivity().getContentResolver().delete(uri,null,null);
@@ -236,7 +246,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         if(count>0)
         {
             Toast.makeText(getActivity(), "已经删除！", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "sumugu:delete item:" + String.valueOf(mItemId));
+            Log.d(TAG, "sumugu:delete item:" + mItemId);
         }
     }
 }
