@@ -16,13 +16,13 @@
         android:layout_below="@id/panel_adding_ctl_title">
         <LinearLayout
             android:id="@+id/panel_adding_ctl_layer_bottom"
-            android:layout_width="100dp"
+            android:layout_width="120dp"
             android:layout_height="fill_parent">
             <TextView
                 android:id="@+id/panel_adding_ctl_cancel"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="取消"
+                android:text="取消?"
                 android:gravity="center"
                 android:background="@color/red"/>
         </LinearLayout>
@@ -50,31 +50,22 @@
             android:layout_width="200dp"
             android:layout_height="fill_parent"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:weightSum="9">
             <TextView
-                android:id="@+id/panel_setting_ctl_timer1"
+                android:id="@+id/panel_setting_ctl_timercancel"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="今天"
-                android:layout_weight="0.3"
+                android:layout_weight="5"
+                android:text="取消?"/>
+            <TextView
+                android:id="@+id/panel_setting_ctl_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="设置"
+                android:layout_weight="4"
                 android:background="@color/red"/>
-            <TextView
-                android:id="@+id/panel_setting_ctl_timer2"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="明天"
-                android:layout_weight="0.4"
-                android:background="#f7e79c"/>
-            <TextView
-                android:id="@+id/panel_setting_ctl_timer3"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="后天"
-                android:layout_weight="0.3"
-                android:background="#4cd964"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/panel_setting_ctl_layer_top"
@@ -88,7 +79,18 @@
                 android:background="#2196f3"/>
         </LinearLayout>
     </com.daimajia.swipe.SwipeLayout>
-
+    <TextView
+        android:id="@+id/panel_finish_ctl_createdAt"
+        android:tag="createdAt"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:gravity="right"
+        android:text="创建时间占位"
+        android:layout_below="@id/panel_setting_ctl"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"/>
     <EditText
         android:id="@+id/editItemContent"
         android:layout_width="fill_parent"
@@ -96,7 +98,7 @@
         android:ems="10"
         android:hint="@string/hint_content"
         android:inputType="textMultiLine"
-        android:layout_below="@+id/panel_setting_ctl"
+        android:layout_below="@+id/panel_finish_ctl_createdAt"
         android:focusableInTouchMode="true">
     </EditText>
 

@@ -58,20 +58,20 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
 
         //新增控制板
         swipePanelAdding = (SwipeLayout)view.findViewById(R.id.panel_adding_ctl);
-        swipePanelAdding.setShowMode(SwipeLayout.ShowMode.LayDown);
-        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Left, swipePanelAdding.findViewById(R.id.panel_adding_ctl_layer_bottom));
-        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Right, null);
+        swipePanelAdding.setShowMode(SwipeLayout.ShowMode.PullOut);
+        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Right, swipePanelAdding.findViewById(R.id.panel_adding_ctl_layer_bottom));
+        swipePanelAdding.addDrag(SwipeLayout.DragEdge.Left, null);
         swipePanelAdding.findViewById(R.id.panel_adding_ctl_commit).setOnClickListener(this);
         swipePanelAdding.findViewById(R.id.panel_adding_ctl_cancel).setOnClickListener(this);
 
 
         //设置提醒控制板
         swipePanelSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
-        swipePanelSetting.setShowMode(SwipeLayout.ShowMode.LayDown);
-        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left, swipePanelSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
-        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Right,null);
+        swipePanelSetting.setShowMode(SwipeLayout.ShowMode.PullOut);
+        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Right, swipePanelSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
+        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left,null);
 
-        swipePanelSetting.open(SwipeLayout.DragEdge.Left);//--不听使唤
+        swipePanelSetting.open(SwipeLayout.DragEdge.Right);//--不听使唤
 
         return view;
     }

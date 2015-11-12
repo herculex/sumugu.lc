@@ -128,9 +128,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 holder.display_text = (TextView)view.findViewById(R.id.displayText);
                 holder.archire_text = (TextView)view.findViewById(R.id.archive);
                 holder.delete_text = (TextView)view.findViewById(R.id.delete);
-                holder.starboot = view.findViewById(R.id.starbott);
                 holder.bottom_wrapper = view.findViewById(R.id.bottom_wrapper);
-                holder.bottom_wrapper_2 = view.findViewById(R.id.bottom_wrapper_2);
                 holder.swipeLayout = (SwipeLayout)view.findViewById(R.id.swipe_sample1);
                 
                 holder.itemId = (TextView)view.findViewById(R.id.displayItemId);
@@ -149,12 +147,9 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 final String itemid = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
                 holder.itemId.setText(itemid);
 
-                holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, holder.bottom_wrapper);
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.bottom_wrapper_2);
-
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Top, holder.starboot);   //貌似焦点获取不到，只swipe listview 上下
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, holder.starboot);    //貌似焦点获取不到，只swipe listview 上下
+                holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.bottom_wrapper);
+                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left,null);
 
                 holder.swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -169,7 +164,8 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 holder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
                     @Override
                     public void onDoubleClick(SwipeLayout layout, boolean surface) {
-                        Toast.makeText(MainListActivity.this, "Double click", Toast.LENGTH_SHORT).show();
+
+//                        Toast.makeText(MainListActivity.this, "Double click", Toast.LENGTH_SHORT).show();
                     }
 //                    @Override
 //                    public void onClick(View v) {

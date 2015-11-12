@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,25 +61,24 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         //完成控制板
         swipelayoutFinish = (SwipeLayout)view.findViewById(R.id.panel_finish_ctl);
         swipelayoutFinish.setShowMode(SwipeLayout.ShowMode.PullOut);
-        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Left, swipelayoutFinish.findViewById(R.id.panel_finish_ctl_layer_bottom));
-        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Right, null);
+        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Right, swipelayoutFinish.findViewById(R.id.panel_finish_ctl_layer_bottom));
+        swipelayoutFinish.addDrag(SwipeLayout.DragEdge.Left, null);
 
         //完成控制板的各项OnClick
         swipelayoutFinish.findViewById(R.id.panel_finish_ctl_commit).setOnClickListener(this);
         swipelayoutFinish.findViewById(R.id.panel_finish_ctl_delete).setOnClickListener(this);
+        swipelayoutFinish.findViewById(R.id.panel_finish_ctl_finished).setOnClickListener(this);
 
 
         //设置提醒控制板
         swipelayoutSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
         swipelayoutSetting.setShowMode(SwipeLayout.ShowMode.PullOut);
-        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Left, swipelayoutSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
-        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Right, null);
+        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Right, swipelayoutSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
+        swipelayoutSetting.addDrag(SwipeLayout.DragEdge.Left, null);
 
         //设置提醒控制板的各项OnClick
         swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timercancel).setOnClickListener(this);
-        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer1).setOnClickListener(this);
-        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer2).setOnClickListener(this);
-        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer3).setOnClickListener(this);
+        swipelayoutSetting.findViewById(R.id.panel_setting_ctl_timer).setOnClickListener(this);
 
         return view;
     }
@@ -117,19 +117,11 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
             case R.id.panel_setting_ctl_timercancel:
                 //TODO
                 return;
-            case R.id.panel_setting_ctl_timer1:
+            case R.id.panel_setting_ctl_timer:
                 setAlarmClock(1);   //1分钟后提醒
                 backToItemLine();
                 return;
-            case R.id.panel_setting_ctl_timer2:
-                setAlarmClock(5);   //5分钟后提醒
-                backToItemLine();
-                return;
-            case R.id.panel_setting_ctl_timer3:
-                setAlarmClock(15);  //15分钟后提醒
-                backToItemLine();
-                return;
-            case R.id.panel_finish_ctl_commit:
+            case R.id.panel_finish_ctl_finished:
                 finishItem();       //完成
                 backToItemLine();
                 return;
@@ -137,12 +129,34 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
                 deleteItem();       //删除
                 backToItemLine();
                 return;
+            case R.id.panel_finish_ctl_commit:
+                updateItem();       //更新
+//                backToItemLine();
+                return;
             default:
                 return;
         }
     }
 
-    private void backToItemLine()
+    private void updateItem()
+    {
+        Uri uri = ItemContract.CONTENT_URI;
+        String where = ItemContract.Column.ITEM_ID+"=?";
+        String[] paras = new String[] {mItemId};
+        ContentValues values = new ContentValues();
+        values.put(ItemContract.Column.ITEM_CONTENT, itemContent.getText().toString());
+
+        int count = getActivity().getContentResolver().update(uri, values, where, paras);
+        if(count>0)
+            Snackbar.make(getView(),"已更新",Snackbar.LENGTH_LONG).setAction("返回", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    backToItemLine();
+                }
+            }).show();
+    }
+
+   private void backToItemLine()
     {
 //        startActivity(new Intent(getActivity(),ComboItemLineActivity.class));
         startActivity(new Intent(getActivity(),MainListActivity.class));
@@ -237,10 +251,16 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         cancelAlarmClock();
 
         //创建访问内容提供器的URI
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,mItemId);
+//        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,mItemId);
+
+        //_id值的类型换成UUID后，Urimatcher的原有的match有问题
+        Uri uri = ItemContract.CONTENT_URI;
+        String where = ItemContract.Column.ITEM_ID + "=?";
+        String[] params = new String[] {mItemId};
 
         //step 2，删除指定ID的纪录
-        int count = getActivity().getContentResolver().delete(uri,null,null);
+//        int count = getActivity().getContentResolver().delete(uri,null,null);
+        int count = getActivity().getContentResolver().delete(uri,where,params);
 
         //删除成功提示
         if(count>0)

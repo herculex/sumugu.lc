@@ -16,15 +16,25 @@
         android:layout_below="@id/panel_finish_ctl_title">
         <LinearLayout
             android:id="@+id/panel_finish_ctl_layer_bottom"
-            android:layout_width="100dp"
-            android:layout_height="fill_parent">
+            android:layout_width="240dp"
+            android:layout_height="fill_parent"
+            android:weightSum="9">
             <TextView
                 android:id="@+id/panel_finish_ctl_delete"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:text="删除？"
+                android:layout_weight="4"
                 android:gravity="center"
                 android:background="@color/red"/>
+            <TextView
+                android:id="@+id/panel_finish_ctl_finished"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                android:text="Yeah！摆平了"
+                android:gravity="center"
+            />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/panel_finish_ctl_layer_top"
@@ -35,7 +45,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="Yeah！"
+                android:text="更新"
                 android:background="#4cd964"
                 />
         </LinearLayout>
@@ -47,41 +57,25 @@
         android:layout_below="@+id/panel_finish_ctl">
         <LinearLayout
             android:id="@+id/panel_setting_ctl_layer_bottom"
-            android:layout_width="220dp"
+            android:layout_width="200dp"
             android:layout_height="fill_parent"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:weightSum="9">
             <TextView
                 android:id="@+id/panel_setting_ctl_timercancel"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="取消"
-                android:layout_weight="0.25"/>
+                android:layout_weight="5"
+                android:text="取消?"/>
             <TextView
-                android:id="@+id/panel_setting_ctl_timer1"
+                android:id="@+id/panel_setting_ctl_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="今天"
-                android:layout_weight="0.25"
+                android:text="设置"
+                android:layout_weight="4"
                 android:background="@color/red"/>
-            <TextView
-                android:id="@+id/panel_setting_ctl_timer2"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="明天"
-                android:layout_weight="0.25"
-                android:background="#f7e79c"/>
-            <TextView
-                android:id="@+id/panel_setting_ctl_timer3"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="后天"
-                android:layout_weight="0.25"
-                android:background="#4cd964"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/panel_setting_ctl_layer_top"
