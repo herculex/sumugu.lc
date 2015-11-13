@@ -107,7 +107,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         itemContent.setText(content);
         createdAtText.setText(DateUtils.getRelativeTimeSpanString(createdAt));
         if(alarmclock>0) {
-            timerText.setText(android.text.format.DateFormat.format("yyyy-MM-dd kk:mm:ss", alarmclock));
+            timerText.setText("提醒于："+android.text.format.DateFormat.format("yyyy-MM-dd kk:mm:ss", alarmclock));
         }
     }
     @Override
@@ -115,7 +115,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
 
         switch (v.getId()) {
             case R.id.panel_setting_ctl_timercancel:
-                //TODO
+                // TODO: 15/11/13 取消提醒
                 return;
             case R.id.panel_setting_ctl_timer:
                 setAlarmClock(1);   //1分钟后提醒
@@ -123,7 +123,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
                 return;
             case R.id.panel_finish_ctl_finished:
                 finishItem();       //完成
-                backToItemLine();
+//                backToItemLine();
                 return;
             case R.id.panel_finish_ctl_delete:
                 deleteItem();       //删除
@@ -240,7 +240,14 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
 
         if(count>0)
         {
-            Toast.makeText(getActivity(), "继续努力！", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "好样的，继续加油！", Snackbar.LENGTH_LONG).setAction("晒吗？", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "想的美！", Toast.LENGTH_SHORT).show();
+                    backToItemLine();
+                }
+            }).show();
+//            Toast.makeText(getActivity(), "继续努力！", Toast.LENGTH_SHORT).show();
             Log.d(TAG,"sumugu:finish item"+mItemId);
         }
     }

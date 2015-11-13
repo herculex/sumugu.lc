@@ -2,30 +2,39 @@ package com.sumugu.liubo.lc;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.util.Date;
+
 public class MainListActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
+    static final String TAG = MainListActivity.class.getSimpleName();
+
     static final String[]  PROJECTION = new String[] {ItemContract.Column.ITEM_ID,ItemContract.Column.ITEM_CONTENT,ItemContract.Column.ITEM_IS_FINISHED};
-    static final String SELECTION = "";
+    String SELECTION = "";
+    String[] PARAMS;
+    SearchingFilter searchingfilter=SearchingFilter.Undo;
 
     CursorAdapter cursorAdapter;
     SwipeLayout mainList;
@@ -35,12 +44,17 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
         switch (v.getId())
         {
             case R.id.mainlist_control:
-//                Toast.makeText(MainListActivity.this, "helo", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainListActivity.this,ItemActivity.class));
                 return;
             default:
                 return;
         }
+    }
+    enum SearchingFilter{
+        All,
+        Undo,
+        Expired,
+        Done
     }
 
     class ViewHolder{
@@ -94,26 +108,30 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
         filterUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "click the undo filter", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                ((TextView)findViewById(R.id.title_list)).setText("未完成的");
+                RestartLoader(SearchingFilter.Undo);
             }
         });
 
         filterDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainListActivity.this, "click the done", Toast.LENGTH_SHORT).show();
+                ((TextView)findViewById(R.id.title_list)).setText("已完成");
+                RestartLoader(SearchingFilter.Done);
             }
         });
         filterExpired.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainListActivity.this, "click the expired", Toast.LENGTH_SHORT).show();
+                ((TextView)findViewById(R.id.title_list)).setText("过期的");
+                RestartLoader(SearchingFilter.Expired);
             }
         });
         filterAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainListActivity.this, "click the all", Toast.LENGTH_SHORT).show();
+                ((TextView)findViewById(R.id.title_list)).setText("所有");
+                RestartLoader(SearchingFilter.All);
             }
         });
 
@@ -130,7 +148,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 holder.delete_text = (TextView)view.findViewById(R.id.delete);
                 holder.bottom_wrapper = view.findViewById(R.id.bottom_wrapper);
                 holder.swipeLayout = (SwipeLayout)view.findViewById(R.id.swipe_sample1);
-                
+
                 holder.itemId = (TextView)view.findViewById(R.id.displayItemId);
 
                 view.setTag(holder);
@@ -143,64 +161,121 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
 
                 int isfinished = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
                 String name = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
-                holder.display_text.setText((isfinished==1 ? "[已完成] ":"")+name);
+                holder.display_text.setText((isfinished == 1 ? "[已完成] " : "") + name);
                 final String itemid = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
                 holder.itemId.setText(itemid);
 
                 holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
                 holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.bottom_wrapper);
-                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left,null);
+                holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, null);
 
                 holder.swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(MainListActivity.this,ItemDetailActivity.class);
-                        intent.putExtra(ItemContract.Column.ITEM_ID,itemid);
+                        Intent intent = new Intent(MainListActivity.this, ItemDetailActivity.class);
+                        intent.putExtra(ItemContract.Column.ITEM_ID, itemid);
                         startActivity(intent);
 //                        Toast.makeText(MainListActivity.this, itemid, Toast.LENGTH_SHORT).show();
                     }
                 });
-                
-                holder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
-                    @Override
-                    public void onDoubleClick(SwipeLayout layout, boolean surface) {
 
-//                        Toast.makeText(MainListActivity.this, "Double click", Toast.LENGTH_SHORT).show();
-                    }
-//                    @Override
-//                    public void onClick(View v) {
-//                        Toast.makeText(ListContactActivity.this, "Click on surface", Toast.LENGTH_SHORT).show();
-//                    }
-                });
-                holder.swipeLayout.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        Toast.makeText(MainListActivity.this, "longClick on surface", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                });
                 holder.archire_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MainListActivity.this, "click the archire", Toast.LENGTH_SHORT).show();
+                        Uri uri = ItemContract.CONTENT_URI;
+                        String where = ItemContract.Column.ITEM_ID + "=?";
+                        String[] params = new String[] {itemid};
+
+                        //step 1，查处闹钟并取消掉
+//                        cancelAlarmClock();   //// TODO: 15/11/13
+
+                        //step 2，更新记录的闹钟和标记
+                        ContentValues values = new ContentValues();
+                        values.put(ItemContract.Column.ITEM_IS_FINISHED, 1);
+                        values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
+                        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+
+                        int count = getContentResolver().update(uri,values,where,params);
+
+                        if(count>0)
+                        {
+                            Snackbar.make(v, "好样的，继续加油！", Snackbar.LENGTH_LONG).setAction("晒吗？", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(MainListActivity.this, "想的美！", Toast.LENGTH_SHORT).show();
+                                }
+                            }).show();
+
+                            Log.d(TAG, "sumugu:finish item" + itemid);
+                        }
                     }
                 });
                 holder.delete_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MainListActivity.this, "click the delele", Toast.LENGTH_SHORT).show();
+//                      //step 1，查处闹钟并取消
+//                        cancelAlarmClock();   //// TODO: 15/11/13
+
+                        //创建访问内容提供器的URI
+                        Uri uri = ItemContract.CONTENT_URI;
+                        String where = ItemContract.Column.ITEM_ID + "=?";
+                        String[] params = new String[] {itemid};
+
+                        //step 2，删除指定ID的纪录
+                        int count = getContentResolver().delete(uri,where,params);
+
+                        //删除成功提示
+                        if(count>0)
+                        {
+                            Snackbar.make(v, "删掉了，想恢复吗？", Snackbar.LENGTH_LONG).setAction("后悔？", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(MainListActivity.this, "然并卵！", Toast.LENGTH_SHORT).show();
+                                }
+                            }).show();
+
+                            Log.d(TAG, "sumugu:delete item:" + itemid);
+                        }
                     }
                 });
-
             }
         };
         setListAdapter(cursorAdapter);
         getLoaderManager().initLoader(100, null, this);
     }
 
+    private void RestartLoader(SearchingFilter filter)
+    {
+        searchingfilter=filter;
+
+        if(null!=cursorAdapter)
+            getLoaderManager().restartLoader(100,null,this);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(MainListActivity.this,ItemContract.CONTENT_URI,PROJECTION,SELECTION,null,ItemContract.DEFAULT_SORT);
+        switch (searchingfilter)
+        {
+            case Done:
+                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=?";
+                PARAMS = new String[] {"1"};
+                break;
+            case All:
+                SELECTION="";
+                PARAMS = new String[]{};
+                break;
+            case Undo:
+                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=?";
+                PARAMS = new String[] {"0"};
+                break;
+            case Expired:
+                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=? and "+ItemContract.Column.ITEM_HAS_CLOCK+"=? and "+ItemContract.Column.ITEM_ALARM_CLOCK+"<?";
+                PARAMS = new String[] {"0","1", String.valueOf(new Date().getTime())};
+                break;
+            default:
+                break;
+        }
+        return new CursorLoader(MainListActivity.this,ItemContract.CONTENT_URI,PROJECTION,SELECTION,PARAMS,ItemContract.DEFAULT_SORT);
     }
 
     @Override

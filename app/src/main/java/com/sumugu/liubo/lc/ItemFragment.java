@@ -10,12 +10,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
@@ -40,6 +42,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
     private Button mButtonCommit;
 
     private SwipeLayout swipePanelAdding,swipePanelSetting;
+    private long timer = 0;
 
     public ItemFragment() {
         // Required empty public constructor
@@ -69,7 +72,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
         swipePanelSetting = (SwipeLayout)view.findViewById(R.id.panel_setting_ctl);
         swipePanelSetting.setShowMode(SwipeLayout.ShowMode.PullOut);
         swipePanelSetting.addDrag(SwipeLayout.DragEdge.Right, swipePanelSetting.findViewById(R.id.panel_setting_ctl_layer_bottom));
-        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left,null);
+        swipePanelSetting.addDrag(SwipeLayout.DragEdge.Left, null);
+        swipePanelSetting.findViewById(R.id.panel_setting_ctl_timercancel).setOnClickListener(this);
+        swipePanelSetting.findViewById(R.id.panel_setting_ctl_timer).setOnClickListener(this);
+        swipePanelSetting.setClickToClose(true);
 
         swipePanelSetting.open(SwipeLayout.DragEdge.Right);//--不听使唤
 
@@ -87,10 +93,19 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
             case R.id.panel_adding_ctl_cancel:
                 startActivity(new Intent(getActivity(),MainListActivity.class));
                 return;
+            case R.id.panel_setting_ctl_timercancel:
+                timer = 0;
+                ((TextView)getActivity().findViewById(R.id.panel_setting_ctl_timertext)).setText("设置提醒");
+                return;
+            case R.id.panel_setting_ctl_timer:
+                timer = new Date().getTime()+10000; //// TODO: 15/11/13 need to work
+                ((TextView)getActivity().findViewById(R.id.panel_setting_ctl_timertext)).setText("提醒于："+android.text.format.DateFormat.format("yyyy-MM-dd kk:mm:ss",timer));
+                return;
             default:
                 return;
         }
     }
+
     private final class PostTask extends AsyncTask<String,Void,String>
     {
         String title = "default_alpha_list"; //阿尔法3，默认Item的标题    //TODO
@@ -113,8 +128,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 ContentValues values = new ContentValues();
                 values.clear();
 
-//                Random rand = new Random();
-//                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
 
                 String idValue = UUID.randomUUID().toString();  //alpha 4,UUID replaced int for the value of id.
                 values.put(ItemContract.Column.ITEM_ID,idValue);
@@ -123,8 +136,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 values.put(ItemContract.Column.ITEM_CONTENT,content);
                 values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
                 values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
-                values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
-                values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+                values.put(ItemContract.Column.ITEM_HAS_CLOCK,timer>0?1:0); //// TODO: 15/11/13 need to work
+                values.put(ItemContract.Column.ITEM_ALARM_CLOCK,timer); // TODO: 15/11/13 need to work add a real timer
                 values.put(ItemContract.Column.ITEM_INDEX,0);   //TODO 需要默认0，以后列表可以排序再处理
 
                 values.put(ItemContract.Column.ITEM_LIST_ID,listId);
