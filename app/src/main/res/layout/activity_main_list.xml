@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:weightSum="1"
         android:id="@+id/layer_searching"
-        android:tag="searching">
+        android:tag="searching"
+        android:orientation="vertical">
         <EditText
             android:id="@+id/searching_text"
             android:layout_width="match_parent"
@@ -26,7 +27,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:text="选择？"
+            android:text="显示？"
             android:gravity="center"/>
         <TextView
             android:layout_width="match_parent"
@@ -117,10 +118,18 @@
             android:gravity="center"
             android:layout_alignParentTop="true"
             />
+        <SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_list"
+            android:queryHint="准备搜索什么？"
+            android:iconifiedByDefault="true">
+            </SearchView>
         <TextView
             android:id="@+id/mainlist_control"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="60dp"
             android:background="@drawable/white"
             android:text="新增"
             android:gravity="center"
@@ -130,14 +139,14 @@
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/title_list"
+            android:layout_below="@id/search_view"
             android:layout_above="@id/mainlist_control"></ListView>
         <TextView
             android:id="@android:id/empty"
             android:text="什么鬼都没有！找找吧"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/title_list"
+            android:layout_below="@id/search_view"
             android:layout_above="@id/mainlist_control"/>
     </RelativeLayout>
 </com.daimajia.swipe.SwipeLayout>

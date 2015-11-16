@@ -11,14 +11,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +33,8 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
     static final String[]  PROJECTION = new String[] {ItemContract.Column.ITEM_ID,ItemContract.Column.ITEM_CONTENT,ItemContract.Column.ITEM_IS_FINISHED};
     String SELECTION = "";
     String[] PARAMS;
+    String searchingText ="";
+
     SearchingFilter searchingfilter=SearchingFilter.Undo;
 
     CursorAdapter cursorAdapter;
@@ -88,7 +89,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
 
         mainList.addDrag(SwipeLayout.DragEdge.Right, filter);
         mainList.addDrag(SwipeLayout.DragEdge.Left,setting);
-        mainList.addDrag(SwipeLayout.DragEdge.Top, searching);
+/*        mainList.addDrag(SwipeLayout.DragEdge.Top, searching);
 
 
         EditText searchingText = (EditText)findViewById(R.id.searching_text);
@@ -98,7 +99,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
                 mainList.open(true,true, SwipeLayout.DragEdge.Top);
                 Toast.makeText(MainListActivity.this, "click the searching texting", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         TextView filterUndo = (TextView)findViewById(R.id.filter_undo);
         TextView filterDone = (TextView)findViewById(R.id.filter_done);
@@ -109,7 +110,7 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 ((TextView)findViewById(R.id.title_list)).setText("未完成的");
-                RestartLoader(SearchingFilter.Undo);
+                restartLoader(SearchingFilter.Undo);
             }
         });
 
@@ -117,21 +118,21 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 ((TextView)findViewById(R.id.title_list)).setText("已完成");
-                RestartLoader(SearchingFilter.Done);
+                restartLoader(SearchingFilter.Done);
             }
         });
         filterExpired.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((TextView)findViewById(R.id.title_list)).setText("过期的");
-                RestartLoader(SearchingFilter.Expired);
+                restartLoader(SearchingFilter.Expired);
             }
         });
         filterAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((TextView)findViewById(R.id.title_list)).setText("所有");
-                RestartLoader(SearchingFilter.All);
+                restartLoader(SearchingFilter.All);
             }
         });
 
@@ -242,9 +243,24 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
         };
         setListAdapter(cursorAdapter);
         getLoaderManager().initLoader(100, null, this);
+
+        //SearchView
+        ((SearchView)findViewById(R.id.search_view)).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                MainListActivity.this.searchingText =newText;
+                restartLoader(searchingfilter);
+                return true;
+            }
+        });
     }
 
-    private void RestartLoader(SearchingFilter filter)
+    private void restartLoader(SearchingFilter filter)
     {
         searchingfilter=filter;
 
@@ -254,23 +270,49 @@ public class MainListActivity extends ListActivity implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
         switch (searchingfilter)
         {
             case Done:
-                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=?";
-                PARAMS = new String[] {"1"};
+                if(searchingText.isEmpty()) {
+                    SELECTION = ItemContract.Column.ITEM_IS_FINISHED + "=?";
+                    PARAMS = new String[]{"1"};
+                }
+                else
+                {
+                    SELECTION = ItemContract.Column.ITEM_CONTENT+" like ? and " + ItemContract.Column.ITEM_IS_FINISHED + "=?";
+                    PARAMS = new String[]{'%'+ searchingText +'%',"1"};
+                }
                 break;
             case All:
-                SELECTION="";
-                PARAMS = new String[]{};
+                if(searchingText.isEmpty()) {
+                    SELECTION = "";
+                    PARAMS = new String[]{};
+                }
+                else{
+                    SELECTION = ItemContract.Column.ITEM_CONTENT+" like ? ";
+                    PARAMS = new String[] {'%'+ searchingText +'%'};
+                }
                 break;
             case Undo:
-                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=?";
-                PARAMS = new String[] {"0"};
+                if(searchingText.isEmpty()) {
+                    SELECTION = ItemContract.Column.ITEM_IS_FINISHED + "=?";
+                    PARAMS = new String[]{"0"};
+                }
+                else
+                {
+                    SELECTION = ItemContract.Column.ITEM_CONTENT+" like ? and " + ItemContract.Column.ITEM_IS_FINISHED + "=?";
+                    PARAMS = new String[]{'%'+ searchingText +'%',"0"};
+                }
                 break;
             case Expired:
-                SELECTION = ItemContract.Column.ITEM_IS_FINISHED+"=? and "+ItemContract.Column.ITEM_HAS_CLOCK+"=? and "+ItemContract.Column.ITEM_ALARM_CLOCK+"<?";
-                PARAMS = new String[] {"0","1", String.valueOf(new Date().getTime())};
+                if(searchingText.isEmpty()) {
+                    SELECTION = ItemContract.Column.ITEM_IS_FINISHED + "=? and " + ItemContract.Column.ITEM_HAS_CLOCK + "=? and " + ItemContract.Column.ITEM_ALARM_CLOCK + "<?";
+                    PARAMS = new String[]{"0", "1", String.valueOf(new Date().getTime())};
+                }else{
+                    SELECTION = ItemContract.Column.ITEM_CONTENT+" like ? and " +ItemContract.Column.ITEM_IS_FINISHED + "=? and " + ItemContract.Column.ITEM_HAS_CLOCK + "=? and " + ItemContract.Column.ITEM_ALARM_CLOCK + "<?";
+                    PARAMS = new String[]{'%'+ searchingText +'%',"0", "1", String.valueOf(new Date().getTime())};
+                }
                 break;
             default:
                 break;
