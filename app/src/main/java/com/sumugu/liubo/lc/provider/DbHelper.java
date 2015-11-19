@@ -38,7 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_table_list);
 
         String sql_create_table_item = String.format("create table %s (" +
-                "%s int primary key," +
+                "%s INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "%s text," +
                 "%s text," +
                 "%s int," +
