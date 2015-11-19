@@ -100,9 +100,8 @@ public class ItemProvider extends ContentProvider {
 
         if (rowId!=-1)
         {
-            long id=values.getAsLong(ItemContract.Column.ITEM_ID);
-            uriRet = ContentUris.withAppendedId(uri,id);
-            Log.d(TAG,"sumugu,inserted uri:"+uriRet);
+            uriRet = ContentUris.withAppendedId(uri,rowId);
+            Log.d(TAG,"sumugu,inserted uri:"+String.valueOf(rowId));
 
             //通知用于这个uri的数据已经更改
             getContext().getContentResolver().notifyChange(uri,null);
