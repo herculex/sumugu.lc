@@ -75,10 +75,10 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         btnClearAll = (Button)findViewById(R.id.btn_clear_all);
 
         btnUnlock.setOnClickListener(this);
-        btnGotoFinish.setOnClickListener(this);
-        btnClearAll.setOnClickListener(this);
+//        btnGotoFinish.setOnClickListener(this);
+//        btnClearAll.setOnClickListener(this);
 
-        ((Button)findViewById(R.id.btn_swipe_face)).setOnClickListener(this);
+        findViewById(R.id.btn_swipe_face).setOnClickListener(this);
 
         //
         makeFullScreen();
