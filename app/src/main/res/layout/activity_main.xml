@@ -11,11 +11,15 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_missing_content"/>
-
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Go to Finish"
+        android:text="NEW LIFE"
+        android:id="@+id/btn_new_life" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="old stuff"
         android:id="@+id/btn_goto_finish" />
 
     <Button

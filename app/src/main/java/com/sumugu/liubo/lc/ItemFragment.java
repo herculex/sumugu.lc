@@ -84,8 +84,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener{
                 ContentValues values = new ContentValues();
                 values.clear();
                 Random rand = new Random();
-                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
-                values.put(ItemContract.Column.ITEM_ID,idValue);
+//                String idValue = String.valueOf(rand.nextInt(999)+1);   //TODO 不设置，自动产生ID值?
+//                values.put(ItemContract.Column.ITEM_ID,idValue);
 
                 values.put(ItemContract.Column.ITEM_TITLE,title);
                 values.put(ItemContract.Column.ITEM_CONTENT,content);

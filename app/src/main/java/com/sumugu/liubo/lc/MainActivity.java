@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,6 +79,8 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         btnGotoFinish.setOnClickListener(this);
         btnClearAll.setOnClickListener(this);
 
+        findViewById(R.id.btn_new_life).setOnClickListener(this);
+
         //
         makeFullScreen();
         //        
@@ -143,6 +146,9 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
         switch (v.getId())
         {
+            case R.id.btn_new_life:
+                startActivity(new Intent(this, ItemLineFrameActivity.class));
+                return;
             case R.id.btn_goto_finish:
                 startActivity(new Intent(this,ComboItemLineActivity.class));
                 return;
