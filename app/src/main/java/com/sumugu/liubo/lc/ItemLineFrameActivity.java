@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 public class ItemLineFrameActivity extends Activity {
 
+    final static String TAG = "lc_ItemLineFrameActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
