@@ -12,7 +12,7 @@ import android.widget.ListView;
  * Created by liubo on 16/2/1.
  */
 public class MyListView extends ListView{
-    final static String TAG = "sumugu_MyListView";
+    final static String TAG = "lc_MyListView";
 
     public MyListView(Context context) {
         super(context);
