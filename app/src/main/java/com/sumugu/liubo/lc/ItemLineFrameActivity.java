@@ -46,6 +46,11 @@ public class ItemLineFrameActivity extends Activity {
         }
 
         @Override
+        public long getItemId(int position) {
+            return super.getItemId(position);
+        }
+
+        @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             //找到布局文件，保存控件到Holder
             MyViewHolder holder = new MyViewHolder();
