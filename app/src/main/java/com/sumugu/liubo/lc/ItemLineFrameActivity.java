@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -60,15 +61,16 @@ public class ItemLineFrameActivity extends Activity {
             //找到布局文件，保存控件到Holder
             MyViewHolder holder = new MyViewHolder();
             View view = getLayoutInflater().inflate(R.layout.item_frame, null);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "click click click view of list");
-                }
-            });
 
             holder.textView = (TextView) view.findViewById(R.id.text_content);
             holder.editText = (EditText) view.findViewById(R.id.edit_content);
+
+            holder.textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG,"ppppppppppp---------");
+                }
+            });
 
             view.setTag(holder);
             //返回view，会自动传给bindView方法。
@@ -92,7 +94,18 @@ public class ItemLineFrameActivity extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return super.getView(position, convertView, parent);
+            View view = super.getView(position, convertView, parent);
+            if (view != convertView) {
+                // Add touch listener to every new view to track swipe motion
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Log.d(TAG,"clickckckckckck");
+                        return true;
+                    }
+                });
+            }
+            return view;
         }
 
         class MyViewHolder {
