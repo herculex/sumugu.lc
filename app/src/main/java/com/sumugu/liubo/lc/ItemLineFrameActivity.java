@@ -31,8 +31,8 @@ public class ItemLineFrameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
-        myListView = (MyListView)findViewById(R.id.list_view);
-        myCursorAdapter = new MyCursorAdapter(this,null,0);
+        myListView = (MyListView) findViewById(R.id.list_view);
+        myCursorAdapter = new MyCursorAdapter(this, null, 0);
         myListView.setAdapter(myCursorAdapter);
 
         getLoaderManager().initLoader(5, null, new MyLoaderCallback(this, myCursorAdapter, 5));
@@ -45,31 +45,30 @@ public class ItemLineFrameActivity extends Activity {
         });
     }
 
-    public class MyCursorAdapter extends CursorAdapter{
+    public class MyCursorAdapter extends CursorAdapter {
 
-        public MyCursorAdapter(Context context,Cursor cursor,int flag){
-            super(context,cursor,flag);
-        }
-        public MyCursorAdapter(Context context,Cursor cursor,boolean autoRequst){
-            super(context,cursor,autoRequst);
+        public MyCursorAdapter(Context context, Cursor cursor, int flag) {
+            super(context, cursor, flag);
         }
 
-        class MyViewHolder{
-            TextView textView;
-            EditText editText;
-            TextView deleteView;
-            TextView doneView;
+        public MyCursorAdapter(Context context, Cursor cursor, boolean autoRequst) {
+            super(context, cursor, autoRequst);
         }
-
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             //找到布局文件，保存控件到Holder
             MyViewHolder holder = new MyViewHolder();
-            View view = getLayoutInflater().inflate(R.layout.item_frame,null);
+            View view = getLayoutInflater().inflate(R.layout.item_frame, null);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "click click click view of list");
+                }
+            });
 
-            holder.textView=(TextView)view.findViewById(R.id.text_content);
-            holder.editText=(EditText)view.findViewById(R.id.edit_content);
+            holder.textView = (TextView) view.findViewById(R.id.text_content);
+            holder.editText = (EditText) view.findViewById(R.id.edit_content);
 
             view.setTag(holder);
             //返回view，会自动传给bindView方法。
@@ -80,40 +79,51 @@ public class ItemLineFrameActivity extends Activity {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             //接收view的holder里的控件对象，然后赋值
-            MyViewHolder holder = (MyViewHolder)view.getTag();
+            MyViewHolder holder = (MyViewHolder) view.getTag();
 
-            String id =cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+            String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
             String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
 
-            holder.textView.setText(content+":"+id);
+            holder.textView.setText(content + ":" + id);
             holder.editText.setText(content);
 
             //完成赋值
         }
 
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return super.getView(position, convertView, parent);
+        }
+
+        class MyViewHolder {
+            TextView textView;
+            EditText editText;
+            TextView deleteView;
+            TextView doneView;
+        }
     }
 
-    public class MyLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor>
-    {
-        final static String TAG="lc_myLoaderCallback";
+    public class MyLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
+        final static String TAG = "lc_myLoaderCallback";
 
         CursorAdapter mCursorAdapter;
         int mLoaderId;
         Context mContext;
-        public MyLoaderCallback(Context context,CursorAdapter adapter,int id)
-        {
-            mContext =context;
-            mCursorAdapter =adapter;
-            mLoaderId =id;
-            Log.d(TAG,"init..");
+
+        public MyLoaderCallback(Context context, CursorAdapter adapter, int id) {
+            mContext = context;
+            mCursorAdapter = adapter;
+            mLoaderId = id;
+            Log.d(TAG, "init..");
         }
+
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            if(id!= mLoaderId)
+            if (id != mLoaderId)
                 return null;
 
             String where = ItemContract.Column.ITEM_IS_FINISHED + "=0";
-            return new CursorLoader(mContext,ItemContract.CONTENT_URI,null,null,null,ItemContract.DEFAULT_SORT);
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, null, null, ItemContract.DEFAULT_SORT);
         }
 
         @Override
