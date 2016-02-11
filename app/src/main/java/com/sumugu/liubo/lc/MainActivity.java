@@ -1,11 +1,14 @@
 package com.sumugu.liubo.lc;
 
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -25,6 +28,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.contract.ListContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
 import com.sumugu.liubo.lc.missing.MissingUtils;
@@ -32,13 +37,15 @@ import com.sumugu.liubo.lc.missing.MissingUtils;
 import java.util.Random;
 
 
-public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener{
+public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
 
     private final String TAG=MainActivity.class.getSimpleName();
 
     // User-interface
     private Button btnUnlock;
-    private Button btnShowNotify;
+    private Button btnGotoFinish;
+    private Button btnClearAll;
+    private TextView textViewMissingContent;
 
     // Member variables
     private LockScreenUtils mLockscreenUtils;
@@ -64,41 +71,18 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 
 
         setContentView(R.layout.activity_main);
+        btnGotoFinish = (Button)findViewById(R.id.btn_goto_finish);
+        btnUnlock = (Button)findViewById(R.id.btn_unlock_screen);
+        btnClearAll = (Button)findViewById(R.id.btn_clear_all);
 
-//        Random rand = new Random();
-//        String sms = String.valueOf(rand.nextInt(999)+1);
-//        String call = String.valueOf(rand.nextInt(999)+1);
+        btnUnlock.setOnClickListener(this);
+        btnGotoFinish.setOnClickListener(this);
+        btnClearAll.setOnClickListener(this);
 
-        MissingUtils missingUtils = new MissingUtils();
-        String sms = String.valueOf(missingUtils.getNewSmsCount(this));
-        String mms = String.valueOf(missingUtils.getNewMmsCount(this));
-        String call = String.valueOf(missingUtils.getMissCallCount(this));
+        findViewById(R.id.btn_new_life).setOnClickListener(this);
 
-        String missingCount = "Sms:" + sms +" Mms:"+ mms + " Call:" + call;
-
-        //换行符 \n
-        String smsText = "\n nothing!";
-
-        Cursor cursor = missingUtils.getNewSms(this);
-//        if(cursor!=null && cursor.getCount()>0)
-//        {
-//        }
-        //显示头条未读短信内容，仅供原型阿尔法2。这里已经完成读取短信内容，就可以去完成讲未读短信内容插入到Clear里。
-        if(cursor.moveToFirst())
-        {
-            smsText = "\n person:"+cursor.getString(cursor.getColumnIndex("person"));
-            smsText += "\n address:"+cursor.getString(cursor.getColumnIndex("address"));
-            smsText += "\n body:"+cursor.getString(cursor.getColumnIndex("body"));
-            smsText += "\n date:"+ DateFormat.format("yyyy-MM-dd kk:hh:ss",cursor.getLong(cursor.getColumnIndex("date")));
-            smsText += "\n type:"+cursor.getString(cursor.getColumnIndex("type"));
-        }
-
-        ((TextView) findViewById(R.id.textMissing)).setText(missingCount+smsText);
-
-
-     
         //
-//        makeFullScreen();
+        makeFullScreen();
         //        
                 //
         init();
@@ -133,73 +117,6 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
     }
     private void init() {
         mLockscreenUtils = new LockScreenUtils();
-        btnUnlock = (Button) findViewById(R.id.buttonUnclock);
-        btnUnlock.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // unlock home button and then screen on button press
-                unlockHomeButton();
-            }
-        });
-
-        btnShowNotify = (Button) findViewById(R.id.btnShowNotify);
-        btnShowNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                googleNotify();
-            }
-        });
-
-    }
-
-    //Only for prototype test and demo
-    private void googleNotify()
-    {
-        //Same ID , Only one notify.
-        Random random = new Random();
-        int mId=random.nextInt(900);
-
-        //API 11 ,android 3.0
-        Notification.Builder mBuilder =
-                new Notification.Builder(this)
-                        .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)    //必要条件1/3，小图标
-                        .setContentTitle("My notification")                     //必要条件2/3，标题
-                        .setContentText("Hello World!")                         //必要条件3/3，内容
-                        .setTicker("Here we go!")
-//                      .setVibrate(new long[] {350,0,100,350})                 //自定义震动的模式
-                        .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);    //默认的铃声和震动模式
-
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
-
-        //API 16 , android 4.1.2
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
     }
 
     private void makeFullScreen(){
@@ -221,6 +138,42 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
             Log.d(TAG,"sumugu,IMMERSIVE.");
             this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE);
 //            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId())
+        {
+            case R.id.btn_new_life:
+                startActivity(new Intent(this, ItemLineFrameActivity.class));
+                return;
+            case R.id.btn_goto_finish:
+                startActivity(new Intent(this,ComboItemLineActivity.class));
+                return;
+            case R.id.btn_unlock_screen:
+                unlockHomeButton();
+                return;
+            case R.id.btn_clear_all:
+//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//                builder.setMessage("真的要删光光？")
+//                        .setCancelable(false)
+//                        .setPositiveButton("是的", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+                                int row_list = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
+                                int row_item = getContentResolver().delete(ItemContract.CONTENT_URI,null,null);
+                                Toast.makeText(MainActivity.this, "删光光了，待会出错就重启机子吧，哈哈哈！", Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//                        .setNegativeButton("不是的", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                dialog.cancel();
+//                            }
+//                        });
+//                AlertDialog alert = builder.create();
+//                alert.show();
+                return;
         }
     }
 
@@ -334,7 +287,7 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -343,25 +296,8 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-        switch (id)
-        {
-            case R.id.action_listline:
-                startActivity(new Intent(this,ListLineActivity.class));
-                return true;
-            case R.id.action_unlock:
-                Toast.makeText(this,"not link yet!",Toast.LENGTH_LONG).show();
-                return true;
-            default:
-                return false;
-        }
+        return true;
     }
 
 }

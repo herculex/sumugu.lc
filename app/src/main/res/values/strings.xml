@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">LC-原型α2</string>
+    <string name="app_name">lc.α05</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">设置</string>
     <string name="title_activity_list_line">任务列表</string>
     <string name="title_activity_list">新增任务</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="item_addList">添加</string>
     <string name="item_refreshList">刷新</string>
@@ -19,6 +19,9 @@
     <string name="button_add">提交</string>
     <string name="title_activity_item">新增事项</string>
     <string name="buttong_unlock">解锁屏幕</string>
-    <string name="text_hint_no_clock">未设置闹钟</string>
+    <string name="text_hint_no_clock">未设置提醒</string>
     <string name="button_showNotify">显示通知</string>
+    <string name="title_activity_item_detail">事项详情</string>
+    <string name="title_activity_combo_item_line">整理事项</string>
+    <string name="title_activity_item_line_frame">ItemLineFrameActivity</string>
 </resources>

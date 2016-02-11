@@ -21,7 +21,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql_create_table_list = String.format("create table %s (" +
-                "%s int primary key," +
+                "%s integer primary key autoincrement," +
                 "%s text," +
                 "%s text," +
                 "%s int," +
@@ -38,7 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_table_list);
 
         String sql_create_table_item = String.format("create table %s (" +
-                "%s int primary key," +
+                "%s integer primary key autoincrement," +
                 "%s text," +
                 "%s text," +
                 "%s int," +

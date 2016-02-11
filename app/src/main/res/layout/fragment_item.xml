@@ -4,36 +4,25 @@
 
     <EditText
         android:id="@+id/editItemContent"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/hint_content"
         android:inputType="textMultiLine"
-        android:layout_below="@+id/editItemTitle"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <requestFocus />
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/buttonItemCommit"
+        android:layout_toStartOf="@+id/buttonItemCommit"
+        android:focusableInTouchMode="true">
     </EditText>
-    <EditText
-        android:id="@+id/editItemTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/hint_title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
 
-        <requestFocus />
-    </EditText>
     <Button
         android:id="@+id/buttonItemCommit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_add"
-        android:layout_below="@+id/editItemContent"
-        android:layout_alignRight="@+id/editItemContent"
-        android:layout_alignEnd="@+id/editItemContent"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

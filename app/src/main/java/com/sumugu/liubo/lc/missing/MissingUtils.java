@@ -55,4 +55,15 @@ public class MissingUtils {
         }
         return result;
     }
+    public Cursor getMissCall(Context context)
+    {
+        Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[] {
+                CallLog.Calls.CACHED_NAME,CallLog.Calls.NUMBER,CallLog.Calls.TYPE
+        }, " type=? and new=?", new String[] {
+                CallLog.Calls.MISSED_TYPE + "", "1"
+        }, "date desc");
+
+        return cursor;
+
+    }
 }

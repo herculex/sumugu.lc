@@ -11,34 +11,17 @@
         android:layout_alignParentStart="true"
         android:visibility="invisible"
         android:focusable="false"/>
-    <CheckBox
-        android:id="@+id/item_item_check_is_finished"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/item_item_text_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:focusable="false" />
-    <TextView
-        android:id="@+id/item_item_text_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Title"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBottom="@+id/item_item_check_has_clock"
-        android:layout_toRightOf="@+id/item_item_check_is_finished"
-        android:layout_toEndOf="@+id/item_item_check_is_finished" />
 
     <TextView
         android:id="@+id/item_item_text_created_at"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/item_item_text_title"
-        android:layout_alignBottom="@+id/item_item_text_title"
-        android:layout_alignParentRight="true"
         android:text="10 minutes ago"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/secondary_text_light"/>
+        android:textColor="@android:color/secondary_text_light"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/item_item_text_content"
@@ -48,18 +31,18 @@
         android:focusable="false"
         android:linksClickable="true"
         android:text="Content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_below="@+id/item_item_check_has_clock"
-        android:layout_toRightOf="@+id/item_item_check_is_finished"
-        android:layout_toEndOf="@+id/item_item_check_is_finished" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_below="@+id/item_item_text_created_at"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_hint_no_clock"
         android:id="@+id/item_item_text_clock"
-        android:layout_alignTop="@+id/item_item_text_title"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_above="@+id/item_item_text_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

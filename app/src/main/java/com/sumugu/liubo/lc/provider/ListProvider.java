@@ -102,8 +102,7 @@ public class ListProvider extends ContentProvider {
 
         if (rowId!=-1)
         {
-            long id=values.getAsLong(ListContract.Column.LIST_ID);
-            uriRet = ContentUris.withAppendedId(uri, id);
+            uriRet = ContentUris.withAppendedId(uri, rowId);
             Log.d(TAG,"sumugu,inserted uri:"+uriRet);
 
             //通知用于这个uri的数据已经更改
