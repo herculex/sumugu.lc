@@ -7,6 +7,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.sumugu.liubo.lc.R;
 
 /**
  * Created by liubo on 16/2/1.
@@ -28,19 +31,32 @@ public class MyListView extends ListView{
     }
 
     boolean beingSwiped=false;
+    boolean SwipedFix=false;
+    public void setBeingSwiped(boolean flag)
+    {
+        beingSwiped=flag;
+    }
+    public void setSwipedFix(boolean flag)
+    {
+        SwipedFix=flag;
+    }
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-//        Log.d(TAG,"LV_begingSwiped:"+String.valueOf(beingSwiped)+";TranY="+String.valueOf(getTranslationY()));
-//        if(beingSwiped && getTranslationY()<0)
-//        {
-//            beingSwiped=false;
-//            return super.onTouchEvent(ev);
-//        }
-        if(getChildAt(0).getTop()==getFirstVisiblePosition())
+        if(beingSwiped)
+            return false;
+
+        if(SwipedFix)
         {
-            Log.d(TAG,String.valueOf(getTranslationY())+";LV_Abort_Handle,pass to up");
-//            beingSwiped=true;
+            SwipedFix=false;
+            return super.onTouchEvent(ev);
+        }
+
+        if(getChildAt(0).getTop()==0 && getFirstVisiblePosition()==0)
+        {
+            TextView textView = (TextView)getChildAt(0).findViewById(R.id.text_content);
+            Log.d(TAG,(textView.getText())+":"+String.valueOf(getChildAt(0).getTop())+":"+String.valueOf(getFirstVisiblePosition())+";LV_Abort_Handle,pass to up");
+            Log.d(TAG,"TranY="+String.valueOf(getTranslationY()));
             return false;
         }
 

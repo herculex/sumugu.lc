@@ -211,8 +211,15 @@ public class ItemLineFrameActivity extends Activity {
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
 
+                    if(myListView.getTranslationY()<0) {
+                        myListView.setTranslationY(0);
+                        myListView.setSwipedFix(true);
+
+                        Log.d(TAG, String.valueOf(myListView.getTranslationY()) + ";What happend I want this is it !");
+                    }
+
                 }
-                Log.d(TAG,"donwY="+String.valueOf(mListDownY)+";y="+String.valueOf(y)+";DeltaY="+String.valueOf(deltaY));
+                Log.d(TAG, "donwY=" + String.valueOf(mListDownY) + ";y=" + String.valueOf(y) + ";DeltaY=" + String.valueOf(deltaY));
             }
             break;
             case MotionEvent.ACTION_UP:
@@ -230,12 +237,14 @@ public class ItemLineFrameActivity extends Activity {
                         endY = mEditNew.getHeight();
 //                        endAlpha = 0;
                         showEditNew = true;
+                        myListView.setBeingSwiped(true);
                     } else {
                         // Not far enough - animate it back
                         fractionCovered = 1 - (deltaYAbs / mEditNew.getHeight());
                         endY = 0;
 //                        endAlpha = 1;
                         showEditNew = false;
+                        myListView.setBeingSwiped(false);
                     }
                     long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
 
