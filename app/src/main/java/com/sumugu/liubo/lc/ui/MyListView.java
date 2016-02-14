@@ -27,14 +27,25 @@ public class MyListView extends ListView{
         super(context,attributeSet,defAttri);
     }
 
+    boolean beingSwiped=false;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-        Log.d(TAG, "LV_Super_OnTouchEvent");
-
+//        Log.d(TAG,"LV_begingSwiped:"+String.valueOf(beingSwiped)+";TranY="+String.valueOf(getTranslationY()));
+//        if(beingSwiped && getTranslationY()<0)
+//        {
+//            beingSwiped=false;
+//            return super.onTouchEvent(ev);
+//        }
         if(getChildAt(0).getTop()==getFirstVisiblePosition())
+        {
+            Log.d(TAG,String.valueOf(getTranslationY())+";LV_Abort_Handle,pass to up");
+//            beingSwiped=true;
             return false;
+        }
 
+
+        Log.d(TAG, "LV_Super_OnTouchEvent");
         return super.onTouchEvent(ev);
 
 //        switch (ev.getActionMasked())

@@ -165,6 +165,7 @@ public class ItemLineFrameActivity extends Activity {
     boolean mListSwiping=false;
     int mListSwipeSlop =-1;
     float mListDownY =0;
+    boolean showEditNew=false;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //        if(null==gestureDetector)
@@ -192,6 +193,9 @@ public class ItemLineFrameActivity extends Activity {
                 break;
             case MotionEvent.ACTION_MOVE:
             {
+                if(mListDownY==0)
+                    mListDownY=event.getY();
+
                 float y = event.getY();
                 float deltaY = y - mListDownY;
                 float deltaYAbs = Math.abs(deltaY);
@@ -201,23 +205,27 @@ public class ItemLineFrameActivity extends Activity {
                     }
                 }
                 if (mListSwiping) {
-                    myListView.setTranslationY(y - mListDownY);
+                    if(showEditNew)
+                        myListView.setTranslationY(y-mListDownY+mEditNew.getHeight());
+                    else
+                        myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
+
                 }
+                Log.d(TAG,"donwY="+String.valueOf(mListDownY)+";y="+String.valueOf(y)+";DeltaY="+String.valueOf(deltaY));
             }
             break;
             case MotionEvent.ACTION_UP:
             {
                 // User let go - figure out whether to animate the view out, or back into place
                 if (mListSwiping) {
-                    float y = event.getY() + myListView.getTranslationY();
+                    float y = event.getY();
                     float deltaY = y - mListDownY;
                     float deltaYAbs = Math.abs(deltaY);
                     float fractionCovered;
                     float endY;
                     float endAlpha;
-                    final boolean showEditNew;
-                    if (deltaYAbs > mEditNew.getHeight()) {
+                    if (deltaY>0 && deltaYAbs > mEditNew.getHeight()) {
                         fractionCovered = (deltaYAbs / mEditNew.getHeight())>1?1:0;
                         endY = mEditNew.getHeight();
 //                        endAlpha = 0;
@@ -246,7 +254,8 @@ public class ItemLineFrameActivity extends Activity {
 
                 }
             }
-            mListPressed = false;
+                mListPressed = false;
+                mListDownY=0;
             break;
             default:
                 return false;
