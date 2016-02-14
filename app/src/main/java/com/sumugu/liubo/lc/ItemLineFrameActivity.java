@@ -244,7 +244,7 @@ public class ItemLineFrameActivity extends Activity {
                         endY = 0;
 //                        endAlpha = 1;
                         showEditNew = false;
-                        myListView.setBeingSwiped(false);
+
                     }
                     long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
 

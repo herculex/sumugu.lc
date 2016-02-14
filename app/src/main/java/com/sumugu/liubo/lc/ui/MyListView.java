@@ -44,7 +44,10 @@ public class MyListView extends ListView{
     public boolean onTouchEvent(MotionEvent ev) {
 
         if(beingSwiped)
+        {
+            beingSwiped=false;
             return false;
+        }
 
         if(SwipedFix)
         {
