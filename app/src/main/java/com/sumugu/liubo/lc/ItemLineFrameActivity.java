@@ -196,6 +196,7 @@ public class ItemLineFrameActivity extends Activity {
                 if(mListDownY==0)
                     mListDownY=event.getY();
 
+                Log.d(TAG,String.valueOf(mListDownY)+":AT____DownY");
                 float y = event.getY();
                 float deltaY = y - mListDownY;
                 float deltaYAbs = Math.abs(deltaY);
@@ -211,9 +212,10 @@ public class ItemLineFrameActivity extends Activity {
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
 
-                    if(myListView.getTranslationY()<0) {
+                    if(myListView.getTranslationY() <= 0 ) {
                         myListView.setTranslationY(0);
                         myListView.setSwipedFix(true);
+//                        myListView.setBeingSwiped(false);
 
                         Log.d(TAG, String.valueOf(myListView.getTranslationY()) + ";What happend I want this is it !");
                     }
@@ -226,7 +228,7 @@ public class ItemLineFrameActivity extends Activity {
             {
                 // User let go - figure out whether to animate the view out, or back into place
                 if (mListSwiping) {
-                    float y = event.getY();
+                    float y = event.getY() + myListView.getTranslationY();
                     float deltaY = y - mListDownY;
                     float deltaYAbs = Math.abs(deltaY);
                     float fractionCovered;
@@ -237,7 +239,6 @@ public class ItemLineFrameActivity extends Activity {
                         endY = mEditNew.getHeight();
 //                        endAlpha = 0;
                         showEditNew = true;
-                        myListView.setBeingSwiped(true);
                     } else {
                         // Not far enough - animate it back
                         fractionCovered = 1 - (deltaYAbs / mEditNew.getHeight());
@@ -253,6 +254,7 @@ public class ItemLineFrameActivity extends Activity {
                                 @Override
                                 public void run() {
                                     if (showEditNew) {
+//                                        myListView.setBeingSwiped(true);
                                         mEditNew.requestFocus();
                                         //打开softinput
                                     } else {
