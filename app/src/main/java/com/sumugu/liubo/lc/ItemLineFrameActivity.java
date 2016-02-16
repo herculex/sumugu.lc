@@ -293,12 +293,14 @@ public class ItemLineFrameActivity extends Activity {
         return true;
     }
 
+    //打开遮罩
     public void showup(View view)
     {
         mCover.setVisibility(View.VISIBLE);
         mCover.setTranslationY(myListView.getTranslationY());
         myListView.setAlpha(0.5f);
     }
+    //关闭遮罩
     public void showoff(View view) {
 
         mEditNew.animate().setDuration(1000).translationX(-mEditNew.getWidth()).withEndAction(new Runnable() {
