@@ -3,9 +3,7 @@ package com.sumugu.liubo.lc.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,24 +28,18 @@ public class MyListView extends ListView{
         super(context,attributeSet,defAttri);
     }
 
-    boolean beingSwiped=false;
-    boolean SwipedFix=false;
-    public void setBeingSwiped(boolean flag)
+    boolean allowSuperTouch =false;
+    public void requestAllowSuperTouch(boolean flag)
     {
-        beingSwiped=flag;
-    }
-    public void setSwipedFix(boolean flag)
-    {
-        SwipedFix=flag;
+        allowSuperTouch =flag;
     }
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
 
-        if(SwipedFix)
+        if(allowSuperTouch)
         {
-            SwipedFix=false;
-            setTranslationY(0);
+            allowSuperTouch =false;
             return super.onTouchEvent(ev);
         }
 

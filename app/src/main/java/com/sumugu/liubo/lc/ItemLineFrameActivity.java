@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -33,7 +34,7 @@ public class ItemLineFrameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
-        mEditNew = (EditText)findViewById(R.id.edit_new);
+        mEditNew = (EditText) findViewById(R.id.edit_new);
         myListView = (MyListView) findViewById(R.id.list_view);
         myCursorAdapter = new MyCursorAdapter(this, null, 0);
         myListView.setAdapter(myCursorAdapter);
@@ -81,8 +82,7 @@ public class ItemLineFrameActivity extends Activity {
                     v.setTranslationX(0);
                     mItemPressed = false;
                     break;
-                case MotionEvent.ACTION_MOVE:
-                {
+                case MotionEvent.ACTION_MOVE: {
                     float x = event.getX() + v.getTranslationX();
                     float deltaX = x - mDownX;
                     float deltaXAbs = Math.abs(deltaX);
@@ -98,8 +98,7 @@ public class ItemLineFrameActivity extends Activity {
                     }
                 }
                 break;
-                case MotionEvent.ACTION_UP:
-                {
+                case MotionEvent.ACTION_UP: {
                     // User let go - figure out whether to animate the view out, or back into place
                     if (mSwiping) {
                         float x = event.getX() + v.getTranslationX();
@@ -161,17 +160,24 @@ public class ItemLineFrameActivity extends Activity {
      */
 
     GestureDetector gestureDetector;
-    boolean mListPressed =false;
-    boolean mListSwiping=false;
-    int mListSwipeSlop =-1;
-    float mListDownY =0;
-    boolean showEditNew=false;
+    boolean mListPressed = false;
+    boolean mListSwiping = false;
+    int mListSwipeSlop = -1;
+    float mListDownY = 0;
+    boolean showEditNew = false;
+    RelativeLayout mCover;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //        if(null==gestureDetector)
 //            gestureDetector = new GestureDetector(this,new MyFrameTouchGestureListner());
 //
 //        return gestureDetector.onTouchEvent(event);
+
+        if(mCover==null)
+            mCover=(RelativeLayout)findViewById(R.id.layer_cover);
+        if(mCover.getVisibility()==View.VISIBLE)
+            return super.onTouchEvent(event);
 
         if (mListSwipeSlop < 0) {
             mListSwipeSlop = ViewConfiguration.get(ItemLineFrameActivity.this).
@@ -185,20 +191,19 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 mListPressed = true;
                 mListDownY = event.getY();
-                Log.d(TAG,"AT___DOWN.");
+                Log.d(TAG, "AT___DOWN.");
                 break;
             case MotionEvent.ACTION_CANCEL:
-                Log.d(TAG,"AT___CANCEL.");
+                Log.d(TAG, "AT___CANCEL.");
                 mListPressed = false;
-                mListSwiping=false;
+                mListSwiping = false;
                 myListView.setTranslationY(0);
                 break;
-            case MotionEvent.ACTION_MOVE:
-            {
-                if(mListDownY==0)
-                    mListDownY=event.getY();
+            case MotionEvent.ACTION_MOVE: {
+                if (mListDownY == 0)
+                    mListDownY = event.getY();
 
-                Log.d(TAG,String.valueOf(mListDownY)+":AT___MOVE");
+                Log.d(TAG, String.valueOf(mListDownY) + ":AT___MOVE");
                 float y = event.getY();
                 float deltaY = y - mListDownY;
                 float deltaYAbs = Math.abs(deltaY);
@@ -209,23 +214,22 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 if (mListSwiping) {
 
-                    if(showEditNew)
-                        myListView.setTranslationY(y-mListDownY+mEditNew.getHeight());
+                    if (showEditNew)
+                        myListView.setTranslationY(y - mListDownY + mEditNew.getHeight());
                     else
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
 
-                    if(myListView.getTranslationY()<=0)
-                    {
-                        myListView.setSwipedFix(true);
+                    if (myListView.getTranslationY() <= 0) {
+                        myListView.setTranslationY(0);
+                        myListView.requestAllowSuperTouch(true);
                     }
                 }
                 Log.d(TAG, "donwY=" + String.valueOf(mListDownY) + ";y=" + String.valueOf(y) + ";DeltaY=" + String.valueOf(deltaY));
             }
             break;
-            case MotionEvent.ACTION_UP:
-            {
-                Log.d(TAG,"AT___UP.");
+            case MotionEvent.ACTION_UP: {
+                Log.d(TAG, "AT___UP.");
                 // User let go - figure out whether to animate the view out, or back into place
                 if (mListSwiping) {
                     float y = event.getY() + myListView.getTranslationY();
@@ -234,11 +238,12 @@ public class ItemLineFrameActivity extends Activity {
                     float fractionCovered;
                     float endY;
                     float endAlpha;
-                    if (deltaY>0 && deltaYAbs > mEditNew.getHeight()) {
-                        fractionCovered = (deltaYAbs / mEditNew.getHeight())>1?1:0;
+                    if (deltaY > 0 && deltaYAbs > mEditNew.getHeight()) {
+                        fractionCovered = (deltaYAbs / mEditNew.getHeight()) > 1 ? 1 : 0;
                         endY = mEditNew.getHeight();
 //                        endAlpha = 0;
                         showEditNew = true;
+
                     } else {
                         // Not far enough - animate it back
                         fractionCovered = 1 - (deltaYAbs / mEditNew.getHeight());
@@ -254,24 +259,52 @@ public class ItemLineFrameActivity extends Activity {
                                 @Override
                                 public void run() {
                                     if (showEditNew) {
+                                        //
+                                        showup(null);
+                                        //
                                         mEditNew.requestFocus();
                                         //打开softinput
                                     } else {
                                         mListSwiping = false;
                                     }
                                 }
-                    });
+                            });
 
                 }
             }
-                mListPressed = false;
-                mListDownY=0;
+            mListPressed = false;
+            mListDownY = 0;
             break;
             default:
                 return false;
         }
         return true;
     }
+
+    public void showup(View view)
+    {
+        mCover.setVisibility(View.VISIBLE);
+        mCover.setTranslationY(myListView.getTranslationY());
+        myListView.setAlpha(0.5f);
+    }
+    public void showoff(View view) {
+
+        mEditNew.animate().setDuration(1000).translationX(-mEditNew.getWidth()).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                mCover.setVisibility(View.GONE);
+                myListView.animate().translationY(0).setDuration(1000).alpha(1).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEditNew.setTranslationX(0);
+                    }
+                });
+            }
+        });
+
+        showEditNew=false;
+    }
+
 
     public class MyFrameTouchGestureListner extends GestureDetector.SimpleOnGestureListener{
         @Override
