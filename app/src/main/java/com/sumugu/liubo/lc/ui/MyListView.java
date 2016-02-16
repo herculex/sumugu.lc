@@ -44,17 +44,10 @@ public class MyListView extends ListView{
     public boolean onTouchEvent(MotionEvent ev) {
 
 
-        Log.d(TAG,String.valueOf(beingSwiped)+";"+String.valueOf(SwipedFix)+";LV_Request..");
-        if(beingSwiped)
-        {
-            Log.d(TAG,"goin____beingSwiped.");
-            return false;
-        }
-
         if(SwipedFix)
         {
-            Log.d(TAG,"goin____swipedFix.");
             SwipedFix=false;
+            setTranslationY(0);
             return super.onTouchEvent(ev);
         }
 

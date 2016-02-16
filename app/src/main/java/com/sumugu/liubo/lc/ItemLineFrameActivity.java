@@ -185,8 +185,10 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 mListPressed = true;
                 mListDownY = event.getY();
+                Log.d(TAG,"AT___DOWN.");
                 break;
             case MotionEvent.ACTION_CANCEL:
+                Log.d(TAG,"AT___CANCEL.");
                 mListPressed = false;
                 mListSwiping=false;
                 myListView.setTranslationY(0);
@@ -196,7 +198,7 @@ public class ItemLineFrameActivity extends Activity {
                 if(mListDownY==0)
                     mListDownY=event.getY();
 
-                Log.d(TAG,String.valueOf(mListDownY)+":AT____DownY");
+                Log.d(TAG,String.valueOf(mListDownY)+":AT___MOVE");
                 float y = event.getY();
                 float deltaY = y - mListDownY;
                 float deltaYAbs = Math.abs(deltaY);
@@ -206,26 +208,24 @@ public class ItemLineFrameActivity extends Activity {
                     }
                 }
                 if (mListSwiping) {
+
                     if(showEditNew)
                         myListView.setTranslationY(y-mListDownY+mEditNew.getHeight());
                     else
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
 
-                    if(myListView.getTranslationY() <= 0 ) {
-                        myListView.setTranslationY(0);
+                    if(myListView.getTranslationY()<=0)
+                    {
                         myListView.setSwipedFix(true);
-//                        myListView.setBeingSwiped(false);
-
-                        Log.d(TAG, String.valueOf(myListView.getTranslationY()) + ";What happend I want this is it !");
                     }
-
                 }
                 Log.d(TAG, "donwY=" + String.valueOf(mListDownY) + ";y=" + String.valueOf(y) + ";DeltaY=" + String.valueOf(deltaY));
             }
             break;
             case MotionEvent.ACTION_UP:
             {
+                Log.d(TAG,"AT___UP.");
                 // User let go - figure out whether to animate the view out, or back into place
                 if (mListSwiping) {
                     float y = event.getY() + myListView.getTranslationY();
@@ -254,7 +254,6 @@ public class ItemLineFrameActivity extends Activity {
                                 @Override
                                 public void run() {
                                     if (showEditNew) {
-//                                        myListView.setBeingSwiped(true);
                                         mEditNew.requestFocus();
                                         //打开softinput
                                     } else {
