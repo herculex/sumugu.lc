@@ -7,12 +7,14 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -35,6 +37,8 @@ public class ItemLineFrameActivity extends Activity {
         setContentView(R.layout.activity_item_line_frame);
 
         mEditNew = (EditText) findViewById(R.id.edit_new);
+        mEditNew.setInputType(InputType.TYPE_NULL);
+
         myListView = (MyListView) findViewById(R.id.list_view);
         myCursorAdapter = new MyCursorAdapter(this, null, 0);
         myListView.setAdapter(myCursorAdapter);
@@ -262,13 +266,21 @@ public class ItemLineFrameActivity extends Activity {
                                         //
                                         showup(null);
                                         //
-                                        mEditNew.requestFocus();
-                                        //打开softinput
                                     } else {
                                         mListSwiping = false;
                                     }
                                 }
                             });
+
+                    if(showEditNew)
+                    {
+                        mEditNew.requestFocus();
+                        mEditNew.setInputType(InputType.TYPE_CLASS_TEXT);
+                        //打开softinput
+                        mEditNew.setSelection(mEditNew.getText().length());
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.showSoftInput(mEditNew, InputMethodManager.SHOW_IMPLICIT);
+                    }
 
                 }
             }
@@ -303,6 +315,11 @@ public class ItemLineFrameActivity extends Activity {
         });
 
         showEditNew=false;
+
+        myListView.requestFocus();
+        //隐藏软键盘
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
     }
 
 
