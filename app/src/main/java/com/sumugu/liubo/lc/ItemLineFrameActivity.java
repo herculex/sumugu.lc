@@ -37,6 +37,7 @@ public class ItemLineFrameActivity extends Activity {
     private MyListView myListView;
     private MyCursorAdapter myCursorAdapter;
     private EditText mEditNew;
+    private MyLoaderCallback myCursorLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,8 @@ public class ItemLineFrameActivity extends Activity {
         myCursorAdapter = new MyCursorAdapter(this, null, 0);
         myListView.setAdapter(myCursorAdapter);
 
-        getLoaderManager().initLoader(5, null, new MyLoaderCallback(this, myCursorAdapter, 5));
+        myCursorLoader = new MyLoaderCallback(this, myCursorAdapter, 5);
+        getLoaderManager().initLoader(5, null,myCursorLoader);
 
     }
 
@@ -212,7 +214,7 @@ public class ItemLineFrameActivity extends Activity {
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
         int count = getContentResolver().delete(uri,null,null);
         Log.d(TAG, "LV__POSITION FOR Delete=" + String.valueOf(count));
-
+//        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
         //
 
         final ViewTreeObserver observer = listview.getViewTreeObserver();
@@ -225,7 +227,7 @@ public class ItemLineFrameActivity extends Activity {
                 for (int i = 0; i < listview.getChildCount(); ++i) {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
-                    long itemId = myCursorAdapter.getItemId(position);
+                    long itemId = myCursorAdapter.getItemId(position);  //2016.2.18 这里还能查处被删除的item的id，证明adapter没更新，旧数据在里面。
                     Integer startTop = mItemIdTopMap.get(itemId);
                     int top = child.getTop();
                     if (startTop != null) {
