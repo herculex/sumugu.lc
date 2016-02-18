@@ -81,7 +81,7 @@ public class ItemLineFrameActivity extends Activity {
     boolean mSwiping = false;
     boolean mItemPressed = false;
     int SWIPE_DURATION = 250;
-    int MOVE_DURATION = 1000;
+    int MOVE_DURATION = 2000;
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         float mDownX;
         private int mSwipeSlop = -1;
@@ -206,11 +206,11 @@ public class ItemLineFrameActivity extends Activity {
             }
         }
         // Delete the item from the adapter
-        int position = listview.getPositionForView(viewToRemove);
+        final int deletePosition = listview.getPositionForView(viewToRemove);
 //        mAdapter.remove(mAdapter.getItem(position)); CursorAdapter是没有remove方法
 
         //只有删除数据，更新cursoradapter
-        long deleteId=myCursorAdapter.getItemId(position);
+        long deleteId=myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
         int count = getContentResolver().delete(uri,null,null);
         Log.d(TAG, "LV__POSITION FOR Delete=" + String.valueOf(count));
@@ -227,6 +227,8 @@ public class ItemLineFrameActivity extends Activity {
                 for (int i = 0; i < listview.getChildCount(); ++i) {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
+                    if(position>=deletePosition)
+                        position=+1;//避开被删除的item,2016.2.19.但是导致后面的item位移是全部从顶部向原来位置.要查看原例子的逻辑
                     long itemId = myCursorAdapter.getItemId(position);  //2016.2.18 这里还能查处被删除的item的id，证明adapter没更新，旧数据在里面。
                     Integer startTop = mItemIdTopMap.get(itemId);
                     int top = child.getTop();
