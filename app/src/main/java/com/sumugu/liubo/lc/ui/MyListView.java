@@ -39,10 +39,12 @@ public class MyListView extends ListView{
 
         if(allowSuperTouch)
         {
+            Log.d(TAG,"LV_DO_SUperTouch");
             allowSuperTouch =false;
             return super.onTouchEvent(ev);
         }
 
+        //这个条件很有问题，“兼容性”很差
         if(getChildAt(0).getTop()==0 && getFirstVisiblePosition()==0)
         {
             TextView textView = (TextView)getChildAt(0).findViewById(R.id.text_content);

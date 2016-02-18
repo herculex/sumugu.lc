@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -39,18 +41,29 @@ public class ItemLineFrameActivity extends Activity {
         mEditNew = (EditText) findViewById(R.id.edit_new);
         mEditNew.setInputType(InputType.TYPE_NULL);
 
+        //软键盘“完成” 隐藏软键盘，并打开遮罩
+        //其实估计都不用写代码来隐藏软键盘，因为EditView，的Type为Text类型，“回车”变成了“完成”状态
+        mEditNew.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.d(TAG,"softinput press what: "+String.valueOf(actionId));
+                if(EditorInfo.IME_ACTION_DONE == actionId)
+                {
+                    Log.d(TAG, "you pressed the action done!");
+                    finishoff();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
         myListView = (MyListView) findViewById(R.id.list_view);
         myCursorAdapter = new MyCursorAdapter(this, null, 0);
         myListView.setAdapter(myCursorAdapter);
 
         getLoaderManager().initLoader(5, null, new MyLoaderCallback(this, myCursorAdapter, 5));
 
-        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "item position=" + String.valueOf(position) + ",id=" + String.valueOf(id));
-            }
-        });
     }
 
     /**
@@ -142,6 +155,7 @@ public class ItemLineFrameActivity extends Activity {
                                         v.setTranslationX(0);
                                         if (remove) {
 //                                            animateRemoval(myListView, v);
+                                            myListView.setEnabled(true);// animateRemoval(myListView, v);-逻辑里有这句
                                         } else {
                                             mSwiping = false;
                                             myListView.setEnabled(true);
@@ -227,6 +241,7 @@ public class ItemLineFrameActivity extends Activity {
                     if (myListView.getTranslationY() <= 0) {
                         myListView.setTranslationY(0);
                         myListView.requestAllowSuperTouch(true);
+                        Log.d(TAG,"AT___LV__TOP!");
                     }
                 }
                 Log.d(TAG, "donwY=" + String.valueOf(mListDownY) + ";y=" + String.valueOf(y) + ";DeltaY=" + String.valueOf(deltaY));
@@ -276,7 +291,7 @@ public class ItemLineFrameActivity extends Activity {
                     {
                         mEditNew.requestFocus();
                         mEditNew.setInputType(InputType.TYPE_CLASS_TEXT);
-                        //打开softinput
+                        //打开softinput软键盘
                         mEditNew.setSelection(mEditNew.getText().length());
                         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         mgr.showSoftInput(mEditNew, InputMethodManager.SHOW_IMPLICIT);
@@ -322,6 +337,30 @@ public class ItemLineFrameActivity extends Activity {
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+
+    }
+
+    public void finishoff()
+    {
+        mEditNew.animate().setDuration(1000).alpha(0);
+        myListView.animate().translationY(0).setDuration(1000).alpha(1).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                mCover.setVisibility(View.GONE);
+                mEditNew.setAlpha(1);
+                mEditNew.setText("");
+                myListView.requestFocus();
+            }
+        });
+
+        showEditNew=false;
+
+        //隐藏软键盘
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+
+        //处理一些保存数据的操作
+        //....
     }
 
 
