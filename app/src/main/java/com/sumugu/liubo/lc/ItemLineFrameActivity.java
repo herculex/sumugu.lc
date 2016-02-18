@@ -228,7 +228,7 @@ public class ItemLineFrameActivity extends Activity {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
                     if(position>=deletePosition)
-                        position=+1;//避开被删除的item,2016.2.19.但是导致后面的item位移是全部从顶部向原来位置.要查看原例子的逻辑
+                        position=+1;//避开被删除的item,2016.2.19.但是导致后面的item位移是全部从顶部向原来位置(从顶向下).要查看原例子的逻辑
                     long itemId = myCursorAdapter.getItemId(position);  //2016.2.18 这里还能查处被删除的item的id，证明adapter没更新，旧数据在里面。
                     Integer startTop = mItemIdTopMap.get(itemId);
                     int top = child.getTop();
