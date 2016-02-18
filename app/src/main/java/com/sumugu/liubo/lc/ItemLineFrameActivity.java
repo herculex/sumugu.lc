@@ -221,8 +221,6 @@ public class ItemLineFrameActivity extends Activity {
                 observer.removeOnPreDrawListener(this);
                 boolean firstAnimation = true;
                 int firstVisiblePosition = listview.getFirstVisiblePosition();
-                int childcount = listview.getChildCount();
-                Log.d(TAG,"LV___ChildCount:"+String.valueOf(childcount));
 
                 for (int i = 0; i < listview.getChildCount(); ++i) {
                     final View child = listview.getChildAt(i);
