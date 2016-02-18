@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -15,16 +16,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
+
+import java.util.HashMap;
 
 public class ItemLineFrameActivity extends Activity {
 
@@ -74,7 +79,7 @@ public class ItemLineFrameActivity extends Activity {
     boolean mSwiping = false;
     boolean mItemPressed = false;
     int SWIPE_DURATION = 250;
-    int MOVE_DURATION = 150;
+    int MOVE_DURATION = 1000;
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         float mDownX;
         private int mSwipeSlop = -1;
@@ -154,7 +159,22 @@ public class ItemLineFrameActivity extends Activity {
                                         v.setAlpha(1);
                                         v.setTranslationX(0);
                                         if (remove) {
-//                                            animateRemoval(myListView, v);
+                                            animateRemoval(myListView, v);
+                                            //
+//                                            int position = myListView.getPositionForView(v);
+//                                            long id=myCursorAdapter.getItemId(position);
+//                                            int id = myListView.getChildAt(position).getId(); ＝这个得不到id
+//                                            Log.d(TAG, "LV__POSITION FOR VIEW:" + String.valueOf(position) + ",ID=" + String.valueOf(id));
+//                                          方法1
+//                                            String where = ItemContract.Column.ITEM_ID +"=" +String.valueOf(id);
+//                                            int rowid = getContentResolver().delete(ItemContract.CONTENT_URI, where,null);
+//                                          方法2
+//                                            Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(id));
+//                                            int count=getContentResolver().delete(uri,null,null);
+//
+//                                            Log.d(TAG,"LV__POSITION FOR Delete="+String.valueOf(count));
+//                                          上面的方法移入animateRemoval方法中
+                                            //
                                             myListView.setEnabled(true);// animateRemoval(myListView, v);-逻辑里有这句
                                         } else {
                                             mSwiping = false;
@@ -172,6 +192,85 @@ public class ItemLineFrameActivity extends Activity {
             return true;
         }
     };
+    HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
+    private void animateRemoval(final ListView listview, View viewToRemove) {
+        int firstVisiblePosition = listview.getFirstVisiblePosition();
+        for (int i = 0; i < listview.getChildCount(); ++i) {
+            View child = listview.getChildAt(i);
+            if (child != viewToRemove) {
+                int position = firstVisiblePosition + i;
+                long itemId = myCursorAdapter.getItemId(position);
+                mItemIdTopMap.put(itemId, child.getTop());
+            }
+        }
+        // Delete the item from the adapter
+        int position = listview.getPositionForView(viewToRemove);
+//        mAdapter.remove(mAdapter.getItem(position)); CursorAdapter是没有remove方法
+
+        //只有删除数据，更新cursoradapter
+        long deleteId=myCursorAdapter.getItemId(position);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
+        int count = getContentResolver().delete(uri,null,null);
+        Log.d(TAG, "LV__POSITION FOR Delete=" + String.valueOf(count));
+
+        //
+
+        final ViewTreeObserver observer = listview.getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                observer.removeOnPreDrawListener(this);
+                boolean firstAnimation = true;
+                int firstVisiblePosition = listview.getFirstVisiblePosition();
+                int childcount = listview.getChildCount();
+                Log.d(TAG,"LV___ChildCount:"+String.valueOf(childcount));
+
+                for (int i = 0; i < listview.getChildCount(); ++i) {
+                    final View child = listview.getChildAt(i);
+                    int position = firstVisiblePosition + i;
+                    long itemId = myCursorAdapter.getItemId(position);
+                    Integer startTop = mItemIdTopMap.get(itemId);
+                    int top = child.getTop();
+                    if (startTop != null) {
+                        if (startTop != top) {
+                            int delta = startTop - top;
+                            child.setTranslationY(delta);
+                            child.animate().setDuration(MOVE_DURATION).translationY(0);
+                            Log.d(TAG,"LV__animatie____:"+String.valueOf(itemId));
+                            if (firstAnimation) {
+                                child.animate().withEndAction(new Runnable() {
+                                    public void run() {
+                                        mSwiping = false;
+                                        listview.setEnabled(true);
+                                    }
+                                });
+                                firstAnimation = false;
+                            }
+                        }
+                    } else {
+                        // Animate new views along with the others. The catch is that they did not
+                        // exist in the start state, so we must calculate their starting position
+                        // based on neighboring views.
+                        int childHeight = child.getHeight() + listview.getDividerHeight();
+                        startTop = top + (i > 0 ? childHeight : -childHeight);
+                        int delta = startTop - top;
+                        child.setTranslationY(delta);
+                        child.animate().setDuration(MOVE_DURATION).translationY(0);
+                        if (firstAnimation) {
+                            child.animate().withEndAction(new Runnable() {
+                                public void run() {
+                                    mSwiping = false;
+                                    listview.setEnabled(true);
+                                }
+                            });
+                            firstAnimation = false;
+                        }
+                    }
+                }
+                mItemIdTopMap.clear();
+                return true;
+            }
+        });
+    }
 
     /*
     * 用本Activity的onTcouhEvent ，以控制各层级的位移
@@ -308,6 +407,7 @@ public class ItemLineFrameActivity extends Activity {
         return true;
     }
 
+
     //打开遮罩
     public void showup(View view)
     {
@@ -339,7 +439,7 @@ public class ItemLineFrameActivity extends Activity {
                 .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
 
     }
-
+    //完成后关闭遮罩
     public void finishoff()
     {
         mEditNew.animate().setDuration(1000).alpha(0);
