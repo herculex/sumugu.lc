@@ -202,7 +202,6 @@ public class ItemLineFrameActivity extends Activity {
         for (int i = 0; i < listview.getChildCount(); ++i) {
             View child = listview.getChildAt(i);
             if (child.findViewById(R.id.text_content) != viewToRemove) {    //问题的根源在此，删除的view，不同与listview get出来的child－2016.2.19
-//            if(i!=deletePosition){
                 int position = firstVisiblePosition + i;
                 long itemId = myCursorAdapter.getItemId(position);
                 mItemIdTopMap.put(itemId, child.getTop());
