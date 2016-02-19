@@ -226,11 +226,13 @@ public class ItemLineFrameActivity extends Activity {
                 for (int i = 0; i < listview.getChildCount(); ++i) {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
+                    //
                     if(position>=deletePosition){   //问题的根源2在此，adapter的数据没有更新，所以要跳过被删除的位置－2016.2.19
 //                        position=+1;//position not change!!!!
 //                        position=position+1;
                         position++;
                     }
+                    //
 
                     long itemId = myCursorAdapter.getItemId(position);
                     Integer startTop = mItemIdTopMap.get(itemId);
