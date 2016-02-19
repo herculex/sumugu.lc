@@ -211,8 +211,8 @@ public class ItemLineFrameActivity extends Activity {
 
         //只有删除数据，更新cursoradapter
         long deleteId=myCursorAdapter.getItemId(deletePosition);
-//        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
-//        int count = getContentResolver().delete(uri,null,null);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
+        int count = getContentResolver().delete(uri,null,null);
 //        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
         //
 
