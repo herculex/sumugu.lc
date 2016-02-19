@@ -196,24 +196,24 @@ public class ItemLineFrameActivity extends Activity {
     };
     HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
     private void animateRemoval(final ListView listview, View viewToRemove) {
+
+        final int deletePosition = listview.getPositionForView(viewToRemove);
         int firstVisiblePosition = listview.getFirstVisiblePosition();
         for (int i = 0; i < listview.getChildCount(); ++i) {
             View child = listview.getChildAt(i);
-            if (child != viewToRemove) {
+            if (child.findViewById(R.id.text_content) != viewToRemove) {    //问题的根源在此，删除的view，不同与listview get出来的child－2016.2.19
+//            if(i!=deletePosition){
                 int position = firstVisiblePosition + i;
                 long itemId = myCursorAdapter.getItemId(position);
                 mItemIdTopMap.put(itemId, child.getTop());
             }
         }
-        // Delete the item from the adapter
-        final int deletePosition = listview.getPositionForView(viewToRemove);
-//        mAdapter.remove(mAdapter.getItem(position)); CursorAdapter是没有remove方法
+//        mAdapter.remove(mAdapter.getItem(position)); //CursorAdapter是没有remove方法
 
         //只有删除数据，更新cursoradapter
         long deleteId=myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
         int count = getContentResolver().delete(uri,null,null);
-        Log.d(TAG, "LV__POSITION FOR Delete=" + String.valueOf(count));
 //        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
         //
 
@@ -227,9 +227,13 @@ public class ItemLineFrameActivity extends Activity {
                 for (int i = 0; i < listview.getChildCount(); ++i) {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
-                    if(position>=deletePosition)
-                        position=+1;//避开被删除的item,2016.2.19.但是导致后面的item位移是全部从顶部向原来位置(从顶向下).要查看原例子的逻辑
-                    long itemId = myCursorAdapter.getItemId(position);  //2016.2.18 这里还能查处被删除的item的id，证明adapter没更新，旧数据在里面。
+                    if(position>=deletePosition){   //问题的根源2在此，adapter的数据没有更新，所以要跳过被删除的位置－2016.2.19
+//                        position=+1;//position not change!!!!
+//                        position=position+1;
+                        position++;
+                    }
+
+                    long itemId = myCursorAdapter.getItemId(position);
                     Integer startTop = mItemIdTopMap.get(itemId);
                     int top = child.getTop();
                     if (startTop != null) {
