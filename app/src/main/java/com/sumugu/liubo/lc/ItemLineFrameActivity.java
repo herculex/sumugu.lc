@@ -201,14 +201,37 @@ public class ItemLineFrameActivity extends Activity {
                     else
                     {
                         //no swiping ,but click
-                        int position = myListView.getPositionForView(v);
                         FrameLayout container = (FrameLayout)v.getParent();
-//                        myListView.smoothScrollToPosition(position);
+                        //scroll listview
+                        int position = myListView.getPositionForView(v);
                         int firstposition = myListView.getFirstVisiblePosition();
-                        int delta=Math.abs(myListView.getChildAt(firstposition).getTop());
+                        int offset=Math.abs(myListView.getChildAt(firstposition).getTop());
+                        int delta=myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-offset;
 
-                        myListView.setScrollY(myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-delta);
-                        Log.d(TAG, "textView no swiping here "+String.valueOf(position));
+                        myListView.setScrollY(delta);
+                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
+
+                        //set textview gone, and set edittext visibility
+                        TextView tv = (TextView)container.findViewById(R.id.text_content);
+                        EditText et = (EditText)container.findViewById(R.id.edit_content);
+                        tv.setVisibility(View.GONE);
+                        et.setVisibility(View.VISIBLE);
+                        et.setInputType(InputType.TYPE_CLASS_TEXT);
+                        et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                            @Override
+                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                                Log.d(TAG,"EDITTIVE in LiSTVIEW ,softinput press what: "+String.valueOf(actionId));
+                                if(EditorInfo.IME_ACTION_DONE == actionId)
+                                {
+                                    Log.d(TAG, "EDITTIVE in LiSTVIEW ,you pressed the action done!");
+
+                                    return true;
+                                }
+
+                                return false;
+                            }
+                        });
 
                     }
                 }
@@ -499,8 +522,32 @@ public class ItemLineFrameActivity extends Activity {
         });
 
         showEditNew=false;
+    }
 
+    private boolean updateContent(String content,long id)
+    {
+        Uri uri = ItemContract.CONTENT_URI;
+        String where = ItemContract.Column.ITEM_ID + "=?";
+        String[] params = new String[] {String.valueOf(id)};
 
+        //step 1，查处闹钟并取消掉
+        //cancelAlarmClock();
+
+        //step 2，更新记录的闹钟和标记
+        ContentValues values = new ContentValues();
+        values.put(ItemContract.Column.ITEM_CONTENT,content);
+
+        int count = getContentResolver().update(uri,values,where,params);   //方法1
+//        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
+
+        if(count>0)
+        {
+            Log.d(TAG,"updated item:"+String.valueOf(id));
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     private boolean postNewContent(String content)
     {
