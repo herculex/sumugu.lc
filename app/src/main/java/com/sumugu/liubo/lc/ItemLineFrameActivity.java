@@ -44,6 +44,10 @@ public class ItemLineFrameActivity extends Activity {
     private MyCursorAdapter myCursorAdapter;
     private EditText mEditNew;
     private MyLoaderCallback myCursorLoader;
+    private EditText mEditModify;
+    private TextView mTextModify;
+    private long mItemIdModify;
+    private boolean showEditModity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,10 @@ public class ItemLineFrameActivity extends Activity {
         findViewById(R.id.layer_cover).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finishoff();
+                if(showEditNew)
+                    finishoff();
+                if(showEditModity)
+                    updateoff();
             }
         });
         mEditNew = (EditText) findViewById(R.id.edit_new);
@@ -204,6 +211,7 @@ public class ItemLineFrameActivity extends Activity {
                         FrameLayout container = (FrameLayout)v.getParent();
                         //scroll listview
                         int position = myListView.getPositionForView(v);
+                        mItemIdModify = myListView.getAdapter().getItemId(position);
                         int firstposition = myListView.getFirstVisiblePosition();
                         int offset=Math.abs(myListView.getChildAt(firstposition).getTop());
                         int delta=myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-offset;
@@ -212,26 +220,34 @@ public class ItemLineFrameActivity extends Activity {
                         Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
 
                         //set textview gone, and set edittext visibility
-                        TextView tv = (TextView)container.findViewById(R.id.text_content);
-                        EditText et = (EditText)container.findViewById(R.id.edit_content);
-                        tv.setVisibility(View.GONE);
-                        et.setVisibility(View.VISIBLE);
-                        et.setInputType(InputType.TYPE_CLASS_TEXT);
-                        et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        mTextModify = (TextView)container.findViewById(R.id.text_content);
+                        mTextModify.setVisibility(View.GONE);
+
+                        mEditModify = (EditText)container.findViewById(R.id.edit_content);
+                        mEditModify.setVisibility(View.VISIBLE);
+
+                        mEditModify.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.showSoftInput(mEditModify, InputMethodManager.SHOW_IMPLICIT);
+
+                        mEditModify.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                             @Override
                             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-                                Log.d(TAG,"EDITTIVE in LiSTVIEW ,softinput press what: "+String.valueOf(actionId));
-                                if(EditorInfo.IME_ACTION_DONE == actionId)
-                                {
+                                Log.d(TAG, "EDITTIVE in LiSTVIEW ,softinput press what: " + String.valueOf(actionId));
+                                if (EditorInfo.IME_ACTION_DONE == actionId) {
                                     Log.d(TAG, "EDITTIVE in LiSTVIEW ,you pressed the action done!");
-
+                                    updateoff();
                                     return true;
                                 }
 
                                 return false;
                             }
                         });
+                        //打开遮罩
+                        updateup(v.getHeight());
+                        showEditModity=true;
 
                     }
                 }
@@ -522,6 +538,50 @@ public class ItemLineFrameActivity extends Activity {
         });
 
         showEditNew=false;
+    }
+
+    private void updateup(int height)
+    {
+        if(mCover==null)
+           mCover=(RelativeLayout)findViewById(R.id.layer_cover);
+
+        mCover.setVisibility(View.VISIBLE);
+        mCover.setTranslationY(height);
+        myListView.setAlpha(0.5f);
+
+    }
+    private void updateoff()
+    {
+        //隐藏软键盘
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+
+        final String content = mEditModify.getText().toString();
+        if(TextUtils.isEmpty(content))
+        {
+            // 删除
+            return;
+        }
+        else
+        {
+            mCover.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+
+                    updateContent(content, mItemIdModify);
+
+                    mCover.setVisibility(View.GONE);
+                    myListView.requestFocus();
+                    myListView.setAlpha(1);
+
+                    mTextModify.setVisibility(View.VISIBLE);
+                    mEditModify.setVisibility(View.GONE);
+                    mEditModify.setInputType(InputType.TYPE_NULL);
+                }
+            });
+
+        }
+        showEditModity=false;
     }
 
     private boolean updateContent(String content,long id)
