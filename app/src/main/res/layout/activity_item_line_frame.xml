@@ -34,7 +34,6 @@
         android:id="@+id/layer_cover"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:onClick="showoff">
+        android:layout_height="match_parent">
     </RelativeLayout>
 </FrameLayout>

@@ -2,6 +2,7 @@ package com.sumugu.liubo.lc;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -9,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -22,6 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,7 +33,9 @@ import android.widget.TextView;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
 public class ItemLineFrameActivity extends Activity {
 
@@ -44,6 +50,12 @@ public class ItemLineFrameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
+        findViewById(R.id.layer_cover).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishoff();
+            }
+        });
         mEditNew = (EditText) findViewById(R.id.edit_new);
         mEditNew.setInputType(InputType.TYPE_NULL);
 
@@ -123,6 +135,7 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 break;
                 case MotionEvent.ACTION_UP: {
+                    Log.d(TAG,"TextVIEW____ACTION__UP");
                     // User let go - figure out whether to animate the view out, or back into place
                     if (mSwiping) {
                         float x = event.getX() + v.getTranslationX();
@@ -184,6 +197,19 @@ public class ItemLineFrameActivity extends Activity {
                                         }
                                     }
                                 });
+                    }
+                    else
+                    {
+                        //no swiping ,but click
+                        int position = myListView.getPositionForView(v);
+                        FrameLayout container = (FrameLayout)v.getParent();
+//                        myListView.smoothScrollToPosition(position);
+                        int firstposition = myListView.getFirstVisiblePosition();
+                        int delta=Math.abs(myListView.getChildAt(firstposition).getTop());
+
+                        myListView.setScrollY(myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-delta);
+                        Log.d(TAG, "textView no swiping here "+String.valueOf(position));
+
                     }
                 }
                 mItemPressed = false;
@@ -449,25 +475,57 @@ public class ItemLineFrameActivity extends Activity {
     //完成后关闭遮罩
     public void finishoff()
     {
-        mEditNew.animate().setDuration(1000).alpha(0);
-        myListView.animate().translationY(0).setDuration(1000).alpha(1).withEndAction(new Runnable() {
+        //隐藏软键盘
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+
+        final String content = mEditNew.getText().toString();
+        if(TextUtils.isEmpty(content))
+        {
+            showoff(null);
+            return;
+        }
+
+        mEditNew.animate().setDuration(500).alpha(0);
+        myListView.animate().translationY(0).setDuration(500).alpha(1).withEndAction(new Runnable() {
             @Override
             public void run() {
                 mCover.setVisibility(View.GONE);
                 mEditNew.setAlpha(1);
                 mEditNew.setText("");
+                postNewContent(content);  //处理一些保存数据的操作
                 myListView.requestFocus();
             }
         });
 
         showEditNew=false;
 
-        //隐藏软键盘
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
 
-        //处理一些保存数据的操作
-        //....
+    }
+    private boolean postNewContent(String content)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(ItemContract.Column.ITEM_TITLE,"");
+        values.put(ItemContract.Column.ITEM_CONTENT,content);
+        values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
+        values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
+        values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
+        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+
+        values.put(ItemContract.Column.ITEM_LIST_ID,-1);
+
+        //用Provider插入新数据，而非用DbHelper。在Fragment里，要用Provider，需获取的当前的Activity。
+        Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
+        if(uri!=null){
+            Log.d(TAG, String.format("%s:%s", values.getAsString(ItemContract.Column.ITEM_TITLE), values.getAsString(ItemContract.Column.ITEM_CONTENT)));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        //
     }
 
 
