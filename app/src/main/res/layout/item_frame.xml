@@ -26,13 +26,6 @@
         android:padding="10dp"
         />
 </LinearLayout>
-    <EditText
-        android:id="@+id/edit_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="none"
-        android:background="#ffb"
-        android:visibility="gone"/>
     <TextView
         android:id="@+id/text_content"
         android:layout_width="match_parent"

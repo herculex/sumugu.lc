@@ -614,7 +614,6 @@ public class ItemLineFrameActivity extends Activity {
             View view = getLayoutInflater().inflate(R.layout.item_frame, null);
 
             holder.textView = (TextView) view.findViewById(R.id.text_content);
-            holder.editText = (EditText) view.findViewById(R.id.edit_content);
 
 //            holder.textView.setOnTouchListener(mTouchListener);
 //            holder.textView.setOnClickListener(new View.OnClickListener() {
@@ -639,7 +638,6 @@ public class ItemLineFrameActivity extends Activity {
             String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
 
             holder.textView.setText(id+":"+content );
-            holder.editText.setText(content);
 
             //完成赋值
         }
@@ -656,7 +654,6 @@ public class ItemLineFrameActivity extends Activity {
 
         class MyViewHolder {
             TextView textView;
-            EditText editText;
             TextView deleteView;
             TextView doneView;
         }
