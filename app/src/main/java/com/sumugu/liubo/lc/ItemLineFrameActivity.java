@@ -44,23 +44,22 @@ public class ItemLineFrameActivity extends Activity {
     private MyCursorAdapter myCursorAdapter;
     private EditText mEditNew;
     private MyLoaderCallback myCursorLoader;
-    private EditText mEditModify;
-    private TextView mTextModify;
-    private long mItemIdModify;
-    private boolean showEditModity;
+
+    private long mUpdateItemId=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
+        if(mCover==null)
+            mCover=(RelativeLayout)findViewById(R.id.layer_cover);
+
         findViewById(R.id.layer_cover).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(showEditNew)
                     finishoff();
-                if(showEditModity)
-                    updateoff();
             }
         });
         mEditNew = (EditText) findViewById(R.id.edit_new);
@@ -208,46 +207,30 @@ public class ItemLineFrameActivity extends Activity {
                     else
                     {
                         //no swiping ,but click
-                        FrameLayout container = (FrameLayout)v.getParent();
                         //scroll listview
                         int position = myListView.getPositionForView(v);
-                        mItemIdModify = myListView.getAdapter().getItemId(position);
                         int firstposition = myListView.getFirstVisiblePosition();
                         int offset=Math.abs(myListView.getChildAt(firstposition).getTop());
                         int delta=myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-offset;
+//                        myListView.setScrollY(delta);// TODO:卷起来
+//                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
 
-                        myListView.setScrollY(delta);
-                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
+                        mUpdateItemId = myListView.getAdapter().getItemId(position);
 
                         //set textview gone, and set edittext visibility
-                        mTextModify = (TextView)container.findViewById(R.id.text_content);
-                        mTextModify.setVisibility(View.GONE);
+                        mEditNew.setText(((TextView) v).getText());
 
-                        mEditModify = (EditText)container.findViewById(R.id.edit_content);
-                        mEditModify.setVisibility(View.VISIBLE);
-
-                        mEditModify.setInputType(InputType.TYPE_CLASS_TEXT);
-
+                        mEditNew.requestFocus();
+                        mEditNew.setInputType(InputType.TYPE_CLASS_TEXT);
+                        mEditNew.setSelection(mEditNew.getText().length());
                         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(mEditModify, InputMethodManager.SHOW_IMPLICIT);
+                        mgr.showSoftInput(mEditNew, InputMethodManager.SHOW_IMPLICIT);
 
-                        mEditModify.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                            @Override
-                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        myListView.setTranslationY(mEditNew.getHeight());
 
-                                Log.d(TAG, "EDITTIVE in LiSTVIEW ,softinput press what: " + String.valueOf(actionId));
-                                if (EditorInfo.IME_ACTION_DONE == actionId) {
-                                    Log.d(TAG, "EDITTIVE in LiSTVIEW ,you pressed the action done!");
-                                    updateoff();
-                                    return true;
-                                }
-
-                                return false;
-                            }
-                        });
                         //打开遮罩
-                        updateup(v.getHeight());
-                        showEditModity=true;
+                        showup(null);
+                        showEditNew=true;
 
                     }
                 }
@@ -363,8 +346,6 @@ public class ItemLineFrameActivity extends Activity {
 //
 //        return gestureDetector.onTouchEvent(event);
 
-        if(mCover==null)
-            mCover=(RelativeLayout)findViewById(R.id.layer_cover);
         if(mCover.getVisibility()==View.VISIBLE)
             return super.onTouchEvent(event);
 
@@ -502,6 +483,7 @@ public class ItemLineFrameActivity extends Activity {
                 });
             }
         });
+        mEditNew.setInputType(InputType.TYPE_NULL);
 
         showEditNew=false;
 
@@ -522,6 +504,11 @@ public class ItemLineFrameActivity extends Activity {
         if(TextUtils.isEmpty(content))
         {
             showoff(null);
+
+            if(mUpdateItemId!=0) {
+                getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId)), null, null);
+                Log.d(TAG,"Editor EMPTY! Delete it!!");
+            }
             return;
         }
 
@@ -532,7 +519,11 @@ public class ItemLineFrameActivity extends Activity {
                 mCover.setVisibility(View.GONE);
                 mEditNew.setAlpha(1);
                 mEditNew.setText("");
-                postNewContent(content);  //处理一些保存数据的操作
+                mEditNew.setInputType(InputType.TYPE_NULL);
+                if (mUpdateItemId == 0)
+                    postNewContent(content);  //处理一些保存数据的操作
+                else
+                    updateContent(content);
                 myListView.requestFocus();
             }
         });
@@ -540,55 +531,11 @@ public class ItemLineFrameActivity extends Activity {
         showEditNew=false;
     }
 
-    private void updateup(int height)
-    {
-        if(mCover==null)
-           mCover=(RelativeLayout)findViewById(R.id.layer_cover);
-
-        mCover.setVisibility(View.VISIBLE);
-        mCover.setTranslationY(height);
-        myListView.setAlpha(0.5f);
-
-    }
-    private void updateoff()
-    {
-        //隐藏软键盘
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
-
-        final String content = mEditModify.getText().toString();
-        if(TextUtils.isEmpty(content))
-        {
-            // 删除
-            return;
-        }
-        else
-        {
-            mCover.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-
-                    updateContent(content, mItemIdModify);
-
-                    mCover.setVisibility(View.GONE);
-                    myListView.requestFocus();
-                    myListView.setAlpha(1);
-
-                    mTextModify.setVisibility(View.VISIBLE);
-                    mEditModify.setVisibility(View.GONE);
-                    mEditModify.setInputType(InputType.TYPE_NULL);
-                }
-            });
-
-        }
-        showEditModity=false;
-    }
-
-    private boolean updateContent(String content,long id)
+    private boolean updateContent(String content)
     {
         Uri uri = ItemContract.CONTENT_URI;
         String where = ItemContract.Column.ITEM_ID + "=?";
-        String[] params = new String[] {String.valueOf(id)};
+        String[] params = new String[] {String.valueOf(mUpdateItemId)};
 
         //step 1，查处闹钟并取消掉
         //cancelAlarmClock();
@@ -602,7 +549,7 @@ public class ItemLineFrameActivity extends Activity {
 
         if(count>0)
         {
-            Log.d(TAG,"updated item:"+String.valueOf(id));
+            Log.d(TAG,"updated item:"+String.valueOf(mUpdateItemId));
             return true;
         }
         else{
