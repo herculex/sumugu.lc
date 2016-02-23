@@ -520,10 +520,12 @@ public class ItemLineFrameActivity extends Activity {
                 mEditNew.setAlpha(1);
                 mEditNew.setText("");
                 mEditNew.setInputType(InputType.TYPE_NULL);
-                if (mUpdateItemId == 0)
+                if (mUpdateItemId == 0) {
                     postNewContent(content);  //处理一些保存数据的操作
-                else
+                }
+                else {
                     updateContent(content);
+                }
                 myListView.requestFocus();
             }
         });
@@ -547,6 +549,7 @@ public class ItemLineFrameActivity extends Activity {
         int count = getContentResolver().update(uri,values,where,params);   //方法1
 //        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
 
+        mUpdateItemId=0;    //恢复默认
         if(count>0)
         {
             Log.d(TAG,"updated item:"+String.valueOf(mUpdateItemId));
