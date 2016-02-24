@@ -34,5 +34,6 @@
         android:background="#fff"
         android:text="here we go!"
         android:padding="10dp"
+        android:typeface="monospace"
         android:gravity="left|center_vertical"/>
 </FrameLayout>
