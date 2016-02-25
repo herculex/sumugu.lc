@@ -46,6 +46,7 @@ public class ItemLineFrameActivity extends Activity {
     private MyLoaderCallback myCursorLoader;
 
     private long mUpdateItemId=0;
+    private int mScrollDistance=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,14 +209,20 @@ public class ItemLineFrameActivity extends Activity {
                     {
                         //no swiping ,but click
                         //scroll listview
-                        int position = myListView.getPositionForView(v);
+                        int currentPosition = myListView.getPositionForView(v);
                         int firstposition = myListView.getFirstVisiblePosition();
-                        int offset=Math.abs(myListView.getChildAt(firstposition).getTop());
-                        int delta=myListView.getChildAt(position).getTop()-myListView.getChildAt(firstposition).getTop()-offset;
-//                        myListView.setScrollY(delta);// TODO:卷起来
+                        int absOffset=Math.abs(myListView.getChildAt(firstposition).getTop());
+                        mScrollDistance=(myListView.getChildAt(currentPosition).getTop()
+                                +myListView.getChildAt(currentPosition).getHeight()
+                                +myListView.getDividerHeight())
+                                -myListView.getChildAt(firstposition).getTop()
+                                -absOffset;
+
+//                        myListView.setScrollY(mScrollDistance);//向上
+                        myListView.smoothScrollBy(mScrollDistance,1000);
 //                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
 
-                        mUpdateItemId = myListView.getAdapter().getItemId(position);
+                        mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
 
                         //set textview gone, and set edittext visibility
                         mEditNew.setText(((TextView) v).getText());
@@ -525,6 +532,9 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 else {
                     updateContent(content);
+
+                    myListView.smoothScrollBy(-mScrollDistance,1000);
+                    mScrollDistance=0;
                 }
                 myListView.requestFocus();
             }
