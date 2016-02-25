@@ -531,10 +531,10 @@ public class ItemLineFrameActivity extends Activity {
                     postNewContent(content);  //处理一些保存数据的操作
                 }
                 else {
-                    updateContent(content);
-
                     myListView.smoothScrollBy(-mScrollDistance,1000);
                     mScrollDistance=0;
+                    updateContent(content);
+
                 }
                 myListView.requestFocus();
             }
