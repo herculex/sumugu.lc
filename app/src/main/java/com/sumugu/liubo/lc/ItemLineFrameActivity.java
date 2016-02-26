@@ -192,9 +192,10 @@ public class ItemLineFrameActivity extends Activity {
                         // back at an appropriate speed.
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
-                        if (swipedResult>0)
-                        {
-                            myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done).animate().alpha(0).setDuration(duration / 2);
+                        final View contaier=myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
+
+                        if (swipedResult>0) {
+                            contaier.animate().alpha(0).setDuration(duration / 2);
                         }
                         v.animate().setDuration(duration).translationX(endX).
                                 withEndAction(new Runnable() {
@@ -203,6 +204,7 @@ public class ItemLineFrameActivity extends Activity {
                                         // Restore animated values
                                         v.setAlpha(1);
                                         v.setTranslationX(0);
+                                        contaier.setAlpha(1);
                                         if (swipedResult>0) {
                                             animateRemoval(myListView, v,swipedResult);
                                             //
@@ -296,14 +298,25 @@ public class ItemLineFrameActivity extends Activity {
             Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
         }
         else if(2==resultType) {
+
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if(!cursor.moveToFirst())
+                return;
+            //获取查询结果各项值
+            int finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+            Log.d(TAG,"FINISHED==="+String.valueOf(finshed));
+            //
             ContentValues values = new ContentValues();
-            values.put(ItemContract.Column.ITEM_IS_FINISHED,1);
+            values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
             int count = getContentResolver().update(uri, values, null, null);
             Log.d(TAG, "update ITEM!!!"+String.valueOf(count));
+            return; //结束
         }
         else
         {
             //
+            return;
+            //结束
         }
 
 //        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
@@ -689,6 +702,9 @@ public class ItemLineFrameActivity extends Activity {
             holder.textView.setText(content);
             if(finish==1)
                 holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);   //删除线
+            else
+                holder.textView.getPaint().setFlags(0);
+
             holder.textView.getPaint().setAntiAlias(true);  //抗锯齿
 
             //完成赋值
