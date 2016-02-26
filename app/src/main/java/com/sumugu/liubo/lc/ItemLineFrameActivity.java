@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -47,6 +48,8 @@ public class ItemLineFrameActivity extends Activity {
 
     private long mUpdateItemId=0;
     private int mScrollDistance=0;
+    private int mCurrentPosition=0;
+    private int mCurrentPositionTop=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,7 @@ public class ItemLineFrameActivity extends Activity {
 
     boolean mSwiping = false;
     boolean mItemPressed = false;
-    int SWIPE_DURATION = 250;
+    int SWIPE_DURATION = 1000;
     int MOVE_DURATION = 2000;
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         float mDownX;
@@ -137,7 +140,14 @@ public class ItemLineFrameActivity extends Activity {
                     }
                     if (mSwiping) {
                         v.setTranslationX((x - mDownX));
-                        v.setAlpha(1 - deltaXAbs / v.getWidth());
+//                        v.setAlpha(1 - deltaXAbs / v.getWidth());
+                        if(deltaXAbs>v.getWidth()/3)
+                        {
+                            if(deltaX<0)
+                                v.setTranslationX(-v.getWidth()/3);
+                            else
+                                v.setTranslationX(v.getWidth()/3);
+                        }
                     }
                 }
                 break;
@@ -152,18 +162,28 @@ public class ItemLineFrameActivity extends Activity {
                         float endX;
                         float endAlpha;
                         final boolean remove;
+                        final int swipedResult;
                         if (deltaXAbs > v.getWidth() / 4) {
                             // Greater than a quarter of the width - animate it out
                             fractionCovered = deltaXAbs / v.getWidth();
                             endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
                             endAlpha = 0;
-                            remove = true;
+                            if(deltaX>0) {
+                                remove = true;
+                                swipedResult=1;// is deleted.
+                            }
+                            else
+                            {
+                                remove=false;
+                                swipedResult=2;// is done.
+                            }
                         } else {
                             // Not far enough - animate it back
                             fractionCovered = 1 - (deltaXAbs / v.getWidth());
                             endX = 0;
                             endAlpha = 1;
                             remove = false;
+                            swipedResult=0; //nothing happend.
                         }
                         // Animate position and alpha of swiped item
                         // NOTE: This is a simplified version of swipe behavior, for the
@@ -172,16 +192,19 @@ public class ItemLineFrameActivity extends Activity {
                         // back at an appropriate speed.
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
-                        v.animate().setDuration(duration).
-                                alpha(endAlpha).translationX(endX).
+                        if (swipedResult>0)
+                        {
+                            myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done).animate().alpha(0).setDuration(duration / 2);
+                        }
+                        v.animate().setDuration(duration).translationX(endX).
                                 withEndAction(new Runnable() {
                                     @Override
                                     public void run() {
                                         // Restore animated values
                                         v.setAlpha(1);
                                         v.setTranslationX(0);
-                                        if (remove) {
-                                            animateRemoval(myListView, v);
+                                        if (swipedResult>0) {
+                                            animateRemoval(myListView, v,swipedResult);
                                             //
 //                                            int position = myListView.getPositionForView(v);
 //                                            long id=myCursorAdapter.getItemId(position);
@@ -210,16 +233,16 @@ public class ItemLineFrameActivity extends Activity {
                         //no swiping ,but click
                         //scroll listview
                         int currentPosition = myListView.getPositionForView(v);
-                        int firstposition = myListView.getFirstVisiblePosition();
-                        int absOffset=Math.abs(myListView.getChildAt(firstposition).getTop());
-                        mScrollDistance=(myListView.getChildAt(currentPosition).getTop()
-                                +myListView.getChildAt(currentPosition).getHeight()
-                                +myListView.getDividerHeight())
-                                -myListView.getChildAt(firstposition).getTop()
-                                -absOffset;
-
-//                        myListView.setScrollY(mScrollDistance);//向上
-                        myListView.smoothScrollBy(mScrollDistance,1000);
+//                        int firstposition = myListView.getFirstVisiblePosition();
+//                        mScrollDistance=(myListView.getChildAt(currentPosition).getTop()
+//                                +myListView.getChildAt(currentPosition).getHeight()
+//                                +myListView.getDividerHeight());
+//
+//                        mCurrentPosition=currentPosition;
+//                        mCurrentPositionTop=myListView.getChildAt(currentPosition).getTop();
+//
+////                        myListView.setScrollY(mScrollDistance);//向上
+//                        myListView.smoothScrollBy(mScrollDistance,1000);
 //                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
 
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
@@ -250,7 +273,7 @@ public class ItemLineFrameActivity extends Activity {
         }
     };
     HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
-    private void animateRemoval(final ListView listview, View viewToRemove) {
+    private void animateRemoval(final ListView listview, View viewToRemove,int resultType) {
 
         final int deletePosition = listview.getPositionForView(viewToRemove);
         int firstVisiblePosition = listview.getFirstVisiblePosition();
@@ -265,9 +288,24 @@ public class ItemLineFrameActivity extends Activity {
 //        mAdapter.remove(mAdapter.getItem(position)); //CursorAdapter是没有remove方法
 
         //只有删除数据，更新cursoradapter
-        long deleteId=myCursorAdapter.getItemId(deletePosition);
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(deleteId));
-        int count = getContentResolver().delete(uri,null,null);
+        long targetId=myCursorAdapter.getItemId(deletePosition);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
+        if(1==resultType){
+
+            int count = getContentResolver().delete(uri,null,null);
+            Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
+        }
+        else if(2==resultType) {
+            ContentValues values = new ContentValues();
+            values.put(ItemContract.Column.ITEM_IS_FINISHED,1);
+            int count = getContentResolver().update(uri, values, null, null);
+            Log.d(TAG, "update ITEM!!!"+String.valueOf(count));
+        }
+        else
+        {
+            //
+        }
+
 //        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
         //
 
@@ -531,8 +569,8 @@ public class ItemLineFrameActivity extends Activity {
                     postNewContent(content);  //处理一些保存数据的操作
                 }
                 else {
-                    myListView.smoothScrollBy(-mScrollDistance,1000);
-                    mScrollDistance=0;
+//                    myListView.smoothScrollBy(-mScrollDistance,1000);
+//                    mScrollDistance=0;
                     updateContent(content);
 
                 }
@@ -646,8 +684,12 @@ public class ItemLineFrameActivity extends Activity {
 
             String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
             String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+            int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
-            holder.textView.setText(id+":"+content );
+            holder.textView.setText(content);
+            if(finish==1)
+                holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);   //删除线
+            holder.textView.getPaint().setAntiAlias(true);  //抗锯齿
 
             //完成赋值
         }
