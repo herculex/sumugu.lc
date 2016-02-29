@@ -22,11 +22,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,14 +33,13 @@ import com.sumugu.liubo.lc.ui.MyListView;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 
 public class ItemLineFrameActivity extends Activity {
 
     final static String TAG = "lc_ItemLineFrame";
     private MyListView myListView;
     private MyCursorAdapter myCursorAdapter;
-    private EditText mEditNew;
+    private EditText mEditView;
     private MyLoaderCallback myCursorLoader;
 
     private long mUpdateItemId=0;
@@ -66,17 +62,16 @@ public class ItemLineFrameActivity extends Activity {
                     finishoff();
             }
         });
-        mEditNew = (EditText) findViewById(R.id.edit_new);
-        mEditNew.setInputType(InputType.TYPE_NULL);
+        mEditView = (EditText) findViewById(R.id.edit_view);
+        mEditView.setInputType(InputType.TYPE_NULL);
 
         //软键盘“完成” 隐藏软键盘，并打开遮罩
         //其实估计都不用写代码来隐藏软键盘，因为EditView，的Type为Text类型，“回车”变成了“完成”状态
-        mEditNew.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Log.d(TAG,"softinput press what: "+String.valueOf(actionId));
-                if(EditorInfo.IME_ACTION_DONE == actionId)
-                {
+                Log.d(TAG, "softinput press what: " + String.valueOf(actionId));
+                if (EditorInfo.IME_ACTION_DONE == actionId) {
                     Log.d(TAG, "you pressed the action done!");
                     finishoff();
                     return true;
@@ -250,15 +245,15 @@ public class ItemLineFrameActivity extends Activity {
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
 
                         //set textview gone, and set edittext visibility
-                        mEditNew.setText(((TextView) v).getText());
+                        mEditView.setText(((TextView) v).getText());
 
-                        mEditNew.requestFocus();
-                        mEditNew.setInputType(InputType.TYPE_CLASS_TEXT);
-                        mEditNew.setSelection(mEditNew.getText().length());
+                        mEditView.requestFocus();
+                        mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
+                        mEditView.setSelection(mEditView.getText().length());
                         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(mEditNew, InputMethodManager.SHOW_IMPLICIT);
+                        mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
 
-                        myListView.setTranslationY(mEditNew.getHeight());
+                        myListView.setTranslationY(mEditView.getHeight());
 
                         //打开遮罩
                         showup(null);
@@ -443,7 +438,7 @@ public class ItemLineFrameActivity extends Activity {
                 if (mListSwiping) {
 
                     if (showEditNew)
-                        myListView.setTranslationY(y - mListDownY + mEditNew.getHeight());
+                        myListView.setTranslationY(y - mListDownY + mEditView.getHeight());
                     else
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
@@ -467,15 +462,15 @@ public class ItemLineFrameActivity extends Activity {
                     float fractionCovered;
                     float endY;
                     float endAlpha;
-                    if (deltaY > 0 && deltaYAbs > mEditNew.getHeight()) {
-                        fractionCovered = (deltaYAbs / mEditNew.getHeight()) > 1 ? 1 : 0;
-                        endY = mEditNew.getHeight();
+                    if (deltaY > 0 && deltaYAbs > mEditView.getHeight()) {
+                        fractionCovered = (deltaYAbs / mEditView.getHeight()) > 1 ? 1 : 0;
+                        endY = mEditView.getHeight();
 //                        endAlpha = 0;
                         showEditNew = true;
 
                     } else {
                         // Not far enough - animate it back
-                        fractionCovered = 1 - (deltaYAbs / mEditNew.getHeight());
+                        fractionCovered = 1 - (deltaYAbs / mEditView.getHeight());
                         endY = 0;
 //                        endAlpha = 1;
                         showEditNew = false;
@@ -499,12 +494,12 @@ public class ItemLineFrameActivity extends Activity {
 
                     if(showEditNew)
                     {
-                        mEditNew.requestFocus();
-                        mEditNew.setInputType(InputType.TYPE_CLASS_TEXT);
+                        mEditView.requestFocus();
+                        mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
                         //打开softinput软键盘
-                        mEditNew.setSelection(mEditNew.getText().length());
+                        mEditView.setSelection(mEditView.getText().length());
                         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(mEditNew, InputMethodManager.SHOW_IMPLICIT);
+                        mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
                     }
 
                 }
@@ -529,26 +524,26 @@ public class ItemLineFrameActivity extends Activity {
     //关闭遮罩
     public void showoff(View view) {
 
-        mEditNew.animate().setDuration(1000).translationX(-mEditNew.getWidth()).withEndAction(new Runnable() {
+        mEditView.animate().setDuration(1000).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
             @Override
             public void run() {
                 mCover.setVisibility(View.GONE);
                 myListView.animate().translationY(0).setDuration(1000).alpha(1).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        mEditNew.setTranslationX(0);
+                        mEditView.setTranslationX(0);
                     }
                 });
             }
         });
-        mEditNew.setInputType(InputType.TYPE_NULL);
+        mEditView.setInputType(InputType.TYPE_NULL);
 
         showEditNew=false;
 
         myListView.requestFocus();
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+                .hideSoftInputFromWindow(mEditView.getWindowToken(), 0);
 
     }
     //完成后关闭遮罩
@@ -556,9 +551,9 @@ public class ItemLineFrameActivity extends Activity {
     {
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditNew.getWindowToken(), 0);
+                .hideSoftInputFromWindow(mEditView.getWindowToken(), 0);
 
-        final String content = mEditNew.getText().toString();
+        final String content = mEditView.getText().toString();
         if(TextUtils.isEmpty(content))
         {
             showoff(null);
@@ -570,14 +565,14 @@ public class ItemLineFrameActivity extends Activity {
             return;
         }
 
-        mEditNew.animate().setDuration(500).alpha(0);
+        mEditView.animate().setDuration(500).alpha(0);
         myListView.animate().translationY(0).setDuration(500).alpha(1).withEndAction(new Runnable() {
             @Override
             public void run() {
                 mCover.setVisibility(View.GONE);
-                mEditNew.setAlpha(1);
-                mEditNew.setText("");
-                mEditNew.setInputType(InputType.TYPE_NULL);
+                mEditView.setAlpha(1);
+                mEditView.setText("");
+                mEditView.setInputType(InputType.TYPE_NULL);
                 if (mUpdateItemId == 0) {
                     postNewContent(content);  //处理一些保存数据的操作
                 }

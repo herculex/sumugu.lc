@@ -19,7 +19,7 @@
     </RelativeLayout>
     <EditText
         style="@style/Base.TextAppearance.AppCompat.Body1"
-        android:id="@+id/edit_new"
+        android:id="@+id/edit_view"
         android:background="#fff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
