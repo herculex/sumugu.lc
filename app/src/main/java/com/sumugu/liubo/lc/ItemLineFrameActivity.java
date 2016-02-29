@@ -52,16 +52,16 @@ public class ItemLineFrameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
-        if(mCover==null)
-            mCover=(RelativeLayout)findViewById(R.id.layer_cover);
-
-        findViewById(R.id.layer_cover).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(showEditNew)
-                    finishoff();
-            }
-        });
+        if(mCover==null) {
+            mCover = (RelativeLayout) findViewById(R.id.layer_cover);
+            mCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (showEditView)
+                        finishoff();
+                }
+            });
+        }
         mEditView = (EditText) findViewById(R.id.edit_view);
         mEditView.setInputType(InputType.TYPE_NULL);
 
@@ -257,7 +257,7 @@ public class ItemLineFrameActivity extends Activity {
 
                         //打开遮罩
                         showup(null);
-                        showEditNew=true;
+                        showEditView =true;
 
                     }
                 }
@@ -389,7 +389,7 @@ public class ItemLineFrameActivity extends Activity {
     boolean mListSwiping = false;
     int mListSwipeSlop = -1;
     float mListDownY = 0;
-    boolean showEditNew = false;
+    boolean showEditView = false;
     RelativeLayout mCover;
 
     @Override
@@ -437,7 +437,7 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 if (mListSwiping) {
 
-                    if (showEditNew)
+                    if (showEditView)
                         myListView.setTranslationY(y - mListDownY + mEditView.getHeight());
                     else
                         myListView.setTranslationY(y - mListDownY);
@@ -466,14 +466,14 @@ public class ItemLineFrameActivity extends Activity {
                         fractionCovered = (deltaYAbs / mEditView.getHeight()) > 1 ? 1 : 0;
                         endY = mEditView.getHeight();
 //                        endAlpha = 0;
-                        showEditNew = true;
+                        showEditView = true;
 
                     } else {
                         // Not far enough - animate it back
                         fractionCovered = 1 - (deltaYAbs / mEditView.getHeight());
                         endY = 0;
 //                        endAlpha = 1;
-                        showEditNew = false;
+                        showEditView = false;
 
                     }
                     long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
@@ -482,7 +482,7 @@ public class ItemLineFrameActivity extends Activity {
                             .withEndAction(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (showEditNew) {
+                                    if (showEditView) {
                                         //
                                         showup(null);
                                         //
@@ -492,7 +492,7 @@ public class ItemLineFrameActivity extends Activity {
                                 }
                             });
 
-                    if(showEditNew)
+                    if(showEditView)
                     {
                         mEditView.requestFocus();
                         mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -538,7 +538,7 @@ public class ItemLineFrameActivity extends Activity {
         });
         mEditView.setInputType(InputType.TYPE_NULL);
 
-        showEditNew=false;
+        showEditView =false;
 
         myListView.requestFocus();
         //隐藏软键盘
@@ -586,7 +586,7 @@ public class ItemLineFrameActivity extends Activity {
             }
         });
 
-        showEditNew=false;
+        showEditView =false;
     }
 
     private boolean updateContent(String content)
