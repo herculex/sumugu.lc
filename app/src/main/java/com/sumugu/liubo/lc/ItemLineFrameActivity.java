@@ -572,6 +572,7 @@ public class ItemLineFrameActivity extends Activity {
 //        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
 
         mUpdateItemId=0;    //恢复默认
+
         return count;
     }
     private boolean postNewContent(String content)
