@@ -243,7 +243,7 @@ public class ItemLineFrameActivity extends Activity {
                         myListView.animate().translationY(mEditView.getHeight()).alpha(0.5f).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
                         //打开遮罩，进入编辑状态
-                        showUp(null);
+                        showUp();
                         showEditView =true;
 
                     }
@@ -465,7 +465,7 @@ public class ItemLineFrameActivity extends Activity {
                                 public void run() {
                                     if (showEditView) {
                                         //
-                                        showUp(null);
+                                        showUp();
                                         myListView.setAlpha(0.5f);
                                         //
                                     } else {
@@ -485,8 +485,8 @@ public class ItemLineFrameActivity extends Activity {
     }
 
 
-    //打开遮罩
-    private void showUp(View view)
+    //打开遮罩，并进入编辑状态
+    private void showUp()
     {
         mCover.setVisibility(View.VISIBLE);
         mCover.setTranslationY(myListView.getTranslationY());
@@ -495,6 +495,7 @@ public class ItemLineFrameActivity extends Activity {
         mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
         mEditView.setSelection(mEditView.getText().length());
 
+        //打开软键盘
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
     }
