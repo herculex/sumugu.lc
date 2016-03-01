@@ -295,12 +295,12 @@ public class ItemLineFrameActivity extends Activity {
 
         Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
 
-//        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
-        //
+//      getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
 
         final ViewTreeObserver observer = listview.getViewTreeObserver();
+        // TODO: 16/3/1 删除Item的之后的动画，超过一页的，从最低开始删除，APP会崩溃
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {    // TODO: 16/3/1 删除Item的之后的动画，超过一页的，从最低开始删除，APP会崩溃
+            public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
                 boolean firstAnimation = true;
                 int firstVisiblePosition = listview.getFirstVisiblePosition();
