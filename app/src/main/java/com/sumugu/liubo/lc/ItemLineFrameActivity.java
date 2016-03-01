@@ -554,7 +554,7 @@ public class ItemLineFrameActivity extends Activity {
         showEditView =false;
     }
 
-    private boolean updateContent(String content)
+    private int updateContent(String content)
     {
         Uri uri = ItemContract.CONTENT_URI;
         String where = ItemContract.Column.ITEM_ID + "=?";
@@ -571,14 +571,7 @@ public class ItemLineFrameActivity extends Activity {
 //        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
 
         mUpdateItemId=0;    //恢复默认
-        if(count>0)
-        {
-            Log.d(TAG,"updated item:"+String.valueOf(mUpdateItemId));
-            return true;
-        }
-        else{
-            return false;
-        }
+        return count;
     }
     private boolean postNewContent(String content)
     {
