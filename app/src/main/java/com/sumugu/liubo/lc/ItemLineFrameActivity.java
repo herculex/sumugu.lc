@@ -300,7 +300,7 @@ public class ItemLineFrameActivity extends Activity {
 
         final ViewTreeObserver observer = listview.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {
+            public boolean onPreDraw() {    // TODO: 16/3/1 删除Item的之后的动画，超过一页的，从最低开始删除，APP会崩溃
                 observer.removeOnPreDrawListener(this);
                 boolean firstAnimation = true;
                 int firstVisiblePosition = listview.getFirstVisiblePosition();
@@ -486,7 +486,7 @@ public class ItemLineFrameActivity extends Activity {
 
 
     //打开遮罩
-    public void showUp(View view)
+    private void showUp(View view)
     {
         mCover.setVisibility(View.VISIBLE);
         mCover.setTranslationY(myListView.getTranslationY());
@@ -500,7 +500,7 @@ public class ItemLineFrameActivity extends Activity {
     }
 
     //完成后关闭遮罩
-    public void finishOff()
+    private void finishOff()
     {
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
