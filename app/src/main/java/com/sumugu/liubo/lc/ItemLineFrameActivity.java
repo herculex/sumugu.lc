@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class ItemLineFrameActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     if (showEditView)
-                        finishoff();
+                        finishOff();
                 }
             });
         }
@@ -73,7 +74,7 @@ public class ItemLineFrameActivity extends Activity {
                 Log.d(TAG, "softinput press what: " + String.valueOf(actionId));
                 if (EditorInfo.IME_ACTION_DONE == actionId) {
                     Log.d(TAG, "you pressed the action done!");
-                    finishoff();
+                    finishOff();
                     return true;
                 }
 
@@ -136,12 +137,29 @@ public class ItemLineFrameActivity extends Activity {
                     if (mSwiping) {
                         v.setTranslationX((x - mDownX));
 //                        v.setAlpha(1 - deltaXAbs / v.getWidth());
-                        if(deltaXAbs>v.getWidth()/3)
+
+                        //设置提醒背景色
+                        if(deltaXAbs>v.getWidth()/4)
                         {
                             if(deltaX<0)
-                                v.setTranslationX(-v.getWidth()/3);
+                                v.setBackgroundColor(Color.GREEN);
                             else
-                                v.setTranslationX(v.getWidth()/3);
+                                v.setBackgroundColor(Color.RED);
+                        }
+                        else
+                        {
+                            v.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
+                        }
+
+                        //设置固定距离
+                        if(deltaXAbs>v.getWidth()/3)
+                        {
+                            if(deltaX<0) {
+                                v.setTranslationX(-v.getWidth() / 3);
+                            }
+                            else {
+                                v.setTranslationX(v.getWidth() / 3);
+                            }
                         }
                     }
                 }
@@ -154,18 +172,18 @@ public class ItemLineFrameActivity extends Activity {
                         float deltaX = x - mDownX;
                         float deltaXAbs = Math.abs(deltaX);
                         float fractionCovered;
-                        float endX;
+                        float endX=0;
                         float endAlpha;
                         final boolean remove;
                         final int swipedResult;
                         if (deltaXAbs > v.getWidth() / 4) {
                             // Greater than a quarter of the width - animate it out
                             fractionCovered = deltaXAbs / v.getWidth();
-                            endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
                             endAlpha = 0;
                             if(deltaX>0) {
                                 remove = true;
                                 swipedResult=1;// is deleted.
+                                endX = v.getWidth();
                             }
                             else
                             {
@@ -175,7 +193,6 @@ public class ItemLineFrameActivity extends Activity {
                         } else {
                             // Not far enough - animate it back
                             fractionCovered = 1 - (deltaXAbs / v.getWidth());
-                            endX = 0;
                             endAlpha = 1;
                             remove = false;
                             swipedResult=0; //nothing happend.
@@ -197,66 +214,36 @@ public class ItemLineFrameActivity extends Activity {
                                     @Override
                                     public void run() {
                                         // Restore animated values
+                                        v.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
                                         v.setAlpha(1);
                                         v.setTranslationX(0);
                                         contaier.setAlpha(1);
-                                        if (swipedResult>0) {
-                                            animateRemoval(myListView, v,swipedResult);
-                                            //
-//                                            int position = myListView.getPositionForView(v);
-//                                            long id=myCursorAdapter.getItemId(position);
-//                                            int id = myListView.getChildAt(position).getId(); ＝这个得不到id
-//                                            Log.d(TAG, "LV__POSITION FOR VIEW:" + String.valueOf(position) + ",ID=" + String.valueOf(id));
-//                                          方法1
-//                                            String where = ItemContract.Column.ITEM_ID +"=" +String.valueOf(id);
-//                                            int rowid = getContentResolver().delete(ItemContract.CONTENT_URI, where,null);
-//                                          方法2
-//                                            Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(id));
-//                                            int count=getContentResolver().delete(uri,null,null);
-//
-//                                            Log.d(TAG,"LV__POSITION FOR Delete="+String.valueOf(count));
-//                                          上面的方法移入animateRemoval方法中
-                                            //
-                                            myListView.setEnabled(true);// animateRemoval(myListView, v);-逻辑里有这句
-                                        } else {
-                                            mSwiping = false;
-                                            myListView.setEnabled(true);
+                                        if (swipedResult==1) {
+                                            animateRemoval(myListView, v);
                                         }
+                                        else if(swipedResult==2)
+                                        {
+                                            updateToFinished(myListView,v);
+                                        }
+                                        else {
+                                            mSwiping = false;
+                                        }
+                                        myListView.setEnabled(true);
                                     }
                                 });
                     }
                     else
                     {
                         //no swiping ,but click
-                        //scroll listview
                         int currentPosition = myListView.getPositionForView(v);
-//                        int firstposition = myListView.getFirstVisiblePosition();
-//                        mScrollDistance=(myListView.getChildAt(currentPosition).getTop()
-//                                +myListView.getChildAt(currentPosition).getHeight()
-//                                +myListView.getDividerHeight());
-//
-//                        mCurrentPosition=currentPosition;
-//                        mCurrentPositionTop=myListView.getChildAt(currentPosition).getTop();
-//
-////                        myListView.setScrollY(mScrollDistance);//向上
-//                        myListView.smoothScrollBy(mScrollDistance,1000);
-//                        Log.d(TAG, "textView no swiping here "+String.valueOf(delta));
 
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
-
-                        //set textview gone, and set edittext visibility
                         mEditView.setText(((TextView) v).getText());
 
-                        mEditView.requestFocus();
-                        mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
-                        mEditView.setSelection(mEditView.getText().length());
-                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
+                        myListView.animate().translationY(mEditView.getHeight()).alpha(0.5f).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
-                        myListView.setTranslationY(mEditView.getHeight());
-
-                        //打开遮罩
-                        showup(null);
+                        //打开遮罩，进入编辑状态
+                        showUp(null);
                         showEditView =true;
 
                     }
@@ -269,8 +256,25 @@ public class ItemLineFrameActivity extends Activity {
             return true;
         }
     };
+    private int updateToFinished(final ListView listView,final View viewToFinish)
+    {
+        int finishPosition= listView.getPositionForView(viewToFinish);
+        long targetId = myCursorAdapter.getItemId(finishPosition);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
+
+        //获取查询结果各项值
+        Cursor cursor = myCursorAdapter.getCursor();
+        int finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+        //
+        ContentValues values = new ContentValues();
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
+        int count = getContentResolver().update(uri, values, null, null);
+
+        return count;
+    }
+
     HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
-    private void animateRemoval(final ListView listview, View viewToRemove,int resultType) {
+    private void animateRemoval(final ListView listview, View viewToRemove) {
 
         final int deletePosition = listview.getPositionForView(viewToRemove);
         int firstVisiblePosition = listview.getFirstVisiblePosition();
@@ -287,32 +291,9 @@ public class ItemLineFrameActivity extends Activity {
         //只有删除数据，更新cursoradapter
         long targetId=myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
-        if(1==resultType){
+        int count = getContentResolver().delete(uri,null,null);
 
-            int count = getContentResolver().delete(uri,null,null);
-            Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
-        }
-        else if(2==resultType) {
-
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if(!cursor.moveToFirst())
-                return;
-            //获取查询结果各项值
-            int finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
-            Log.d(TAG,"FINISHED==="+String.valueOf(finshed));
-            //
-            ContentValues values = new ContentValues();
-            values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
-            int count = getContentResolver().update(uri, values, null, null);
-            Log.d(TAG, "update ITEM!!!"+String.valueOf(count));
-            return; //结束
-        }
-        else
-        {
-            //
-            return;
-            //结束
-        }
+        Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
 
 //        getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
         //
@@ -484,24 +465,14 @@ public class ItemLineFrameActivity extends Activity {
                                 public void run() {
                                     if (showEditView) {
                                         //
-                                        showup(null);
+                                        showUp(null);
+                                        myListView.setAlpha(0.5f);
                                         //
                                     } else {
                                         mListSwiping = false;
                                     }
                                 }
                             });
-
-                    if(showEditView)
-                    {
-                        mEditView.requestFocus();
-                        mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
-                        //打开softinput软键盘
-                        mEditView.setSelection(mEditView.getText().length());
-                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
-                    }
-
                 }
             }
             mListPressed = false;
@@ -515,76 +486,70 @@ public class ItemLineFrameActivity extends Activity {
 
 
     //打开遮罩
-    public void showup(View view)
+    public void showUp(View view)
     {
         mCover.setVisibility(View.VISIBLE);
         mCover.setTranslationY(myListView.getTranslationY());
-        myListView.setAlpha(0.5f);
+
+        mEditView.requestFocus();
+        mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
+        mEditView.setSelection(mEditView.getText().length());
+
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.showSoftInput(mEditView, InputMethodManager.SHOW_IMPLICIT);
     }
-    //关闭遮罩
-    public void showoff(View view) {
 
-        mEditView.animate().setDuration(1000).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                mCover.setVisibility(View.GONE);
-                myListView.animate().translationY(0).setDuration(1000).alpha(1).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        mEditView.setTranslationX(0);
-                    }
-                });
-            }
-        });
-        mEditView.setInputType(InputType.TYPE_NULL);
-
-        showEditView =false;
-
-        myListView.requestFocus();
-        //隐藏软键盘
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditView.getWindowToken(), 0);
-
-    }
     //完成后关闭遮罩
-    public void finishoff()
+    public void finishOff()
     {
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mEditView.getWindowToken(), 0);
+
+        mEditView.setInputType(InputType.TYPE_NULL);
 
         final String content = mEditView.getText().toString();
         if(TextUtils.isEmpty(content))
         {
-            showoff(null);
+            mEditView.animate().setDuration(500).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
+                @Override
+                public void run() { // TODO: 16/3/1 统一编辑框消失动画时间
+                    mCover.setVisibility(View.GONE);
+                    myListView.animate().translationY(0).setDuration(500).alpha(1).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {// TODO: 16/3/1 统一列表动画时间
+                            mEditView.setTranslationX(0);
+                            myListView.requestFocus();
+                        }
+                    });
+                }
+            });
 
             if(mUpdateItemId!=0) {
                 getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId)), null, null);
-                Log.d(TAG,"Editor EMPTY! Delete it!!");
+                mUpdateItemId=0;
+                Log.d(TAG, "Editor EMPTY! Delete it!!");
             }
-            return;
         }
+        else {
+            mEditView.animate().setDuration(500).alpha(0);// TODO: 16/3/1 编辑框消失动画时间
 
-        mEditView.animate().setDuration(500).alpha(0);
-        myListView.animate().translationY(0).setDuration(500).alpha(1).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                mCover.setVisibility(View.GONE);
-                mEditView.setAlpha(1);
-                mEditView.setText("");
-                mEditView.setInputType(InputType.TYPE_NULL);
-                if (mUpdateItemId == 0) {
-                    postNewContent(content);  //处理一些保存数据的操作
+            myListView.animate().translationY(0).alpha(1).setDuration(500).withEndAction(new Runnable() {
+                @Override
+                public void run() { // TODO: 16/3/1 统一列表位移复位的动画时间
+                    mCover.setVisibility(View.GONE);
+                    mEditView.setAlpha(1);
+                    mEditView.setText("");
+                    if (mUpdateItemId == 0) {
+                        postNewContent(content);  //处理一些保存数据的操作
+                    }
+                    else {
+                        updateContent(content);
+                    }
+                    myListView.requestFocus();
                 }
-                else {
-//                    myListView.smoothScrollBy(-mScrollDistance,1000);
-//                    mScrollDistance=0;
-                    updateContent(content);
-
-                }
-                myListView.requestFocus();
-            }
-        });
+            });
+        }
 
         showEditView =false;
     }
