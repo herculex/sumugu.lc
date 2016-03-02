@@ -240,7 +240,7 @@ public class ItemLineFrameActivity extends Activity {
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
                         mEditView.setText(((TextView) v).getText());
 
-                        myListView.animate().translationY(mEditView.getHeight()).alpha(0.5f).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
+                        myListView.animate().translationY(mEditView.getHeight()).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
                         //打开遮罩，进入编辑状态
                         showUp();
@@ -466,7 +466,6 @@ public class ItemLineFrameActivity extends Activity {
                                     if (showEditView) {
                                         //
                                         showUp();
-                                        myListView.setAlpha(0.5f);
                                         //
                                     } else {
                                         mListSwiping = false;
@@ -489,7 +488,7 @@ public class ItemLineFrameActivity extends Activity {
     private void showUp()
     {
         mCover.setVisibility(View.VISIBLE);
-        mCover.setTranslationY(myListView.getTranslationY());
+        mCover.setTranslationY(mEditView.getHeight());
 
         mEditView.requestFocus();
         mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -515,8 +514,13 @@ public class ItemLineFrameActivity extends Activity {
             mEditView.animate().setDuration(500).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一编辑框消失动画时间
-                    mCover.setVisibility(View.GONE);
-                    myListView.animate().translationY(0).setDuration(500).alpha(1).withEndAction(new Runnable() {
+                    mCover.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCover.setVisibility(View.GONE);
+                        }
+                    });
+                    myListView.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
                         public void run() {// TODO: 16/3/1 统一列表动画时间
                             mEditView.setTranslationX(0);
@@ -534,11 +538,15 @@ public class ItemLineFrameActivity extends Activity {
         }
         else {
             mEditView.animate().setDuration(500).alpha(0);// TODO: 16/3/1 编辑框消失动画时间
-
+            mCover.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mCover.setVisibility(View.GONE);
+                }
+            });
             myListView.animate().translationY(0).alpha(1).setDuration(500).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一列表位移复位的动画时间
-                    mCover.setVisibility(View.GONE);
                     mEditView.setAlpha(1);
                     mEditView.setText("");
                     if (mUpdateItemId == 0) {

@@ -35,6 +35,7 @@
     </com.sumugu.liubo.lc.ui.MyListView>
     <RelativeLayout
         android:id="@+id/layer_cover"
+        android:background="#b0000000"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
