@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,7 +25,9 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +35,8 @@ import android.widget.TextView;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -48,10 +53,32 @@ public class ItemLineFrameActivity extends Activity {
     private int mCurrentPosition=0;
     private int mCurrentPositionTop=0;
 
+    private LinearLayout mContainerEditor;
+    private TextView mTextReminder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
+
+        mContainerEditor=(LinearLayout)findViewById(R.id.container_editor);
+        mTextReminder=(TextView)findViewById(R.id.text_reminder);
+        mTextReminder.setOnClickListener(new View.OnClickListener() {
+            Calendar today = Calendar.getInstance();
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog dialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(i, i1, i2);
+                        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+                        mTextReminder.setText(formater.format(cal));
+                    }
+                }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(today.DAY_OF_MONTH));
+            }
+        });
+
 
         if(mCover==null) {
             mCover = (RelativeLayout) findViewById(R.id.layer_cover);
@@ -419,7 +446,7 @@ public class ItemLineFrameActivity extends Activity {
                 if (mListSwiping) {
 
                     if (showEditView)
-                        myListView.setTranslationY(y - mListDownY + mEditView.getHeight());
+                        myListView.setTranslationY(y - mListDownY + mContainerEditor.getHeight());
                     else
                         myListView.setTranslationY(y - mListDownY);
 //                    myListView.setAlpha(1 - deltaYAbs / myListView.getWidth());
@@ -443,15 +470,15 @@ public class ItemLineFrameActivity extends Activity {
                     float fractionCovered;
                     float endY;
                     float endAlpha;
-                    if (deltaY > 0 && deltaYAbs > mEditView.getHeight()) {
-                        fractionCovered = (deltaYAbs / mEditView.getHeight()) > 1 ? 1 : 0;
-                        endY = mEditView.getHeight();
+                    if (deltaY > 0 && deltaYAbs > mContainerEditor.getHeight()) {
+                        fractionCovered = (deltaYAbs / mContainerEditor.getHeight()) > 1 ? 1 : 0;
+                        endY = mContainerEditor.getHeight();
 //                        endAlpha = 0;
                         showEditView = true;
 
                     } else {
                         // Not far enough - animate it back
-                        fractionCovered = 1 - (deltaYAbs / mEditView.getHeight());
+                        fractionCovered = 1 - (deltaYAbs / mContainerEditor.getHeight());
                         endY = 0;
 //                        endAlpha = 1;
                         showEditView = false;
