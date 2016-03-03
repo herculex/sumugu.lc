@@ -284,7 +284,7 @@ public class ItemLineFrameActivity extends Activity {
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
                         mEditView.setText(((TextView) v).getText());
 
-                        myListView.animate().translationY(mEditView.getHeight()).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
+                        myListView.animate().translationY(mContainerEditor.getHeight()).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
                         //打开遮罩，进入编辑状态
                         showUp();
