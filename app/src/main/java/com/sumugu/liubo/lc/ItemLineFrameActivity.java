@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -55,6 +56,7 @@ public class ItemLineFrameActivity extends Activity {
 
     private LinearLayout mContainerEditor;
     private TextView mTextReminder;
+    private long mReminder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +73,26 @@ public class ItemLineFrameActivity extends Activity {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                         Calendar cal = Calendar.getInstance();
-                        cal.set(i, i1, i2);
+//                        cal.set(i,i1,i2);
+                        cal.set(Calendar.YEAR,i);
+                        cal.set(Calendar.MONTH,i1);
+                        cal.set(Calendar.DAY_OF_MONTH,i2);
+
                         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-                        mTextReminder.setText(formater.format(cal));
+                        mTextReminder.setText(formater.format(cal.getTime()));
+                        mReminder=cal.getTimeInMillis();
                     }
                 }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(today.DAY_OF_MONTH));
+
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mTextReminder.setText("Add Reminder");
+                        mReminder=0;
+                    }
+                });
+
+                dialog.show();
             }
         });
 
@@ -515,7 +532,7 @@ public class ItemLineFrameActivity extends Activity {
     private void showUp()
     {
         mCover.setVisibility(View.VISIBLE);
-        mCover.setTranslationY(mEditView.getHeight());
+        mCover.setTranslationY(mContainerEditor.getHeight());
 
         mEditView.requestFocus();
         mEditView.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -538,7 +555,7 @@ public class ItemLineFrameActivity extends Activity {
         final String content = mEditView.getText().toString();
         if(TextUtils.isEmpty(content))
         {
-            mEditView.animate().setDuration(500).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
+            mContainerEditor.animate().setDuration(500).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一编辑框消失动画时间
                     mCover.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
@@ -550,7 +567,7 @@ public class ItemLineFrameActivity extends Activity {
                     myListView.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
                         public void run() {// TODO: 16/3/1 统一列表动画时间
-                            mEditView.setTranslationX(0);
+                            mContainerEditor.setTranslationX(0);
                             myListView.requestFocus();
                         }
                     });
@@ -564,7 +581,7 @@ public class ItemLineFrameActivity extends Activity {
             }
         }
         else {
-            mEditView.animate().setDuration(500).alpha(0);// TODO: 16/3/1 编辑框消失动画时间
+            mContainerEditor.animate().setDuration(500).alpha(0);// TODO: 16/3/1 编辑框消失动画时间
             mCover.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
                 @Override
                 public void run() {
@@ -574,7 +591,7 @@ public class ItemLineFrameActivity extends Activity {
             myListView.animate().translationY(0).alpha(1).setDuration(500).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一列表位移复位的动画时间
-                    mEditView.setAlpha(1);
+                    mContainerEditor.setAlpha(1);
                     mEditView.setText("");
                     if (mUpdateItemId == 0) {
                         postNewContent(content);  //处理一些保存数据的操作
