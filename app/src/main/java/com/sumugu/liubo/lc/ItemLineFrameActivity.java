@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -87,8 +88,8 @@ public class ItemLineFrameActivity extends Activity {
                 dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mTextReminder.setText("Add Reminder");
                         mReminder=0;
+                        mTextReminder.setText("");
                     }
                 });
 
@@ -283,6 +284,7 @@ public class ItemLineFrameActivity extends Activity {
 
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
                         mEditView.setText(((TextView) v).getText());
+                        // TODO: 16/3/3 显示提醒日期,赋值mReminder
 
                         myListView.animate().translationY(mContainerEditor.getHeight()).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
@@ -300,6 +302,11 @@ public class ItemLineFrameActivity extends Activity {
             return true;
         }
     };
+    private int deleteAlsoReminder()
+    {
+        // TODO: 16/3/3 删除item之后,同时要取消提醒
+        return 0;
+    }
     private int updateToFinished(final ListView listView,final View viewToFinish)
     {
         int finishPosition= listView.getPositionForView(viewToFinish);
@@ -313,6 +320,8 @@ public class ItemLineFrameActivity extends Activity {
         ContentValues values = new ContentValues();
         values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
         int count = getContentResolver().update(uri, values, null, null);
+
+        // TODO: 16/3/3 取消提醒,或设定提醒
 
         return count;
     }
@@ -620,10 +629,17 @@ public class ItemLineFrameActivity extends Activity {
         ContentValues values = new ContentValues();
         values.put(ItemContract.Column.ITEM_CONTENT,content);
 
+        if(0!=mReminder) {
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
+            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+        }
+
         int count = getContentResolver().update(uri,values,where,params);   //方法1
 //        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
 
         mUpdateItemId=0;    //恢复默认
+        mReminder=0;    //return to 0
+        mTextReminder.setText("");
 
         return count;
     }
@@ -682,6 +698,7 @@ public class ItemLineFrameActivity extends Activity {
             View view = getLayoutInflater().inflate(R.layout.item_frame, null);
 
             holder.textView = (TextView) view.findViewById(R.id.text_content);
+            holder.textReminder =(TextView)view.findViewById(R.id.text_reminder);
 
 //            holder.textView.setOnTouchListener(mTouchListener);
 //            holder.textView.setOnClickListener(new View.OnClickListener() {
@@ -704,15 +721,30 @@ public class ItemLineFrameActivity extends Activity {
 
             String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
             String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+            long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
             int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
             holder.textView.setText(content);
-            if(finish==1)
-                holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);   //删除线
-            else
-                holder.textView.getPaint().setFlags(0);
 
-            holder.textView.getPaint().setAntiAlias(true);  //抗锯齿
+            if(reminder>0) {
+                holder.textReminder.setText(android.text.format.DateFormat.format("yyyy-MM-dd",reminder));
+                holder.textReminder.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.textReminder.setVisibility(View.GONE);
+            }
+            //删除线
+            if(finish==1) {
+                holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textReminder.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+            else {
+                holder.textView.getPaint().setFlags(0);
+                holder.textReminder.getPaint().setFlags(0);
+            }
+            //抗锯齿
+            holder.textView.getPaint().setAntiAlias(true);
+            holder.textReminder.getPaint().setAntiAlias(true);
 
             //完成赋值
         }
@@ -729,6 +761,7 @@ public class ItemLineFrameActivity extends Activity {
 
         class MyViewHolder {
             TextView textView;
+            TextView textReminder;
             TextView deleteView;
             TextView doneView;
         }
