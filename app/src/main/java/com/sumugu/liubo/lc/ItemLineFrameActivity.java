@@ -45,101 +45,6 @@ import java.util.HashMap;
 public class ItemLineFrameActivity extends Activity {
 
     final static String TAG = "lc_ItemLineFrame";
-    private MyListView myListView;
-    private MyCursorAdapter myCursorAdapter;
-    private EditText mEditView;
-    private MyLoaderCallback myCursorLoader;
-
-    private long mUpdateItemId=0;
-    private int mScrollDistance=0;
-    private int mCurrentPosition=0;
-    private int mCurrentPositionTop=0;
-
-    private LinearLayout mContainerEditor;
-    private TextView mTextReminder;
-    private long mReminder;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_line_frame);
-
-        mContainerEditor=(LinearLayout)findViewById(R.id.container_editor);
-        mTextReminder=(TextView)findViewById(R.id.text_reminder);
-        mTextReminder.setOnClickListener(new View.OnClickListener() {
-            Calendar today = Calendar.getInstance();
-            @Override
-            public void onClick(View view) {
-
-                if(!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
-                    return;
-
-                DatePickerDialog dialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        Calendar cal = Calendar.getInstance();
-//                        cal.set(i,i1,i2);
-                        cal.set(Calendar.YEAR,i);
-                        cal.set(Calendar.MONTH,i1);
-                        cal.set(Calendar.DAY_OF_MONTH,i2);
-
-                        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-                        mTextReminder.setText(formater.format(cal.getTime()));
-                        mReminder=cal.getTimeInMillis();
-                    }
-                }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(today.DAY_OF_MONTH));
-
-                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mReminder=0;
-                        mTextReminder.setText("");
-                    }
-                });
-
-                dialog.show();
-            }
-        });
-
-
-        if(mCover==null) {
-            mCover = (RelativeLayout) findViewById(R.id.layer_cover);
-            mCover.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (showEditView)
-                        finishOff();
-                }
-            });
-        }
-        mEditView = (EditText) findViewById(R.id.edit_view);
-        mEditView.setInputType(InputType.TYPE_NULL);
-
-        //软键盘“完成” 隐藏软键盘，并打开遮罩
-        //其实估计都不用写代码来隐藏软键盘，因为EditView，的Type为Text类型，“回车”变成了“完成”状态
-        mEditView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Log.d(TAG, "softinput press what: " + String.valueOf(actionId));
-                if (EditorInfo.IME_ACTION_DONE == actionId) {
-                    Log.d(TAG, "you pressed the action done!");
-                    finishOff();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-        myListView = (MyListView) findViewById(R.id.list_view);
-        myCursorAdapter = new MyCursorAdapter(this, null, 0);
-        myListView.setAdapter(myCursorAdapter);
-
-        myCursorLoader = new MyLoaderCallback(this, myCursorAdapter, 5);
-        getLoaderManager().initLoader(5, null,myCursorLoader);
-
-    }
-
     /**
      * Handle touch events to fade/move dragged items as they are swiped out
      * 用于Textview的onTouchListner
@@ -149,6 +54,29 @@ public class ItemLineFrameActivity extends Activity {
     boolean mItemPressed = false;
     int SWIPE_DURATION = 1000;
     int MOVE_DURATION = 2000;
+    HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
+    GestureDetector gestureDetector;
+    boolean mListPressed = false;
+    boolean mListSwiping = false;
+    int mListSwipeSlop = -1;
+    float mListDownY = 0;
+    boolean showEditView = false;
+    RelativeLayout mCover;
+    private MyListView myListView;
+    private MyCursorAdapter myCursorAdapter;
+    private EditText mEditView;
+    private MyLoaderCallback myCursorLoader;
+    private long mUpdateItemId=0;
+    private int mScrollDistance=0;
+    private int mCurrentPosition=0;
+    private int mCurrentPositionTop=0;
+    private LinearLayout mContainerEditor;
+    private TextView mTextReminder;
+
+    /*
+    * 用本Activity的onTcouhEvent ，以控制各层级的位移
+     */
+    private long mReminder;
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         float mDownX;
         private int mSwipeSlop = -1;
@@ -306,6 +234,88 @@ public class ItemLineFrameActivity extends Activity {
             return true;
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_item_line_frame);
+
+        mContainerEditor=(LinearLayout)findViewById(R.id.container_editor);
+        mTextReminder=(TextView)findViewById(R.id.text_reminder);
+        mTextReminder.setOnClickListener(new View.OnClickListener() {
+            Calendar today = Calendar.getInstance();
+            @Override
+            public void onClick(View view) {
+
+                if(!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
+                    return;
+
+                DatePickerDialog dialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        Calendar cal = Calendar.getInstance();
+//                        cal.set(i,i1,i2);
+                        cal.set(Calendar.YEAR,i);
+                        cal.set(Calendar.MONTH,i1);
+                        cal.set(Calendar.DAY_OF_MONTH,i2);
+
+                        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+                        mTextReminder.setText(formater.format(cal.getTime()));
+                        mReminder=cal.getTimeInMillis();
+                    }
+                }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(today.DAY_OF_MONTH));
+
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mReminder=0;
+                        mTextReminder.setText("");
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+
+        if(mCover==null) {
+            mCover = (RelativeLayout) findViewById(R.id.layer_cover);
+            mCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (showEditView)
+                        finishOff();
+                }
+            });
+        }
+        mEditView = (EditText) findViewById(R.id.edit_view);
+        mEditView.setInputType(InputType.TYPE_NULL);
+
+        //软键盘“完成” 隐藏软键盘，并打开遮罩
+        //其实估计都不用写代码来隐藏软键盘，因为EditView，的Type为Text类型，“回车”变成了“完成”状态
+        mEditView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.d(TAG, "softinput press what: " + String.valueOf(actionId));
+                if (EditorInfo.IME_ACTION_DONE == actionId) {
+                    Log.d(TAG, "you pressed the action done!");
+                    finishOff();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        myListView = (MyListView) findViewById(R.id.list_view);
+        myCursorAdapter = new MyCursorAdapter(this, null, 0);
+        myListView.setAdapter(myCursorAdapter);
+
+        myCursorLoader = new MyLoaderCallback(this, myCursorAdapter, 5);
+        getLoaderManager().initLoader(5, null,myCursorLoader);
+
+    }
+
     private void initEditorContent()
     {
         if(0==mUpdateItemId)
@@ -321,11 +331,13 @@ public class ItemLineFrameActivity extends Activity {
         }
 
     }
+
     private int deleteAlsoReminder()
     {
         // TODO: 16/3/3 删除item之后,同时要取消提醒
         return 0;
     }
+
     private int updateToFinished(final ListView listView,final View viewToFinish)
     {
         int finishPosition= listView.getPositionForView(viewToFinish);
@@ -349,7 +361,6 @@ public class ItemLineFrameActivity extends Activity {
         return count;
     }
 
-    HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
     private void animateRemoval(final ListView listview, View viewToRemove) {
 
         final int deletePosition = listview.getPositionForView(viewToRemove);
@@ -436,18 +447,6 @@ public class ItemLineFrameActivity extends Activity {
             }
         });
     }
-
-    /*
-    * 用本Activity的onTcouhEvent ，以控制各层级的位移
-     */
-
-    GestureDetector gestureDetector;
-    boolean mListPressed = false;
-    boolean mListSwiping = false;
-    int mListSwipeSlop = -1;
-    float mListDownY = 0;
-    boolean showEditView = false;
-    RelativeLayout mCover;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
