@@ -778,6 +778,7 @@ public class ItemLineFrameActivity extends Activity {
             if (view != convertView) {
                 // Add touch listener to every new view to track swipe motion
                 view.findViewById(R.id.text_content).setOnTouchListener(mTouchListener);
+                view.findViewById(R.id.text_reminder).setOnTouchListener(mTouchListener);
             }
             return view;
         }
