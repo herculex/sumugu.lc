@@ -315,7 +315,7 @@ public class ItemLineFrameActivity extends Activity {
         Cursor cursor = getContentResolver().query(uri,null,null,null,null);
         if(cursor.moveToFirst()){
             mEditView.setText(cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
-            mReminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+            mReminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
             if(0!=mReminder)
                 mTextReminder.setText(DateFormat.format("yyyy-MM-dd", mReminder));
         }
