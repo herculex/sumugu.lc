@@ -29,15 +29,16 @@
         />
 </LinearLayout>
     <LinearLayout
+        style="@style/Base.TextAppearance.AppCompat.Body1"
         android:id="@+id/container_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#fff">
         <TextView
             android:id="@+id/text_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff"
             android:gravity="left|center_vertical"
             android:padding="10dp"
             android:text="here we go!"
@@ -46,7 +47,6 @@
             android:id="@+id/text_reminder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
             android:paddingLeft="10dp"
             android:visibility="gone"/>
     </LinearLayout>

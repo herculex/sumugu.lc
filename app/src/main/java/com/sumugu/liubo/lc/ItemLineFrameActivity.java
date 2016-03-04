@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -36,7 +37,6 @@ import android.widget.TextView;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,6 +70,10 @@ public class ItemLineFrameActivity extends Activity {
             Calendar today = Calendar.getInstance();
             @Override
             public void onClick(View view) {
+
+                if(!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
+                    return;
+
                 DatePickerDialog dialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
@@ -151,6 +155,7 @@ public class ItemLineFrameActivity extends Activity {
 
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
+            final LinearLayout containerItem = (LinearLayout)v.getParent();
             if (mSwipeSlop < 0) {
                 mSwipeSlop = ViewConfiguration.get(ItemLineFrameActivity.this).
                         getScaledTouchSlop();
@@ -165,12 +170,12 @@ public class ItemLineFrameActivity extends Activity {
                     mDownX = event.getX();
                     break;
                 case MotionEvent.ACTION_CANCEL:
-                    v.setAlpha(1);
-                    v.setTranslationX(0);
+                    containerItem.setAlpha(1);
+                    containerItem.setTranslationX(0);
                     mItemPressed = false;
                     break;
                 case MotionEvent.ACTION_MOVE: {
-                    float x = event.getX() + v.getTranslationX();
+                    float x = event.getX() + containerItem.getTranslationX();
                     float deltaX = x - mDownX;
                     float deltaXAbs = Math.abs(deltaX);
                     if (!mSwiping) {
@@ -180,30 +185,30 @@ public class ItemLineFrameActivity extends Activity {
                         }
                     }
                     if (mSwiping) {
-                        v.setTranslationX((x - mDownX));
+                        containerItem.setTranslationX((x - mDownX));
 //                        v.setAlpha(1 - deltaXAbs / v.getWidth());
 
                         //设置提醒背景色
-                        if(deltaXAbs>v.getWidth()/4)
+                        if(deltaXAbs>containerItem.getWidth()/4)
                         {
                             if(deltaX<0)
-                                v.setBackgroundColor(Color.GREEN);
+                                containerItem.setBackgroundColor(Color.GREEN);
                             else
-                                v.setBackgroundColor(Color.RED);
+                                containerItem.setBackgroundColor(Color.RED);
                         }
                         else
                         {
-                            v.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
+                            containerItem.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
                         }
 
                         //设置固定距离
-                        if(deltaXAbs>v.getWidth()/3)
+                        if(deltaXAbs>containerItem.getWidth()/3)
                         {
                             if(deltaX<0) {
-                                v.setTranslationX(-v.getWidth() / 3);
+                                containerItem.setTranslationX(-containerItem.getWidth() / 3);
                             }
                             else {
-                                v.setTranslationX(v.getWidth() / 3);
+                                containerItem.setTranslationX(containerItem.getWidth() / 3);
                             }
                         }
                     }
@@ -213,7 +218,7 @@ public class ItemLineFrameActivity extends Activity {
                     Log.d(TAG,"TextVIEW____ACTION__UP");
                     // User let go - figure out whether to animate the view out, or back into place
                     if (mSwiping) {
-                        float x = event.getX() + v.getTranslationX();
+                        float x = event.getX() + containerItem.getTranslationX();
                         float deltaX = x - mDownX;
                         float deltaXAbs = Math.abs(deltaX);
                         float fractionCovered;
@@ -221,14 +226,14 @@ public class ItemLineFrameActivity extends Activity {
                         float endAlpha;
                         final boolean remove;
                         final int swipedResult;
-                        if (deltaXAbs > v.getWidth() / 4) {
+                        if (deltaXAbs > containerItem.getWidth() / 4) {
                             // Greater than a quarter of the width - animate it out
-                            fractionCovered = deltaXAbs / v.getWidth();
+                            fractionCovered = deltaXAbs / containerItem.getWidth();
                             endAlpha = 0;
                             if(deltaX>0) {
                                 remove = true;
                                 swipedResult=1;// is deleted.
-                                endX = v.getWidth();
+                                endX = containerItem.getWidth();
                             }
                             else
                             {
@@ -237,7 +242,7 @@ public class ItemLineFrameActivity extends Activity {
                             }
                         } else {
                             // Not far enough - animate it back
-                            fractionCovered = 1 - (deltaXAbs / v.getWidth());
+                            fractionCovered = 1 - (deltaXAbs / containerItem.getWidth());
                             endAlpha = 1;
                             remove = false;
                             swipedResult=0; //nothing happend.
@@ -249,26 +254,26 @@ public class ItemLineFrameActivity extends Activity {
                         // back at an appropriate speed.
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
-                        final View contaier=myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
+                        final View contaierDelDone=myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
 
                         if (swipedResult>0) {
-                            contaier.animate().alpha(0).setDuration(duration / 2);
+                            contaierDelDone.animate().alpha(0).setDuration(duration / 2);
                         }
-                        v.animate().setDuration(duration).translationX(endX).
+                        containerItem.animate().setDuration(duration).translationX(endX).
                                 withEndAction(new Runnable() {
                                     @Override
                                     public void run() {
                                         // Restore animated values
-                                        v.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
-                                        v.setAlpha(1);
-                                        v.setTranslationX(0);
-                                        contaier.setAlpha(1);
+                                        containerItem.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
+                                        containerItem.setAlpha(1);
+                                        containerItem.setTranslationX(0);
+                                        contaierDelDone.setAlpha(1);
                                         if (swipedResult==1) {
-                                            animateRemoval(myListView, v);
+                                            animateRemoval(myListView, containerItem);
                                         }
                                         else if(swipedResult==2)
                                         {
-                                            updateToFinished(myListView,v);
+                                            updateToFinished(myListView,containerItem);
                                         }
                                         else {
                                             mSwiping = false;
@@ -281,10 +286,9 @@ public class ItemLineFrameActivity extends Activity {
                     {
                         //no swiping ,but click
                         int currentPosition = myListView.getPositionForView(v);
-
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
-                        mEditView.setText(((TextView) v).getText());
-                        // TODO: 16/3/3 显示提醒日期,赋值mReminder
+                        // 16/3/3 显示提醒日期,赋值mReminder
+                        initEditorContent();
 
                         myListView.animate().translationY(mContainerEditor.getHeight()).setDuration(250);  // TODO: 16/3/1 改成（编辑框在前，列表在后的方案）
 
@@ -302,6 +306,21 @@ public class ItemLineFrameActivity extends Activity {
             return true;
         }
     };
+    private void initEditorContent()
+    {
+        if(0==mUpdateItemId)
+            return;
+
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mUpdateItemId));
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        if(cursor.moveToFirst()){
+            mEditView.setText(cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
+            mReminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+            if(0!=mReminder)
+                mTextReminder.setText(DateFormat.format("yyyy-MM-dd", mReminder));
+        }
+
+    }
     private int deleteAlsoReminder()
     {
         // TODO: 16/3/3 删除item之后,同时要取消提醒
@@ -314,8 +333,12 @@ public class ItemLineFrameActivity extends Activity {
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
 
         //获取查询结果各项值
-        Cursor cursor = myCursorAdapter.getCursor();
-        int finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+        int finshed=0;
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if(cursor.moveToFirst())
+            finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+        else
+        return 0;
         //
         ContentValues values = new ContentValues();
         values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
