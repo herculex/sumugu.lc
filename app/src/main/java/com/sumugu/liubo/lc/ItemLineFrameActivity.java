@@ -335,29 +335,47 @@ public class ItemLineFrameActivity extends Activity {
 
     private int deleteAlsoReminder()
     {
-        // TODO: 16/3/3 删除item之后,同时要取消提醒
+        // TODO: 16/3/7 删除item之后,同时要取消提醒.（逻辑，先要取消闹钟，再删除记录）
         return 0;
     }
 
     private int updateToFinished(final ListView listView,final View viewToFinish)
     {
         int finishPosition= listView.getPositionForView(viewToFinish);
-        long targetId = myCursorAdapter.getItemId(finishPosition);
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
+        long itemId = myCursorAdapter.getItemId(finishPosition);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId));
 
         //获取查询结果各项值
         int finshed=0;
+        long alarmclock=0;
+
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if(cursor.moveToFirst())
-            finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
-        else
-        return 0;
+        if(!cursor.moveToFirst())
+            return 0;
+
+        finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+        alarmclock=cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
         //
+        int newFinished=finshed==0?1:0;
         ContentValues values = new ContentValues();
-        values.put(ItemContract.Column.ITEM_IS_FINISHED, finshed==0?1:0);
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, newFinished);
+
+        //跟新数据库记录
         int count = getContentResolver().update(uri, values, null, null);
 
-        // TODO: 16/3/3 取消提醒,或设定提醒
+        AlarmUntils alarmUntils = new AlarmUntils();
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(alarmclock);
+        if(newFinished==0)
+        {
+            if(alarmclock>0) {
+                alarmUntils.setAlarmClock(this,calendar,true,60*1000,itemId);
+            }
+        }
+        else
+        {
+            alarmUntils.cancelAlarmClock(this,calendar,itemId);
+        }
 
         return count;
     }
@@ -381,7 +399,7 @@ public class ItemLineFrameActivity extends Activity {
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
         int count = getContentResolver().delete(uri,null,null);
 
-        Log.d(TAG,"delete ITEM!!!"+String.valueOf(count));
+        Log.d(TAG, "delete ITEM!!!" + String.valueOf(count));
 
 //      getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
 
@@ -695,40 +713,63 @@ public class ItemLineFrameActivity extends Activity {
             long itemId = Long.parseLong(uri.getLastPathSegment());
             //Add A Reminder when inserted success.
             if(mReminder>0) {
+                String clock;
                 AlarmUntils alarmUntils = new AlarmUntils();
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(mReminder);
-
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-
-                calendar.set(Calendar.HOUR, 8);
-                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
-
-                calendar.set(Calendar.HOUR,12);
-                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
-
-                calendar.set(Calendar.HOUR,16);
-                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
-
-                calendar.set(Calendar.HOUR,20);
-                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
-
+                clock =alarmUntils.setAlarmClock(this, calendar, true, 60*1000, itemId);
+                Log.d(TAG,clock);
             }
+            mTextReminder.setText("");
             mReminder=0;
             return true;
         }
         else
         {
+            mTextReminder.setText("");
             mReminder=0;
             return false;
         }
-
-
         //
     }
 
+    private void setUpAlarmClock(long itemId)
+    {
+        String clock;
+
+        AlarmUntils alarmUntils = new AlarmUntils();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(mReminder);
+
+        clock=alarmUntils.setAlarmClock(this, calendar, true, 60*1000, itemId);
+
+        Log.d(TAG,clock);
+
+    }
+    private void cancelAlarmClock(long itemid)
+    {
+        //定义各种以下用到的变量
+        AlarmUntils alarmUntils = new AlarmUntils();
+        Calendar calendar = Calendar.getInstance();
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemid));
+
+        //找出已经设置的闹钟提醒，并取消之。
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if(!cursor.moveToFirst()) {
+            return;
+        }
+
+        int hasAlarm = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+
+        if(hasAlarm>0 && alarmClock>0)
+        {
+            // /取消闹钟
+            calendar.setTimeInMillis(alarmClock);
+            String result = alarmUntils.cancelAlarmClock(this, calendar, itemid);
+            Log.d(TAG, "sumugu:" + result);
+        }
+    }
 
     public class MyFrameTouchGestureListner extends GestureDetector.SimpleOnGestureListener{
         @Override

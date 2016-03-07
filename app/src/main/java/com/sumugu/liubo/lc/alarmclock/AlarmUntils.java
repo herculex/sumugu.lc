@@ -21,7 +21,7 @@ public class AlarmUntils {
         year = calendar.get(Calendar.YEAR);
         month=calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DATE);
-        hour=calendar.get(Calendar.HOUR);
+        hour=calendar.get(Calendar.HOUR_OF_DAY);
         minute=calendar.get(Calendar.MINUTE);
         second=calendar.get(Calendar.SECOND);
 
