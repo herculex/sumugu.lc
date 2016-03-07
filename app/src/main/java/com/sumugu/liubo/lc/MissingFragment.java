@@ -2,22 +2,17 @@ package com.sumugu.liubo.lc;
 
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.CallLog;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -165,7 +160,7 @@ public class MissingFragment extends Fragment implements View.OnClickListener {
         if(uri!=null)
         {
             long itemId = Long.parseLong(idValue);
-            alarmUntils.SetAlarmClock(getActivity(),calendar,true,60,itemId);
+            alarmUntils.setAlarmClock(getActivity(), calendar, true, 60, itemId);
         }
     }
 }

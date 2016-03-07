@@ -14,7 +14,7 @@ import java.util.Calendar;
  */
 public class AlarmUntils {
 
-    public String SetAlarmClock(Activity activity,Calendar calendar,boolean repeat,long interval,long actionId)
+    public String setAlarmClock(Activity activity, Calendar calendar, boolean repeat, long interval, long actionId)
     {
         int year,month,day,hour,minute,second;
         // 获取设置日期的年，月，日，时，分，秒
@@ -51,7 +51,7 @@ public class AlarmUntils {
                 + "日" + hour + "时" + minute + "分" + second + "秒.");
     }
 
-    public String CancelAlarmClock(Activity activity,Calendar calendar,long actionId)
+    public String cancelAlarmClock(Activity activity, Calendar calendar, long actionId)
     {
         int year,month,day,hour,minute,second;
         // 获取设置日期的年，月，日，时，分

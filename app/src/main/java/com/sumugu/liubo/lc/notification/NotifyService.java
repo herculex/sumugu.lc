@@ -22,6 +22,8 @@ import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -63,7 +65,7 @@ public class NotifyService extends IntentService {
 
         mText = text;
         mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
-        mTicker = "你有一项任务需要马上完成！来自lc.alpha.3.";
+        mTicker = "GET UP!来自lc.alpha.5."+(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss",alarmClock));
         show();
 
     }
@@ -91,7 +93,7 @@ public class NotifyService extends IntentService {
                         .setContentText(mText)                                  //必要条件3/3，内容 -"Hello World!"
                         .setTicker(mTicker)
 //                      .setContent(remoteViews)                                //自定义通知样式
-//                      .setVibrate(new long[] {350,0,100,350})                 //自定义震动的模式
+                        .setVibrate(new long[] {350,0,100,350})                 //自定义震动的模式
                         .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);    //默认的铃声和震动模式
 
         // Creates an explicit intent for an Activity in your app

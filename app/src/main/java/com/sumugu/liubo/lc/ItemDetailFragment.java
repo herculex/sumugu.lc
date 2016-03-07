@@ -1,6 +1,5 @@
 package com.sumugu.liubo.lc;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -154,7 +153,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         calendar.add(Calendar.MINUTE, interval);
 
         //重复提醒，间隔1分钟
-        String result = alarmUntils.SetAlarmClock(getActivity(),calendar,true,60*1000,mItemId);
+        String result = alarmUntils.setAlarmClock(getActivity(), calendar, true, 60 * 1000, mItemId);
 
         //step 3，更新记录的闹钟信息
         ContentValues values = new ContentValues();
@@ -188,7 +187,7 @@ public class ItemDetailFragment extends Fragment implements View.OnClickListener
         {
             // /取消闹钟
             calendar.setTimeInMillis(alarmClock);
-            String result = alarmUntils.CancelAlarmClock(getActivity(),calendar,mItemId);
+            String result = alarmUntils.cancelAlarmClock(getActivity(), calendar, mItemId);
 //            Toast.makeText(ItemDetailActivity.this, result, Toast.LENGTH_SHORT).show();
             Log.d(TAG, "sumugu:" + result);
         }

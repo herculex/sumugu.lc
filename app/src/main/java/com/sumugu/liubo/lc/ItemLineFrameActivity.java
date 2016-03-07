@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.ui.MyListView;
 
@@ -673,21 +674,58 @@ public class ItemLineFrameActivity extends Activity {
         values.put(ItemContract.Column.ITEM_CONTENT,content);
         values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
         values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
-        values.put(ItemContract.Column.ITEM_HAS_CLOCK,0);
-        values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+
+        if(mReminder>0){
+            values.put(ItemContract.Column.ITEM_HAS_CLOCK,1);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK,mReminder);
+        }
+        else {
+            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
+        }
 
         values.put(ItemContract.Column.ITEM_LIST_ID,-1);
 
         //用Provider插入新数据，而非用DbHelper。在Fragment里，要用Provider，需获取的当前的Activity。
         Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
+
         if(uri!=null){
-            Log.d(TAG, String.format("%s:%s", values.getAsString(ItemContract.Column.ITEM_TITLE), values.getAsString(ItemContract.Column.ITEM_CONTENT)));
+            Log.d(TAG, String.format("%s:%s", uri.getLastPathSegment(), values.getAsString(ItemContract.Column.ITEM_CONTENT)));
+
+            long itemId = Long.parseLong(uri.getLastPathSegment());
+            //Add A Reminder when inserted success.
+            if(mReminder>0) {
+                AlarmUntils alarmUntils = new AlarmUntils();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(mReminder);
+
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+
+                calendar.set(Calendar.HOUR, 8);
+                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
+
+                calendar.set(Calendar.HOUR,12);
+                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
+
+                calendar.set(Calendar.HOUR,16);
+                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
+
+                calendar.set(Calendar.HOUR,20);
+                alarmUntils.setAlarmClock(this,calendar,true,60000,itemId);
+
+            }
+            mReminder=0;
             return true;
         }
         else
         {
+            mReminder=0;
             return false;
         }
+
+
         //
     }
 
