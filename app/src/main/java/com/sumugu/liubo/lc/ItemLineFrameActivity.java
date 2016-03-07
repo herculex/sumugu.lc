@@ -3,6 +3,8 @@ package com.sumugu.liubo.lc;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.LoaderManager;
+import android.app.TimePickerDialog;
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -33,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -251,30 +254,51 @@ public class ItemLineFrameActivity extends Activity {
                 if(!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
                     return;
 
-                DatePickerDialog dialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        Calendar cal = Calendar.getInstance();
+                        final Calendar cal = Calendar.getInstance();
 //                        cal.set(i,i1,i2);
                         cal.set(Calendar.YEAR,i);
-                        cal.set(Calendar.MONTH,i1);
-                        cal.set(Calendar.DAY_OF_MONTH,i2);
+                        cal.set(Calendar.MONTH, i1);
+                        cal.set(Calendar.DAY_OF_MONTH, i2);
 
-                        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-                        mTextReminder.setText(formater.format(cal.getTime()));
-                        mReminder=cal.getTimeInMillis();
+                        //
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(ItemLineFrameActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                                cal.set(Calendar.HOUR_OF_DAY,i);
+                                cal.set(Calendar.MINUTE,i1);
+                                cal.set(Calendar.SECOND,0);
+
+                                SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+                                mTextReminder.setText(formater.format(cal.getTime()));
+                                mReminder=cal.getTimeInMillis();
+                            }
+                        },today.get(Calendar.HOUR_OF_DAY),today.get(Calendar.MINUTE)+10,true);
+
+                        timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mReminder=0;
+                                mTextReminder.setText("");
+                            }
+                        });
+                        timePickerDialog.show();
+                        //
+
                     }
                 }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(today.DAY_OF_MONTH));
 
-                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
+                datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mReminder=0;
+                        mReminder = 0;
                         mTextReminder.setText("");
                     }
                 });
 
-                dialog.show();
+                datePickerDialog.show();
             }
         });
 
@@ -328,7 +352,7 @@ public class ItemLineFrameActivity extends Activity {
             mEditView.setText(cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
             mReminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
             if(0!=mReminder)
-                mTextReminder.setText(DateFormat.format("yyyy-MM-dd", mReminder));
+                mTextReminder.setText(DateFormat.format("yyyy-MM-dd hh:mm", mReminder));
         }
 
     }
@@ -829,7 +853,7 @@ public class ItemLineFrameActivity extends Activity {
             holder.textView.setText(content);
 
             if(reminder>0) {
-                holder.textReminder.setText(android.text.format.DateFormat.format("yyyy-MM-dd",reminder));
+                holder.textReminder.setText(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm",reminder));
                 holder.textReminder.setVisibility(View.VISIBLE);
             }
             else{
