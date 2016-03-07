@@ -663,6 +663,7 @@ public class ItemLineFrameActivity extends Activity {
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] params = new String[] {String.valueOf(mUpdateItemId)};
 
+        // TODO: 16/3/7 设置提醒（找出原来的闹钟，取消，然后设置新的闹钟）
         //step 1，查处闹钟并取消掉
         //cancelAlarmClock();
 
