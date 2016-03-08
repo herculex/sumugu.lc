@@ -792,44 +792,6 @@ public class ItemLineFrameActivity extends Activity {
         //
     }
 
-    private void setUpAlarmClock(long itemId)
-    {
-        String clock;
-
-        AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(mReminder);
-
-        clock=alarmUntils.setAlarmClock(this, calendar, true, 60*1000, itemId);
-
-        Log.d(TAG,clock);
-
-    }
-    private void cancelAlarmClock(long itemid)
-    {
-        //定义各种以下用到的变量
-        AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar = Calendar.getInstance();
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemid));
-
-        //找出已经设置的闹钟提醒，并取消之。
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if(!cursor.moveToFirst()) {
-            return;
-        }
-
-        int hasAlarm = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
-        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-
-        if(hasAlarm>0 && alarmClock>0)
-        {
-            // /取消闹钟
-            calendar.setTimeInMillis(alarmClock);
-            String result = alarmUntils.cancelAlarmClock(this, calendar, itemid);
-            Log.d(TAG, "sumugu:" + result);
-        }
-    }
-
     public class MyFrameTouchGestureListner extends GestureDetector.SimpleOnGestureListener{
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
