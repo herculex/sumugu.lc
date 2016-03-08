@@ -413,6 +413,7 @@ public class ItemLineFrameActivity extends Activity {
 //        mAdapter.remove(mAdapter.getItem(position)); //CursorAdapter是没有remove方法
 
         //只有删除数据，更新cursoradapter
+        //
         //0,init.
         long targetId=myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
@@ -429,9 +430,8 @@ public class ItemLineFrameActivity extends Activity {
         }
         //2,delete the data
         int count = getContentResolver().delete(uri, null, null);
-
         Log.d(TAG, "delete ITEM!!!" + String.valueOf(count));
-
+        //
 //      getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
 
         final ViewTreeObserver observer = listview.getViewTreeObserver();
