@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.LoaderManager;
 import android.app.TimePickerDialog;
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -205,7 +204,7 @@ public class ItemLineFrameActivity extends Activity {
                                         }
                                         else if(swipedResult==2)
                                         {
-                                            updateToFinished(myListView,containerItem);
+                                            swipeToFinished(myListView, containerItem);
                                         }
                                         else {
                                             mSwiping = false;
@@ -357,7 +356,7 @@ public class ItemLineFrameActivity extends Activity {
 
     }
 
-    private int updateToFinished(final ListView listView,final View viewToFinish)
+    private int swipeToFinished(final ListView listView, final View viewToFinish)
     {
         int finishPosition= listView.getPositionForView(viewToFinish);
         long itemId = myCursorAdapter.getItemId(finishPosition);
