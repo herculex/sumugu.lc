@@ -357,12 +357,6 @@ public class ItemLineFrameActivity extends Activity {
 
     }
 
-    private int deleteAlsoReminder()
-    {
-        // TODO: 16/3/7 删除item之后,同时要取消提醒.（逻辑，先要取消闹钟，再删除记录）
-        return 0;
-    }
-
     private int updateToFinished(final ListView listView,final View viewToFinish)
     {
         int finishPosition= listView.getPositionForView(viewToFinish);
@@ -419,9 +413,22 @@ public class ItemLineFrameActivity extends Activity {
 //        mAdapter.remove(mAdapter.getItem(position)); //CursorAdapter是没有remove方法
 
         //只有删除数据，更新cursoradapter
+        //0,init.
         long targetId=myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
-        int count = getContentResolver().delete(uri,null,null);
+        //1,remove the alarmclock
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        if(cursor.moveToFirst()){
+            AlarmUntils alarmUntils= new AlarmUntils();
+            long clock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            if(clock>0){
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(clock);
+                alarmUntils.cancelAlarmClock(this,calendar,targetId);
+            }
+        }
+        //2,delete the data
+        int count = getContentResolver().delete(uri, null, null);
 
         Log.d(TAG, "delete ITEM!!!" + String.valueOf(count));
 
@@ -700,14 +707,14 @@ public class ItemLineFrameActivity extends Activity {
             alarmclock=cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
             hasclock=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
 
-            //step 1，查处闹钟并取消掉
+            //step 1，查处原来的闹钟并取消掉
             if(alarmclock>0)
             {
                 calendar.setTimeInMillis(alarmclock);
                 alarmUntis.cancelAlarmClock(this,calendar,itemId);
             }
 
-            //step 2，更新记录的闹钟和标记
+            //step 2，更新记录，并设置新闹钟（如果有的）
             ContentValues values = new ContentValues();
             values.put(ItemContract.Column.ITEM_CONTENT, content);
 
