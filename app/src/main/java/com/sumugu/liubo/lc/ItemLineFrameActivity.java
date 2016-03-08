@@ -683,31 +683,57 @@ public class ItemLineFrameActivity extends Activity {
 
     private int updateContent(String content)
     {
+        int updatedCount=0;
         Uri uri = ItemContract.CONTENT_URI;
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] params = new String[] {String.valueOf(mUpdateItemId)};
 
-        // TODO: 16/3/7 设置提醒（找出原来的闹钟，取消，然后设置新的闹钟）
-        //step 1，查处闹钟并取消掉
-        //cancelAlarmClock();
+        AlarmUntils alarmUntis=new AlarmUntils();
+        Calendar calendar = Calendar.getInstance();
+        long itemId=mUpdateItemId;
+        long alarmclock=0;
+        int hasclock=0;
 
-        //step 2，更新记录的闹钟和标记
-        ContentValues values = new ContentValues();
-        values.put(ItemContract.Column.ITEM_CONTENT,content);
+        Cursor cursor = getContentResolver().query(uri,null,where,params,null);
+        if(cursor.moveToFirst()) {
 
-        if(0!=mReminder) {
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
-            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+            alarmclock=cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            hasclock=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+
+            //step 1，查处闹钟并取消掉
+            if(alarmclock>0)
+            {
+                calendar.setTimeInMillis(alarmclock);
+                alarmUntis.cancelAlarmClock(this,calendar,itemId);
+            }
+
+            //step 2，更新记录的闹钟和标记
+            ContentValues values = new ContentValues();
+            values.put(ItemContract.Column.ITEM_CONTENT, content);
+
+            if (mReminder>0) {
+                values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
+                values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+            }
+
+            updatedCount = getContentResolver().update(uri, values, where, params);   //方法1
+//          int updatedCount = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
+            if(updatedCount>0)
+            {
+                if(mReminder>0)
+                {
+                    calendar.setTimeInMillis(mReminder);
+                    alarmUntis.setAlarmClock(this,calendar,true,60*1000,itemId);
+                }
+            }
+
         }
-
-        int count = getContentResolver().update(uri,values,where,params);   //方法1
-//        int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
 
         mUpdateItemId=0;    //恢复默认
         mReminder=0;    //return to 0
         mTextReminder.setText("");
 
-        return count;
+        return updatedCount;
     }
     private boolean postNewContent(String content)
     {
