@@ -394,6 +394,7 @@ public class ItemLineFrameActivity extends Activity {
             alarmUntils.cancelAlarmClock(this,calendar,itemId);
         }
 
+        cursor.close();
         return count;
     }
 
