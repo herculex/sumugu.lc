@@ -736,6 +736,7 @@ public class ItemLineFrameActivity extends Activity {
 
         }
 
+        cursor.close();
         mUpdateItemId=0;    //恢复默认
         mReminder=0;    //return to 0
         mTextReminder.setText("");
