@@ -1,78 +1,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.sumugu.liubo.lc.ItemDetailFragment"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_height="match_parent" android:orientation="vertical"
+    android:padding="10dp"
+    tools:context="com.sumugu.liubo.lc.ItemDetailFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="20dp" />
     <TextView
+        android:id="@+id/text_item_content_detail"
+        style="@style/Base.TextAppearance.AppCompat.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:text="Content"
-        android:id="@+id/text_item_content_detail" />
+        android:typeface="monospace" />
     <TextView
+        android:id="@+id/text_item_created_at_detail"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:paddingRight="10dp"
         android:gravity="right|center"
-        android:text="createdAt"
-        android:id="@+id/text_item_created_at_detail" />
+        android:paddingRight="10dp"
+        android:text="createdAt" />
     <TextView
+        android:id="@+id/text_item_alarmclock_detail"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:background="#E3F2FD"
         android:gravity="left|center"
         android:paddingLeft="10dp"
-        android:background="#E3F2FD"
-        android:text="@string/text_hint_no_clock"
-        android:id="@+id/text_item_alarmclock_detail" />
+        android:text="@string/text_hint_no_clock" />
     <TextView
+        android:id="@+id/btn_1minute_detail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
         android:background="#BBDEFB"
-        android:text="1分钟后"
-        android:id="@+id/btn_1minute_detail" />
+        android:gravity="center"
+        android:text="1分钟后" />
 
     <TextView
+        android:id="@+id/btn_5minutes_detail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
         android:background="#90CAF9"
-        android:text="5分钟后"
-        android:id="@+id/btn_5minutes_detail"/>
+        android:gravity="center"
+        android:text="5分钟后"/>
 
     <TextView
+        android:id="@+id/btn_15minutes_detail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
         android:background="#64B5F6"
-        android:text="15分钟后"
-        android:id="@+id/btn_15minutes_detail" />
+        android:gravity="center"
+        android:text="15分钟后" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="5dp" />
     <TextView
         android:id="@+id/btn_item_delete_detail"
-        android:text="删除"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
         android:background="#F44336"
+        android:gravity="center"
+        android:text="删除"
         android:textColor="#FFFFFF"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="5dp" />
     <TextView
+        android:id="@+id/btn_item_finish_detail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
         android:background="#4CAF50"
-        android:textColor="#FFFFFF"
+        android:gravity="center"
         android:text="完成"
-        android:id="@+id/btn_item_finish_detail" />
+        android:textColor="#FFFFFF" />
 </LinearLayout>
