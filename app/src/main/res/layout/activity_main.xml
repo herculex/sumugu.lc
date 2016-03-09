@@ -16,30 +16,37 @@
         android:layout_height="match_parent"
         android:orientation="vertical"></LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layer_content"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/btn_new_life"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="enter new life"/>
-        <Button
-            android:id="@+id/btn_unlock_screen"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="unlock"/>
-        <DigitalClock
-            android:id="@+id/dc_clock"
-            style="@style/Base.TextAppearance.AppCompat.Display2"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+        <LinearLayout
+            android:id="@+id/layer_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"/>
-        <ListView
-            android:id="@+id/lv_lite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
-    </LinearLayout>
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/btn_new_life"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="enter new life"/>
+
+            <Button
+                android:id="@+id/btn_unlock_screen"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="unlock"/>
+            <DigitalClock
+                android:id="@+id/dc_clock"
+                style="@style/Base.TextAppearance.AppCompat.Display2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"/>
+            <ListView
+                android:id="@+id/lv_lite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></ListView>
+
+        </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>

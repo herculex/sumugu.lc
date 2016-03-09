@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -86,6 +87,19 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
 
 //        mContainerUnlock.setOnTouchListener(); // TODO: 16/3/9 向右unlock,向左进入itemline
+        mContainerUnlock.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getActionMasked())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG,"mContainerUnlock_DOWN");
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
 
         mListView = (ListView)findViewById(R.id.lv_lite);
         mCursorAdapter = new MyCursorAdapter(this,null,10);
