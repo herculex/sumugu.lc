@@ -960,7 +960,7 @@ public class ItemLineFrameActivity extends Activity {
             else{
                 ContentValues values = new ContentValues();
 
-                values.put(ItemContract.Column.ITEM_CONTENT,"你的人生并不空白，下拉创建！");
+                values.put(ItemContract.Column.ITEM_CONTENT,"如果你有梦想，就默默去实现它。");
                 values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
 
                 getContentResolver().insert(ItemContract.CONTENT_URI,values);
