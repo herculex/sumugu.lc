@@ -48,6 +48,7 @@ import com.sumugu.liubo.lc.missing.MissingUtils;
 import java.util.Date;
 import java.util.Random;
 
+////Named Alpha5 -2016.03.09 PM10:27 marked.
 
 public class MainActivity extends Activity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
 
