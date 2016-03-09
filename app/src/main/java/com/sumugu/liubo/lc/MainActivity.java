@@ -129,8 +129,9 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         }
 
     }
-    // TODO: 16/3/9 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
-    // TODO: 16/3/10 控制的mContainerContent的动画
+    // 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
+    // 控制的mContainerContent的动画
+    // TODO: 16/3/10 完成,需完善
     private float mDownX;
     private boolean mSwiping;
     private boolean mPressed;
@@ -177,19 +178,40 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                     if(Math.abs(tranX)>mContainerContent.getWidth()/2){
                         if(tranX>0){
                             //swiping to right to UNLOCK
-                            unlockHomeButton();
+                            mContainerContent.animate()
+                                    .alpha(0)
+                                    .setDuration(250)
+                                    .withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            unlockHomeButton();
+                                        }
+                                    });
                         }
                         else{
                             //swiping to left to enter the ItemLine
-                            mContainerContent.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(MainActivity.this,ItemLineFrameActivity.class));
-                                }
-                            });
+                            mContainerContent.animate()
+                                    .alpha(0)
+                                    .setDuration(250)
+                                    .withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            startActivity(new Intent(MainActivity.this, ItemLineFrameActivity.class));
+                                        }
+                                    });
                         }
                     }
-                    mContainerContent.setTranslationX(0);
+                    else {
+                        float a=tranX/mContainerContent.getWidth();
+                        float c=1-a;
+                        long returnDuration=250;
+                        long duration=(int)(returnDuration*c);
+
+                        mContainerContent.animate()
+                                .translationX(0)
+                                .alpha(1)
+                                .setDuration(duration);
+                    }
                     mPressed=false;
                     mDownX=0;
                     mSwiping=false;

@@ -29,19 +29,23 @@
                 android:id="@+id/btn_new_life"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="enter new life"/>
+                android:text="enter new life"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_unlock_screen"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="unlock"/>
+                android:text="unlock"
+                android:visibility="gone"/>
+
             <DigitalClock
                 android:id="@+id/dc_clock"
                 style="@style/Base.TextAppearance.AppCompat.Display2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"/>
+
             <ListView
                 android:id="@+id/lv_lite"
                 android:layout_width="match_parent"
