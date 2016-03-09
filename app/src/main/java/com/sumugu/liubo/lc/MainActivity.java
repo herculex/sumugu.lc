@@ -1,5 +1,6 @@
 package com.sumugu.liubo.lc;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.Notification;
@@ -25,6 +26,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,17 +40,9 @@ import com.sumugu.liubo.lc.missing.MissingUtils;
 import java.util.Random;
 
 
-public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
+public class MainActivity extends Activity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
 
     private final String TAG=MainActivity.class.getSimpleName();
-
-    // User-interface
-    private Button btnUnlock;
-    private Button btnGotoFinish;
-    private Button btnClearAll;
-    private TextView textViewMissingContent;
-
-    // Member variables
     private LockScreenUtils mLockscreenUtils;
 
     // Set appropriate flags to make the screen appear over the keyguard
@@ -65,28 +60,25 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 //        super.onAttachedToWindow();
 //    }
 
+    private LinearLayout mContainerBottom;
+    private LinearLayout mContainerUnlock;
+    private LinearLayout mContainerContent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_main);
-        btnGotoFinish = (Button)findViewById(R.id.btn_goto_finish);
-        btnUnlock = (Button)findViewById(R.id.btn_unlock_screen);
-        btnClearAll = (Button)findViewById(R.id.btn_clear_all);
 
-        btnUnlock.setOnClickListener(this);
-        btnGotoFinish.setOnClickListener(this);
-        btnClearAll.setOnClickListener(this);
+        mContainerBottom = (LinearLayout)findViewById(R.id.layer_bottom);
+        mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
+        mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
 
+        findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
         findViewById(R.id.btn_new_life).setOnClickListener(this);
 
         //
         makeFullScreen();
-        //        
-                //
+        //
         init();
-
         // unlock screen in case of app get killed by system
         if (getIntent() != null && getIntent().hasExtra("kill")
                 && getIntent().getExtras().getInt("kill") == 1) {
@@ -149,30 +141,10 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
             case R.id.btn_new_life:
                 startActivity(new Intent(this, ItemLineFrameActivity.class));
                 return;
-            case R.id.btn_goto_finish:
-                startActivity(new Intent(this,ComboItemLineActivity.class));
-                return;
             case R.id.btn_unlock_screen:
                 unlockHomeButton();
                 return;
-            case R.id.btn_clear_all:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//                builder.setMessage("真的要删光光？")
-//                        .setCancelable(false)
-//                        .setPositiveButton("是的", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-                                int row_list = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
-                                int row_item = getContentResolver().delete(ItemContract.CONTENT_URI,null,null);
-                                Toast.makeText(MainActivity.this, "删光光了，待会出错就重启机子吧，哈哈哈！", Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//                        .setNegativeButton("不是的", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//                AlertDialog alert = builder.create();
-//                alert.show();
+            default:
                 return;
         }
     }
