@@ -86,20 +86,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
         mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
 
-//        mContainerUnlock.setOnTouchListener(); // TODO: 16/3/9 向右unlock,向左进入itemline
-        mContainerUnlock.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getActionMasked())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d(TAG,"mContainerUnlock_DOWN");
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
+        mContainerUnlock.setOnTouchListener(mUnlockOnTouchListener);
 
         mListView = (ListView)findViewById(R.id.lv_lite);
         mCursorAdapter = new MyCursorAdapter(this,null,10);
@@ -142,6 +129,79 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         }
 
     }
+    // TODO: 16/3/9 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
+    // TODO: 16/3/10 控制的mContainerContent的动画
+    private float mDownX;
+    private boolean mSwiping;
+    private boolean mPressed;
+    private View.OnTouchListener mUnlockOnTouchListener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            switch (motionEvent.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    //不允许多点
+                    if (!mPressed) {
+                        mDownX = motionEvent.getX();
+                        break;
+                    } else
+                        return false;
+
+                case MotionEvent.ACTION_CANCEL:
+
+                    mContainerContent.setTranslationX(0);
+                    mPressed=false;
+                    mDownX=0;
+                    mSwiping=false;
+
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+
+                    float deltaX=motionEvent.getX()-mDownX;
+                    float absDeltaX=Math.abs(deltaX);
+                    if(absDeltaX>0)
+                        mSwiping=true;
+
+                    if(mSwiping){
+                        float x = motionEvent.getX()-mDownX;
+                        mContainerContent.setTranslationX(x);
+                    }
+
+                    break;
+
+                case MotionEvent.ACTION_UP:
+
+                    float tranX=mContainerContent.getTranslationX();
+                    if(Math.abs(tranX)>mContainerContent.getWidth()/2){
+                        if(tranX>0){
+                            //swiping to right to UNLOCK
+                            unlockHomeButton();
+                        }
+                        else{
+                            //swiping to left to enter the ItemLine
+                            mContainerContent.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(MainActivity.this,ItemLineFrameActivity.class));
+                                }
+                            });
+                        }
+                    }
+                    mContainerContent.setTranslationX(0);
+                    mPressed=false;
+                    mDownX=0;
+                    mSwiping=false;
+
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+    };
+
     private void init() {
         mLockscreenUtils = new LockScreenUtils();
     }
