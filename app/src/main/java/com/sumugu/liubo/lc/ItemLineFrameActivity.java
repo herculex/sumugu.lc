@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -953,7 +954,17 @@ public class ItemLineFrameActivity extends Activity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            mCursorAdapter.swapCursor(data);
+            if(data.getCount()>0) {
+                mCursorAdapter.swapCursor(data);
+            }
+            else{
+                ContentValues values = new ContentValues();
+
+                values.put(ItemContract.Column.ITEM_CONTENT,"你的人生并不空白，下拉创建！");
+                values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
+
+                getContentResolver().insert(ItemContract.CONTENT_URI,values);
+            }
         }
 
         @Override
