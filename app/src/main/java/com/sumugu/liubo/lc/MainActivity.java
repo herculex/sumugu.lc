@@ -84,6 +84,8 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
         mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
 
+//        mContainerUnlock.setOnTouchListener(); // TODO: 16/3/9 向右unlock,向左进入itemline
+
         mListView = (ListView)findViewById(R.id.lv_lite);
         mCursorAdapter = new MyCursorAdapter(this,null,10);
         mListView.setAdapter(mCursorAdapter);
