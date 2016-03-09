@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     }
     // 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
     // 控制的mContainerContent的动画
-    // TODO: 16/3/10 完成,需完善
+    // TODO: 16/3/10 完成,需完善.
     private float mDownX;
     private boolean mSwiping;
     private boolean mPressed;
