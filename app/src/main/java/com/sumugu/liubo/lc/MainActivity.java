@@ -1,16 +1,22 @@
 package com.sumugu.liubo.lc;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
+import android.app.LoaderManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,8 +29,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,20 +45,13 @@ import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
 import com.sumugu.liubo.lc.missing.MissingUtils;
 
+import java.util.Date;
 import java.util.Random;
 
 
-public class MainActivity extends ActionBarActivity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
+public class MainActivity extends Activity implements LockScreenUtils.OnLockStatusChangedListener,View.OnClickListener{
 
     private final String TAG=MainActivity.class.getSimpleName();
-
-    // User-interface
-    private Button btnUnlock;
-    private Button btnGotoFinish;
-    private Button btnClearAll;
-    private TextView textViewMissingContent;
-
-    // Member variables
     private LockScreenUtils mLockscreenUtils;
 
     // Set appropriate flags to make the screen appear over the keyguard
@@ -65,28 +69,36 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
 //        super.onAttachedToWindow();
 //    }
 
+    private LinearLayout mContainerBottom;
+    private LinearLayout mContainerUnlock;
+    private LinearLayout mContainerContent;
+    private ListView mListView;
+    private CursorAdapter mCursorAdapter;
+    private MyLoaderCallback mLoaderCallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_main);
-        btnGotoFinish = (Button)findViewById(R.id.btn_goto_finish);
-        btnUnlock = (Button)findViewById(R.id.btn_unlock_screen);
-        btnClearAll = (Button)findViewById(R.id.btn_clear_all);
 
-        btnUnlock.setOnClickListener(this);
-        btnGotoFinish.setOnClickListener(this);
-        btnClearAll.setOnClickListener(this);
+        mContainerBottom = (LinearLayout)findViewById(R.id.layer_bottom);
+        mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
+        mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
 
+//        mContainerUnlock.setOnTouchListener(); // TODO: 16/3/9 向右unlock,向左进入itemline
+
+        mListView = (ListView)findViewById(R.id.lv_lite);
+        mCursorAdapter = new MyCursorAdapter(this,null,10);
+        mListView.setAdapter(mCursorAdapter);
+        mLoaderCallback = new MyLoaderCallback(this,mCursorAdapter,9);
+        getLoaderManager().initLoader(9,null,mLoaderCallback);
+
+        findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
         findViewById(R.id.btn_new_life).setOnClickListener(this);
 
         //
         makeFullScreen();
-        //        
-                //
+        //
         init();
-
         // unlock screen in case of app get killed by system
         if (getIntent() != null && getIntent().hasExtra("kill")
                 && getIntent().getExtras().getInt("kill") == 1) {
@@ -149,30 +161,10 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
             case R.id.btn_new_life:
                 startActivity(new Intent(this, ItemLineFrameActivity.class));
                 return;
-            case R.id.btn_goto_finish:
-                startActivity(new Intent(this,ComboItemLineActivity.class));
-                return;
             case R.id.btn_unlock_screen:
                 unlockHomeButton();
                 return;
-            case R.id.btn_clear_all:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//                builder.setMessage("真的要删光光？")
-//                        .setCancelable(false)
-//                        .setPositiveButton("是的", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-                                int row_list = getContentResolver().delete(ListContract.CONTENT_URI,null,null);
-                                int row_item = getContentResolver().delete(ItemContract.CONTENT_URI,null,null);
-                                Toast.makeText(MainActivity.this, "删光光了，待会出错就重启机子吧，哈哈哈！", Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//                        .setNegativeButton("不是的", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//                AlertDialog alert = builder.create();
-//                alert.show();
+            default:
                 return;
         }
     }
@@ -300,4 +292,99 @@ public class MainActivity extends ActionBarActivity implements LockScreenUtils.O
         return true;
     }
 
+    public class MyCursorAdapter extends CursorAdapter {
+
+        public MyCursorAdapter(Context context, Cursor cursor, int flag) {
+            super(context, cursor, flag);
+        }
+
+        public MyCursorAdapter(Context context, Cursor cursor, boolean autoRequst) {
+            super(context, cursor, autoRequst);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            //找到布局文件，保存控件到Holder
+            MyViewHolder holder = new MyViewHolder();
+            View view = getLayoutInflater().inflate(R.layout.item_frame_lite, null);
+
+            holder.textView = (TextView) view.findViewById(R.id.tv_content);
+            holder.deleteView=(TextView)view.findViewById(R.id.tv_delete_hint);
+            holder.doneView=(TextView)view.findViewById(R.id.tv_done);
+
+            view.setTag(holder);
+            //返回view，会自动传给bindView方法。
+            return view;
+
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            //接收view的holder里的控件对象，然后赋值
+            MyViewHolder holder = (MyViewHolder) view.getTag();
+
+            String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+            String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+            long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+
+            holder.textView.setText(content);
+
+             //抗锯齿
+            holder.textView.getPaint().setAntiAlias(true);
+
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            if (view != convertView) {
+
+                //// TODO: 16/3/9   Add touch listener to every new view to track swipe motion
+//                view.findViewById(R.id.text_content).setOnTouchListener(mTouchListener);
+            }
+            return view;
+        }
+
+        class MyViewHolder {
+            TextView textView;
+            TextView deleteView;
+            TextView doneView;
+        }
+    }
+    public class MyLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
+        final static String TAG = "lc_myLoaderCallback";
+
+        CursorAdapter mCursorAdapter;
+        int mLoaderId;
+        Context mContext;
+
+        public MyLoaderCallback(Context context, CursorAdapter adapter, int id) {
+            mContext = context;
+            mCursorAdapter = adapter;
+            mLoaderId = id;
+            Log.d(TAG, "init..");
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            if (id != mLoaderId)
+                return null;
+            //未完成的前5五项
+            // TODO: 16/3/9 当天未完成的前五项
+            String where = ItemContract.Column.ITEM_IS_FINISHED + "=0";
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, where, null, ItemContract.DEFAULT_SORT+" LIMIT 5");
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                mCursorAdapter.swapCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mCursorAdapter.swapCursor(null);
+        }
+    }
 }
