@@ -44,7 +44,14 @@
                 style="@style/Base.TextAppearance.AppCompat.Display2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"/>
+                android:gravity="right"/>
+            <TextView
+                android:id="@+id/tv_count_hint"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="今日无事可干？"
+                android:gravity="center_vertical|center"
+                android:background="#E3F2FD"/>
 
             <ListView
                 android:id="@+id/lv_lite"

@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -128,14 +129,86 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             }
         }
 
+        //
+        displayUndoCount();
+
     }
+
+    // TODO: 16/3/10 ListView Lite的列表，Item滑动 向左划开 出现“删除”和“完成”
+
+
+    private View mSwipedView;
+    private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
+
+        private float mDownX;
+        private boolean mSwiping;
+        private boolean mPressed;
+        private boolean mSwiped;
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+
+            final LinearLayout containerItem = (LinearLayout)view.getParent();
+
+            switch (event.getActionMasked()){
+
+                case MotionEvent.ACTION_DOWN:
+                    if(!mPressed){
+                        mPressed=true;
+                        mDownX=event.getX();
+                        break;
+                    }else
+                        return false;
+
+                case MotionEvent.ACTION_CANCEL:
+                    mPressed=false;
+                    mSwiping=false;
+                    mDownX=0;
+                    containerItem.setTranslationX(0);
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    float x = event.getX();
+                    float deltaX=x-mDownX;
+                    float absDeltaX=Math.abs(deltaX);
+                    if(absDeltaX>0){
+                        mSwiping=true;
+                        mListView.requestDisallowInterceptTouchEvent(true);
+                    }
+                    if(mSwiping){
+                        containerItem.setTranslationX(deltaX+containerItem.getTranslationX());
+                    }
+                    if(deltaX>0){
+                        if(containerItem.getTranslationX()>=20)
+                            containerItem.setTranslationX(20);
+                    }else{
+                        float maxX=findViewById(R.id.tv_delete_hint).getWidth()+findViewById(R.id.tv_done).getWidth();
+                        Log.d(TAG,"maxX="+String.valueOf(maxX));
+
+                        if(Math.abs(containerItem.getTranslationX())>=maxX)
+                            containerItem.setTranslationX(-maxX);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    containerItem.setTranslationX(0);
+                    mDownX=0;
+                    mSwiping=false;
+                    mPressed=false;
+                default:
+                    return false;
+            }
+            return true;
+        }
+    };
+
     // 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
     // 控制的mContainerContent的动画
     // TODO: 16/3/10 完成,需完善.
-    private float mDownX;
-    private boolean mSwiping;
-    private boolean mPressed;
+
     private View.OnTouchListener mUnlockOnTouchListener = new View.OnTouchListener() {
+
+        private float mDownX;
+        private boolean mSwiping;
+        private boolean mPressed;
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -144,6 +217,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                 case MotionEvent.ACTION_DOWN:
                     //不允许多点
                     if (!mPressed) {
+                        mPressed=true;
                         mDownX = motionEvent.getX();
                         break;
                     } else
@@ -212,8 +286,8 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                                 .alpha(1)
                                 .setDuration(duration);
                     }
-                    mPressed=false;
                     mDownX=0;
+                    mPressed=false;
                     mSwiping=false;
 
                     break;
@@ -223,6 +297,21 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             return true;
         }
     };
+
+    private void displayUndoCount()
+    {
+        //// TODO: 16/3/10 选择当天未完成的条数(按提醒闹钟）
+        String where = ItemContract.Column.ITEM_IS_FINISHED+"=0";
+        Cursor cursor=getContentResolver().query(ItemContract.CONTENT_URI,null,where,null,ItemContract.DEFAULT_SORT);
+        if(cursor!=null){
+            int count = cursor.getCount();
+            if(count>0){
+                TextView textView = (TextView)findViewById(R.id.tv_count_hint);
+                textView.setText("你今天有 "+String.valueOf(count)+" 项需要清除的！" );
+            }
+            cursor.close();
+        }
+    }
 
     private void init() {
         mLockscreenUtils = new LockScreenUtils();
@@ -437,8 +526,11 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             View view = super.getView(position, convertView, parent);
             if (view != convertView) {
 
-                //// TODO: 16/3/9   Add touch listener to every new view to track swipe motion
-//                view.findViewById(R.id.text_content).setOnTouchListener(mTouchListener);
+                view.findViewById(R.id.tv_content).setOnTouchListener(mListItemOnTouchListener);
+                // TODO: 16/3/10 对删除，完成增加click事件的listener
+//                view.findViewById(R.id.tv_done).setOnClickListener();
+//                view.findViewById(R.id.tv_delete_hint).setOnClickListener();
+
             }
             return view;
         }
@@ -468,7 +560,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             if (id != mLoaderId)
                 return null;
             //未完成的前5五项
-            // TODO: 16/3/9 当天未完成的前五项
+            // TODO: 16/3/9 当天未完成的前五项（按提醒闹钟）
             String where = ItemContract.Column.ITEM_IS_FINISHED + "=0";
             return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, where, null, ItemContract.DEFAULT_SORT+" LIMIT 5");
 
@@ -476,7 +568,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                mCursorAdapter.swapCursor(data);
+            mCursorAdapter.swapCursor(data);
         }
 
         @Override
