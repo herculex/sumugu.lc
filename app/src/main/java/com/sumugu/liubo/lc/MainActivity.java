@@ -135,7 +135,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     }
 
     // TODO: 16/3/10 ListView Lite的列表，Item滑动 向左划开 出现“删除”和“完成”
-
+    // TODO: 16/3/10 动画未完成，还有一次能划开一行，划其他行，原先打开的行要复位。
 
     private View mSwipedView;
     private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
@@ -182,7 +182,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                             containerItem.setTranslationX(20);
                     }else{
                         float maxX=findViewById(R.id.tv_delete_hint).getWidth()+findViewById(R.id.tv_done).getWidth();
-                        Log.d(TAG,"maxX="+String.valueOf(maxX));
+                        Log.d(TAG, "maxX=" + String.valueOf(maxX));
 
                         if(Math.abs(containerItem.getTranslationX())>=maxX)
                             containerItem.setTranslationX(-maxX);
