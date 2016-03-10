@@ -228,9 +228,36 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                         }
                         float itemTranX=containerItem.getTranslationX();
                         long duration=(int)((1-itemTranX/containerItem.getWidth())*250);
-                        containerItem.animate()
-                                .translationX(0)
-                                .setDuration(duration);
+                        if(itemTranX>0) {
+                            //itemTranX>0 mean being swiped to right -->
+
+                            containerItem.animate()
+                                    .translationX(0)
+                                    .setDuration(duration);
+                        }
+                        else{
+                            //itemTranx<0 mean being swiped to left <--
+
+                            float absItemTranX=Math.abs(itemTranX);
+                            float leftMaxTrans=findViewById(R.id.tv_done).getWidth()+findViewById(R.id.tv_delete_hint).getWidth();
+//                            Log.d(TAG,String.valueOf(leftMaxTrans)+":"+String.valueOf(itemTranX));
+                            if(absItemTranX>=leftMaxTrans){
+                                mSwiped=true;
+                            }
+                            else{
+                                if(absItemTranX>leftMaxTrans/2){
+                                    containerItem.setTranslationX(-leftMaxTrans);// TODO: 16/3/10 需要动画
+                                    mSwiped=true;
+                                }
+                                else{
+                                    containerItem.setTranslationX(0);
+                                }
+                            }
+
+                            if(mSwiped)
+                                Log.d(TAG,"containerItem swiped:"+((TextView)view.findViewById(R.id.tv_content)).getText());
+
+                        }
                     }
 
                     mDownX=0;
