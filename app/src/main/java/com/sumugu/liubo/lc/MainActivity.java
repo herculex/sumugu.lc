@@ -175,11 +175,22 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                         mListView.requestDisallowInterceptTouchEvent(true);
                     }
                     if(mSwiping){
-                        containerItem.setTranslationX(deltaX+containerItem.getTranslationX());
+                        if(mContainerContent.getTranslationX()>0) {
+                            mContainerContent.setTranslationX(deltaX + mContainerContent.getTranslationX());
+                        }
+                        else {
+                            mContainerContent.setTranslationX(0);
+                            containerItem.setTranslationX(deltaX + containerItem.getTranslationX());
+                        }
                     }
                     if(deltaX>0){
-                        if(containerItem.getTranslationX()>=20)
-                            containerItem.setTranslationX(20);
+                        float maxX=containerItem.getWidth()/3;
+                        if(containerItem.getTranslationX()>=maxX){
+                            containerItem.setTranslationX(maxX);
+                            //grade than 1/3 containerItem then tranX the containerContent
+                            mContainerContent.setTranslationX(deltaX + mContainerContent.getTranslationX());
+                        }
+
                     }else{
                         float maxX=findViewById(R.id.tv_delete_hint).getWidth()+findViewById(R.id.tv_done).getWidth();
                         Log.d(TAG, "maxX=" + String.valueOf(maxX));
@@ -190,6 +201,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                     break;
                 case MotionEvent.ACTION_UP:
                     containerItem.setTranslationX(0);
+                    mContainerContent.setTranslationX(0);
                     mDownX=0;
                     mSwiping=false;
                     mPressed=false;
