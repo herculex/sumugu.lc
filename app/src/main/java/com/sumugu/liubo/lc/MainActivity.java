@@ -134,7 +134,6 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
     }
 
-    // TODO: 16/3/10 ListView Lite的列表，Item滑动 向左划开 出现“删除”和“完成”
     // TODO: 16/3/10 动画未完成，还有一次能划开一行，划其他行，原先打开的行要复位。
 
     private View mSwipedView;
@@ -227,9 +226,10 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                                     .setDuration(canDuration);
                         }
                         float itemTranX=containerItem.getTranslationX();
-                        long duration=(int)((1-itemTranX/containerItem.getWidth())*250);
+                        float absItemTranX=Math.abs(itemTranX);
                         if(itemTranX>0) {
                             //itemTranX>0 mean being swiped to right -->
+                            long duration=(int)((1-absItemTranX/containerItem.getWidth())*250);
 
                             containerItem.animate()
                                     .translationX(0)
@@ -238,24 +238,33 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                         else{
                             //itemTranx<0 mean being swiped to left <--
 
-                            float absItemTranX=Math.abs(itemTranX);
                             float leftMaxTrans=findViewById(R.id.tv_done).getWidth()+findViewById(R.id.tv_delete_hint).getWidth();
 //                            Log.d(TAG,String.valueOf(leftMaxTrans)+":"+String.valueOf(itemTranX));
                             if(absItemTranX>=leftMaxTrans){
                                 mSwiped=true;
                             }
                             else{
+                                float fraction=absItemTranX/leftMaxTrans;
+                                long duration;
                                 if(absItemTranX>leftMaxTrans/2){
-                                    containerItem.setTranslationX(-leftMaxTrans);// TODO: 16/3/10 需要动画
+                                    duration=(int)(fraction*250);
+                                    containerItem.animate()
+                                            .translationX(-leftMaxTrans)
+                                            .setDuration(duration);
                                     mSwiped=true;
                                 }
                                 else{
-                                    containerItem.setTranslationX(0);
+                                    duration=(int)((1-fraction)*250);
+                                    containerItem.animate()
+                                            .translationX(0)
+                                            .setDuration(duration);
                                 }
                             }
 
-                            if(mSwiped)
-                                Log.d(TAG,"containerItem swiped:"+((TextView)view.findViewById(R.id.tv_content)).getText());
+                            if(mSwiped) {
+                                // TODO: 16/3/11 记录当前被滑动打开的item ,滑动其他前的touch down 要先关闭已经打开的item
+                                Log.d(TAG, "containerItem swiped:" + ((TextView) view.findViewById(R.id.tv_content)).getText());
+                            }
 
                         }
                     }
