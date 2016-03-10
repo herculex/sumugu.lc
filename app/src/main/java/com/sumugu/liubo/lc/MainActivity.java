@@ -200,11 +200,43 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    containerItem.setTranslationX(0);
-                    mContainerContent.setTranslationX(0);
+
+                    //if grade than 1/3 TranX of containerContent,then open it's detail
+                    //get itemId from adapter ,build the intent with extra data with it,start it.
+                    //else TranX containerContent and item to 0 with animation
+                    float canTranX=mContainerContent.getTranslationX();
+                    if(canTranX>mContainerContent.getWidth()/3) {
+                        long itemId = mCursorAdapter.getItemId(mListView.getPositionForView(view));
+                        Intent intentDetail = new Intent(MainActivity.this, ItemDetailActivity.class);
+                        intentDetail.putExtra(ItemContract.Column.ITEM_ID, itemId);
+                        startActivity(intentDetail);
+
+                        mContainerContent.animate()
+                                .alpha(0)
+                                .setDuration(150);
+                    }
+                    else{
+                        if(canTranX>0){
+                            float a=canTranX/mContainerContent.getWidth();
+                            float b=1-a;
+                            long stand=250;
+                            long canDuration=(int)(b*stand);
+
+                            mContainerContent.animate()
+                                    .translationX(0)
+                                    .setDuration(canDuration);
+                        }
+                        float itemTranX=containerItem.getTranslationX();
+                        long duration=(int)((1-itemTranX/containerItem.getWidth())*250);
+                        containerItem.animate()
+                                .translationX(0)
+                                .setDuration(duration);
+                    }
+
                     mDownX=0;
                     mSwiping=false;
                     mPressed=false;
+                    break;
                 default:
                     return false;
             }
