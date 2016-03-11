@@ -81,8 +81,6 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     private CursorAdapter mCursorAdapter;
     private MyLoaderCallback mLoaderCallback;
 
-
-    // TODO: 16/3/10 动画未完成，还有一次能划开一行，划其他行，原先打开的行要复位。
     private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
 
         private float mDownX;
@@ -198,7 +196,6 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 //                            Log.d(TAG,String.valueOf(leftMaxTrans)+":"+String.valueOf(itemTranX));
                             if(absItemTranX>=leftMaxTrans){
                                 mSwiped=true;
-                                mSwipedView=containerItem;
                             }
                             else{
                                 float fraction=absItemTranX/leftMaxTrans;
@@ -209,7 +206,6 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                                             .translationX(-leftMaxTrans)
                                             .setDuration(duration);
                                     mSwiped=true;
-                                    mSwipedView=containerItem;
                                 }
                                 else{
                                     duration=(int)((1-fraction)*250);
@@ -217,16 +213,16 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                                             .translationX(0)
                                             .setDuration(duration);
                                     mSwiped=false;
-                                    mSwipedView=null;
                                 }
                             }
 
                             if(mSwiped) {
-                                // TODO: 16/3/11 记录当前被滑动打开的item ,滑动其他前的touch down 要先关闭已经打开的item
+                                mSwipedView=containerItem;
                                 Log.d(TAG, "containerItem swiped:" + ((TextView) view.findViewById(R.id.tv_content)).getText());
-                                Log.d(TAG,"swipedView:"+mSwipedView.toString());
                             }
-
+                            else{
+                                mSwipedView=null;
+                            }
                         }
                     }
 
