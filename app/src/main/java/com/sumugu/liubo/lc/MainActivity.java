@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     private ListView mListView;
     private CursorAdapter mCursorAdapter;
     private MyLoaderCallback mLoaderCallback;
-    private View mSwipedView;
+
 
     // TODO: 16/3/10 动画未完成，还有一次能划开一行，划其他行，原先打开的行要复位。
     private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
@@ -89,6 +89,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         private boolean mSwiping;
         private boolean mPressed;
         private boolean mSwiped;
+        private View mSwipedView;
         @Override
         public boolean onTouch(View view, MotionEvent event) {
 
@@ -97,12 +98,21 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             switch (event.getActionMasked()){
 
                 case MotionEvent.ACTION_DOWN:
+                    if(mSwipedView!=null && mSwipedView!=view){
+                        Log.d(TAG,"an opened should be closed!");
+                        mSwipedView.animate()
+                                .translationX(0)
+                                .setDuration(250);
+                    }
+
                     if(!mPressed){
                         mPressed=true;
                         mDownX=event.getX();
+
                         break;
                     }else
                         return false;
+
 
                 case MotionEvent.ACTION_CANCEL:
                     mPressed=false;
@@ -188,6 +198,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 //                            Log.d(TAG,String.valueOf(leftMaxTrans)+":"+String.valueOf(itemTranX));
                             if(absItemTranX>=leftMaxTrans){
                                 mSwiped=true;
+                                mSwipedView=containerItem;
                             }
                             else{
                                 float fraction=absItemTranX/leftMaxTrans;
@@ -198,18 +209,22 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                                             .translationX(-leftMaxTrans)
                                             .setDuration(duration);
                                     mSwiped=true;
+                                    mSwipedView=containerItem;
                                 }
                                 else{
                                     duration=(int)((1-fraction)*250);
                                     containerItem.animate()
                                             .translationX(0)
                                             .setDuration(duration);
+                                    mSwiped=false;
+                                    mSwipedView=null;
                                 }
                             }
 
                             if(mSwiped) {
                                 // TODO: 16/3/11 记录当前被滑动打开的item ,滑动其他前的touch down 要先关闭已经打开的item
                                 Log.d(TAG, "containerItem swiped:" + ((TextView) view.findViewById(R.id.tv_content)).getText());
+                                Log.d(TAG,"swipedView:"+mSwipedView.toString());
                             }
 
                         }
@@ -382,13 +397,16 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     private void displayUndoCount()
     {
         //// TODO: 16/3/10 选择当天未完成的条数(按提醒闹钟）
+        TextView textView = (TextView)findViewById(R.id.tv_count_hint);
         String where = ItemContract.Column.ITEM_IS_FINISHED+"=0";
         Cursor cursor=getContentResolver().query(ItemContract.CONTENT_URI,null,where,null,ItemContract.DEFAULT_SORT);
         if(cursor!=null){
             int count = cursor.getCount();
             if(count>0){
-                TextView textView = (TextView)findViewById(R.id.tv_count_hint);
                 textView.setText("你今天有 "+String.valueOf(count)+" 项需要清除的！" );
+            }
+            else{
+                textView.setText("");
             }
             cursor.close();
         }
@@ -647,8 +665,10 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                 }
             });
 
-             //抗锯齿
+             //抗锯齿-不懂具体究竟又没用，现在的设备都是1080P以上了
             holder.textView.getPaint().setAntiAlias(true);
+            holder.deleteView.getPaint().setAntiAlias(true);
+            holder.doneView.getPaint().setAntiAlias(true);
 
         }
 
