@@ -44,7 +44,8 @@
                 style="@style/Base.TextAppearance.AppCompat.Display2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"/>
+                android:gravity="right"
+                android:paddingRight="10dp"/>
             <TextView
                 android:id="@+id/tv_count_hint"
                 android:layout_width="match_parent"
