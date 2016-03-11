@@ -41,12 +41,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.contract.ListContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
 import com.sumugu.liubo.lc.missing.MissingUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -78,65 +80,9 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     private ListView mListView;
     private CursorAdapter mCursorAdapter;
     private MyLoaderCallback mLoaderCallback;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mContainerBottom = (LinearLayout)findViewById(R.id.layer_bottom);
-        mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
-        mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
-
-        mContainerUnlock.setOnTouchListener(mUnlockOnTouchListener);
-
-        mListView = (ListView)findViewById(R.id.lv_lite);
-        mCursorAdapter = new MyCursorAdapter(this,null,10);
-        mListView.setAdapter(mCursorAdapter);
-        mLoaderCallback = new MyLoaderCallback(this,mCursorAdapter,9);
-        getLoaderManager().initLoader(9,null,mLoaderCallback);
-
-        findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
-        findViewById(R.id.btn_new_life).setOnClickListener(this);
-
-        //
-        makeFullScreen();
-        //
-        init();
-        // unlock screen in case of app get killed by system
-        if (getIntent() != null && getIntent().hasExtra("kill")
-                && getIntent().getExtras().getInt("kill") == 1) {
-            enableKeyguard();
-            unlockHomeButton();
-        } else {
-
-            try {
-                // disable keyguard
-                disableKeyguard();
-
-                // lock home button
-                lockHomeButton();
-
-                // start service for observing intents
-                startService(new Intent(this, LockScreenService.class));
-
-                // listen the events get fired during the call
-                StateListener phoneStateListener = new StateListener();
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                telephonyManager.listen(phoneStateListener,
-                        PhoneStateListener.LISTEN_CALL_STATE);
-
-            } catch (Exception e) {
-            }
-        }
-
-        //
-        displayUndoCount();
-
-    }
+    private View mSwipedView;
 
     // TODO: 16/3/10 动画未完成，还有一次能划开一行，划其他行，原先打开的行要复位。
-
-    private View mSwipedView;
     private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
 
         private float mDownX;
@@ -279,11 +225,6 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             return true;
         }
     };
-
-    // 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
-    // 控制的mContainerContent的动画
-    // TODO: 16/3/10 完成,需完善.
-
     private View.OnTouchListener mUnlockOnTouchListener = new View.OnTouchListener() {
 
         private float mDownX;
@@ -378,6 +319,66 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         }
     };
 
+    // 向右unlock,向左进入itemline.需要完成.unlock 控制mContainerConent的X轴位置
+    // 控制的mContainerContent的动画
+    // TODO: 16/3/10 完成,需完善.
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mContainerBottom = (LinearLayout)findViewById(R.id.layer_bottom);
+        mContainerUnlock = (LinearLayout)findViewById(R.id.layer_unlock);
+        mContainerContent = (LinearLayout)findViewById(R.id.layer_content);
+
+        mContainerUnlock.setOnTouchListener(mUnlockOnTouchListener);
+
+        mListView = (ListView)findViewById(R.id.lv_lite);
+        mCursorAdapter = new MyCursorAdapter(this,null,10);
+        mListView.setAdapter(mCursorAdapter);
+        mLoaderCallback = new MyLoaderCallback(this,mCursorAdapter,9);
+        getLoaderManager().initLoader(9,null,mLoaderCallback);
+
+        findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
+        findViewById(R.id.btn_new_life).setOnClickListener(this);
+
+        //
+        makeFullScreen();
+        //
+        init();
+        // unlock screen in case of app get killed by system
+        if (getIntent() != null && getIntent().hasExtra("kill")
+                && getIntent().getExtras().getInt("kill") == 1) {
+            enableKeyguard();
+            unlockHomeButton();
+        } else {
+
+            try {
+                // disable keyguard
+                disableKeyguard();
+
+                // lock home button
+                lockHomeButton();
+
+                // start service for observing intents
+                startService(new Intent(this, LockScreenService.class));
+
+                // listen the events get fired during the call
+                StateListener phoneStateListener = new StateListener();
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                telephonyManager.listen(phoneStateListener,
+                        PhoneStateListener.LISTEN_CALL_STATE);
+
+            } catch (Exception e) {
+            }
+        }
+
+        //
+        displayUndoCount();
+
+    }
+
     private void displayUndoCount()
     {
         //// TODO: 16/3/10 选择当天未完成的条数(按提醒闹钟）
@@ -435,28 +436,11 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         }
     }
 
-    // Handle events of calls and unlock screen if necessary
-    private class StateListener extends PhoneStateListener {
         @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-
-            super.onCallStateChanged(state, incomingNumber);
-            switch (state) {
-                case TelephonyManager.CALL_STATE_RINGING:
-                    unlockHomeButton();
-                    break;
-                case TelephonyManager.CALL_STATE_OFFHOOK:
-                    break;
-                case TelephonyManager.CALL_STATE_IDLE:
-                    break;
-            }
-        }
-    };
-
-    @Override
     public void onBackPressed() {
         return;
-    }
+    };
+
     @Override
     public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
 
@@ -488,6 +472,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         }
         return false;
     }
+
     // Lock home button
     public void lockHomeButton() {
 
@@ -522,6 +507,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         super.onStop();
         unlockHomeButton();
     }
+
     @SuppressWarnings("deprecation")
     private void disableKeyguard() {
         KeyguardManager mKM = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
@@ -558,6 +544,24 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         return true;
     }
 
+// Handle events of calls and unlock screen if necessary
+    private class StateListener extends PhoneStateListener {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+
+            super.onCallStateChanged(state, incomingNumber);
+            switch (state) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    unlockHomeButton();
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    break;
+                case TelephonyManager.CALL_STATE_IDLE:
+                    break;
+            }
+        }
+    }
+
     public class MyCursorAdapter extends CursorAdapter {
 
         public MyCursorAdapter(Context context, Cursor cursor, int flag) {
@@ -589,12 +593,59 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             //接收view的holder里的控件对象，然后赋值
             MyViewHolder holder = (MyViewHolder) view.getTag();
 
-            String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
-            String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
-            long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-            int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+            final long id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+            final String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+            final long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            final int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
             holder.textView.setText(content);
+            holder.doneView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "you click DONE,and it is :" + String.valueOf(id));
+
+                    //cancel the alarm clock
+                    if(reminder>0) {
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(reminder);
+                        AlarmUntils alarmUntils = new AlarmUntils();
+                        alarmUntils.cancelAlarmClock(MainActivity.this,calendar,id);
+
+                    }
+
+                    //update data
+                    ContentValues values = new ContentValues();
+                    values.put(ItemContract.Column.ITEM_IS_FINISHED, 1);
+                    values.put(ItemContract.Column.ITEM_ALARM_CLOCK,0);
+
+                    int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(id)),values,null,null);
+                    if(count>0)
+                        displayUndoCount();
+                    Log.d(TAG,"list lite done:"+String.valueOf(count));
+                    //
+                }
+            });
+            holder.deleteView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "you click DELETE,and it is :" + String.valueOf(id));
+                    //cancel the alarm clock
+                    if(reminder>0) {
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(reminder);
+                        AlarmUntils alarmUntils = new AlarmUntils();
+                        alarmUntils.cancelAlarmClock(MainActivity.this,calendar,id);
+
+                    }
+                    //delete the data
+                    int count = getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(id)),null,null);
+                    if(count>0)
+                        displayUndoCount();
+                    Log.d(TAG,"list lite delete:"+String.valueOf(count));
+                }
+            });
 
              //抗锯齿
             holder.textView.getPaint().setAntiAlias(true);
@@ -607,9 +658,9 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             if (view != convertView) {
 
                 view.findViewById(R.id.tv_content).setOnTouchListener(mListItemOnTouchListener);
-                // TODO: 16/3/10 对删除，完成增加click事件的listener
-//                view.findViewById(R.id.tv_done).setOnClickListener();
-//                view.findViewById(R.id.tv_delete_hint).setOnClickListener();
+//              在bindView中添加了－2016.03.11
+//               view.findViewById(R.id.tv_done).setOnClickListener();
+//               view.findViewById(R.id.tv_delete_hint).setOnClickListener();
 
             }
             return view;
