@@ -80,6 +80,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     private ListView mListView;
     private CursorAdapter mCursorAdapter;
     private MyLoaderCallback mLoaderCallback;
+    private View mSwipedView;
 
     private View.OnTouchListener mListItemOnTouchListener = new View.OnTouchListener() {
 
@@ -87,7 +88,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         private boolean mSwiping;
         private boolean mPressed;
         private boolean mSwiped;
-        private View mSwipedView;
+
         @Override
         public boolean onTouch(View view, MotionEvent event) {
 
@@ -247,6 +248,12 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
             switch (motionEvent.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
+                    if(mSwipedView!=null){
+                        Log.d(TAG,"an opened should be closed!also outside");
+                        mSwipedView.animate()
+                                .translationX(0)
+                                .setDuration(250);
+                    }
                     //不允许多点
                     if (!mPressed) {
                         mPressed=true;
