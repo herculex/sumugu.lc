@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                         mSwipedView.animate()
                                 .translationX(0)
                                 .setDuration(250);
+                        mSwipedView=null;
                     }
 
                     if(!mPressed){
@@ -253,6 +254,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                         mSwipedView.animate()
                                 .translationX(0)
                                 .setDuration(250);
+                        mSwipedView=null;
                     }
                     //不允许多点
                     if (!mPressed) {
@@ -620,6 +622,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             final int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
             holder.textView.setText(content);
+            // TODO: 16/3/11 done and delete 后,item的动画未完成.
             holder.doneView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
