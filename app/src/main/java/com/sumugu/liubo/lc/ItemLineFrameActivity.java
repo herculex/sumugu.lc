@@ -58,7 +58,7 @@ public class ItemLineFrameActivity extends Activity {
     boolean mItemPressed = false;
     int SWIPE_DURATION = 1000;
     int MOVE_DURATION = 2000;
-    HashMap<Long,Integer> mItemIdTopMap = new HashMap<Long,Integer>();
+    HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
     GestureDetector gestureDetector;
     boolean mListPressed = false;
     boolean mListSwiping = false;
@@ -70,10 +70,10 @@ public class ItemLineFrameActivity extends Activity {
     private MyCursorAdapter myCursorAdapter;
     private EditText mEditView;
     private MyLoaderCallback myCursorLoader;
-    private long mUpdateItemId=0;
-    private int mScrollDistance=0;
-    private int mCurrentPosition=0;
-    private int mCurrentPositionTop=0;
+    private long mUpdateItemId = 0;
+    private int mScrollDistance = 0;
+    private int mCurrentPosition = 0;
+    private int mCurrentPositionTop = 0;
     private LinearLayout mContainerEditor;
     private TextView mTextReminder;
 
@@ -87,11 +87,15 @@ public class ItemLineFrameActivity extends Activity {
 
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
-            final LinearLayout containerItem = (LinearLayout)v.getParent();
+
+            //获取包含Content和Reminder的TextView的线性布局
+            final LinearLayout containerItem = (LinearLayout) v.getParent();
+
             if (mSwipeSlop < 0) {
                 mSwipeSlop = ViewConfiguration.get(ItemLineFrameActivity.this).
                         getScaledTouchSlop();
             }
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mItemPressed) {
@@ -105,6 +109,7 @@ public class ItemLineFrameActivity extends Activity {
                     containerItem.setAlpha(1);
                     containerItem.setTranslationX(0);
                     mItemPressed = false;
+                    mSwiping = false;
                     break;
                 case MotionEvent.ACTION_MOVE: {
                     float x = event.getX() + containerItem.getTranslationX();
@@ -121,12 +126,10 @@ public class ItemLineFrameActivity extends Activity {
 //                        v.setAlpha(1 - deltaXAbs / v.getWidth());
 
                         //设置固定距离
-                        if(deltaXAbs>containerItem.getWidth()/3)
-                        {
-                            if(deltaX<0) {
+                        if (deltaXAbs > containerItem.getWidth() / 3) {
+                            if (deltaX < 0) {
                                 containerItem.setTranslationX(-containerItem.getWidth() / 3);
-                            }
-                            else {
+                            } else {
                                 containerItem.setTranslationX(containerItem.getWidth() / 3);
                             }
                         }
@@ -134,14 +137,14 @@ public class ItemLineFrameActivity extends Activity {
                 }
                 break;
                 case MotionEvent.ACTION_UP: {
-                    Log.d(TAG,"TextVIEW____ACTION__UP");
+                    Log.d(TAG, "TextVIEW____ACTION__UP");
                     // User let go - figure out whether to animate the view out, or back into place
                     if (mSwiping) {
                         float x = event.getX() + containerItem.getTranslationX();
                         float deltaX = x - mDownX;
                         float deltaXAbs = Math.abs(deltaX);
                         float fractionCovered;
-                        float endX=0;
+                        float endX = 0;
                         float endAlpha;
                         final boolean remove;
                         final int swipedResult;
@@ -149,22 +152,20 @@ public class ItemLineFrameActivity extends Activity {
                             // Greater than a quarter of the width - animate it out
                             fractionCovered = deltaXAbs / containerItem.getWidth();
                             endAlpha = 0;
-                            if(deltaX>0) {
+                            if (deltaX > 0) {
                                 remove = true;
-                                swipedResult=1;// is deleted.
+                                swipedResult = 1;// is deleted.
                                 endX = containerItem.getWidth();
-                            }
-                            else
-                            {
-                                remove=false;
-                                swipedResult=2;// is done.
+                            } else {
+                                remove = false;
+                                swipedResult = 2;// is done.
                             }
                         } else {
                             // Not far enough - animate it back
                             fractionCovered = 1 - (deltaXAbs / containerItem.getWidth());
                             endAlpha = 1;
                             remove = false;
-                            swipedResult=0; //nothing happend.
+                            swipedResult = 0; //nothing happend.
                         }
                         // Animate position and alpha of swiped item
                         // NOTE: This is a simplified version of swipe behavior, for the
@@ -173,9 +174,9 @@ public class ItemLineFrameActivity extends Activity {
                         // back at an appropriate speed.
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
-                        final View contaierDelDone=myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
+                        final View contaierDelDone = myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
 
-                        if (swipedResult>0) {
+                        if (swipedResult > 0) {
                             contaierDelDone.animate().alpha(0).setDuration(duration / 2);
                         }
                         containerItem.animate().setDuration(duration).translationX(endX).
@@ -186,22 +187,17 @@ public class ItemLineFrameActivity extends Activity {
                                         containerItem.setAlpha(1);
                                         containerItem.setTranslationX(0);
                                         contaierDelDone.setAlpha(1);
-                                        if (swipedResult==1) {
+                                        if (swipedResult == 1) {
                                             animateRemoval(myListView, containerItem);
-                                        }
-                                        else if(swipedResult==2)
-                                        {
+                                        } else if (swipedResult == 2) {
                                             swipeToFinished(myListView, containerItem);
-                                        }
-                                        else {
+                                        } else {
                                             mSwiping = false;
                                         }
                                         myListView.setEnabled(true);
                                     }
                                 });
-                    }
-                    else
-                    {
+                    } else {
                         //no swiping ,but click
                         int currentPosition = myListView.getPositionForView(v);
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
@@ -212,7 +208,7 @@ public class ItemLineFrameActivity extends Activity {
 
                         //打开遮罩，进入编辑状态
                         showUp();
-                        showEditView =true;
+                        showEditView = true;
 
                     }
                 }
@@ -230,14 +226,15 @@ public class ItemLineFrameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_line_frame);
 
-        mContainerEditor=(LinearLayout)findViewById(R.id.container_editor);
-        mTextReminder=(TextView)findViewById(R.id.text_reminder);
+        mContainerEditor = (LinearLayout) findViewById(R.id.container_editor);
+        mTextReminder = (TextView) findViewById(R.id.text_reminder);
         mTextReminder.setOnClickListener(new View.OnClickListener() {
             Calendar today = Calendar.getInstance();
+
             @Override
             public void onClick(View view) {
 
-                if(!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
+                if (!showEditView)   //奇葩,ListView的首个Item包含有Add Reminder的话,居然会收到click事件!(不是因为是相同id)2016.03.04
                     return;
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(ItemLineFrameActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -245,7 +242,7 @@ public class ItemLineFrameActivity extends Activity {
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                         final Calendar cal = Calendar.getInstance();
 //                        cal.set(i,i1,i2);
-                        cal.set(Calendar.YEAR,i);
+                        cal.set(Calendar.YEAR, i);
                         cal.set(Calendar.MONTH, i1);
                         cal.set(Calendar.DAY_OF_MONTH, i2);
 
@@ -253,20 +250,20 @@ public class ItemLineFrameActivity extends Activity {
                         TimePickerDialog timePickerDialog = new TimePickerDialog(ItemLineFrameActivity.this, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                                cal.set(Calendar.HOUR_OF_DAY,i);
-                                cal.set(Calendar.MINUTE,i1);
-                                cal.set(Calendar.SECOND,0);
+                                cal.set(Calendar.HOUR_OF_DAY, i);
+                                cal.set(Calendar.MINUTE, i1);
+                                cal.set(Calendar.SECOND, 0);
 
                                 SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm");
                                 mTextReminder.setText(formater.format(cal.getTime()));
-                                mReminder=cal.getTimeInMillis();
+                                mReminder = cal.getTimeInMillis();
                             }
-                        },today.get(Calendar.HOUR_OF_DAY),today.get(Calendar.MINUTE)+10,true);
+                        }, today.get(Calendar.HOUR_OF_DAY), today.get(Calendar.MINUTE) + 10, true);
 
                         timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "移除", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mReminder=0;
+                                mReminder = 0;
                                 mTextReminder.setText("");
                             }
                         });
@@ -289,7 +286,7 @@ public class ItemLineFrameActivity extends Activity {
         });
 
 
-        if(mCover==null) {
+        if (mCover == null) {
             mCover = (RelativeLayout) findViewById(R.id.layer_cover);
             mCover.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -323,44 +320,42 @@ public class ItemLineFrameActivity extends Activity {
         myListView.setAdapter(myCursorAdapter);
 
         myCursorLoader = new MyLoaderCallback(this, myCursorAdapter, 5);
-        getLoaderManager().initLoader(5, null,myCursorLoader);
+        getLoaderManager().initLoader(5, null, myCursorLoader);
 
     }
 
-    private void initEditorContent()
-    {
-        if(0==mUpdateItemId)
+    private void initEditorContent() {
+        if (0 == mUpdateItemId)
             return;
 
-        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mUpdateItemId));
-        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
-        if(cursor.moveToFirst()){
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId));
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor.moveToFirst()) {
             mEditView.setText(cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
             mReminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-            if(0!=mReminder)
+            if (0 != mReminder)
                 mTextReminder.setText(DateFormat.format("yyyy-MM-dd hh:mm", mReminder));
         }
 
     }
 
-    private int swipeToFinished(final ListView listView, final View viewToFinish)
-    {
-        int finishPosition= listView.getPositionForView(viewToFinish);
+    private int swipeToFinished(final ListView listView, final View viewToFinish) {
+        int finishPosition = listView.getPositionForView(viewToFinish);
         long itemId = myCursorAdapter.getItemId(finishPosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId));
 
         //获取查询结果各项值
-        int finshed=0;
-        long alarmclock=0;
+        int finshed = 0;
+        long alarmclock = 0;
 
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if(!cursor.moveToFirst())
+        if (!cursor.moveToFirst())
             return 0;
 
         finshed = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
-        alarmclock=cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+        alarmclock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
         //
-        int newFinished=finshed==0?1:0;
+        int newFinished = finshed == 0 ? 1 : 0;
         ContentValues values = new ContentValues();
         values.put(ItemContract.Column.ITEM_IS_FINISHED, newFinished);
 
@@ -368,17 +363,14 @@ public class ItemLineFrameActivity extends Activity {
         int count = getContentResolver().update(uri, values, null, null);
 
         AlarmUntils alarmUntils = new AlarmUntils();
-        Calendar calendar=Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(alarmclock);
-        if(newFinished==0)
-        {
-            if(alarmclock>0) {
-                alarmUntils.setAlarmClock(this,calendar,true,60*1000,itemId);
+        if (newFinished == 0) {
+            if (alarmclock > 0) {
+                alarmUntils.setAlarmClock(this, calendar, true, 60 * 1000, itemId);
             }
-        }
-        else
-        {
-            alarmUntils.cancelAlarmClock(this,calendar,itemId);
+        } else {
+            alarmUntils.cancelAlarmClock(this, calendar, itemId);
         }
 
         cursor.close();
@@ -402,17 +394,17 @@ public class ItemLineFrameActivity extends Activity {
         //只有删除数据，更新cursoradapter
         //
         //0,init.
-        long targetId=myCursorAdapter.getItemId(deletePosition);
+        long targetId = myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
         //1,remove the alarmclock
-        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
-        if(cursor.moveToFirst()){
-            AlarmUntils alarmUntils= new AlarmUntils();
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            AlarmUntils alarmUntils = new AlarmUntils();
             long clock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-            if(clock>0){
+            if (clock > 0) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(clock);
-                alarmUntils.cancelAlarmClock(this,calendar,targetId);
+                alarmUntils.cancelAlarmClock(this, calendar, targetId);
             }
         }
         //2,delete the data
@@ -433,7 +425,7 @@ public class ItemLineFrameActivity extends Activity {
                     final View child = listview.getChildAt(i);
                     int position = firstVisiblePosition + i;
                     //
-                    if(position>=deletePosition){   //问题的根源2在此，adapter的数据没有更新，所以要跳过被删除的位置－2016.2.19
+                    if (position >= deletePosition) {   //问题的根源2在此，adapter的数据没有更新，所以要跳过被删除的位置－2016.2.19
 //                        position=+1;//position not change!!!!
 //                        position=position+1;
                         position++;
@@ -448,7 +440,7 @@ public class ItemLineFrameActivity extends Activity {
                             int delta = startTop - top;
                             child.setTranslationY(delta);
                             child.animate().setDuration(MOVE_DURATION).translationY(0);
-                            Log.d(TAG,"LV__animatie____:"+String.valueOf(itemId));
+                            Log.d(TAG, "LV__animatie____:" + String.valueOf(itemId));
                             if (firstAnimation) {
                                 child.animate().withEndAction(new Runnable() {
                                     public void run() {
@@ -492,7 +484,7 @@ public class ItemLineFrameActivity extends Activity {
 //
 //        return gestureDetector.onTouchEvent(event);
 
-        if(mCover.getVisibility()==View.VISIBLE)
+        if (mCover.getVisibility() == View.VISIBLE)
             return super.onTouchEvent(event);
 
         if (mListSwipeSlop < 0) {
@@ -539,7 +531,7 @@ public class ItemLineFrameActivity extends Activity {
                     if (myListView.getTranslationY() <= 0) {
                         myListView.setTranslationY(0);
                         myListView.requestAllowSuperTouch(true);
-                        Log.d(TAG,"AT___LV__TOP!");
+                        Log.d(TAG, "AT___LV__TOP!");
                     }
                 }
                 Log.d(TAG, "donwY=" + String.valueOf(mListDownY) + ";y=" + String.valueOf(y) + ";DeltaY=" + String.valueOf(deltaY));
@@ -597,8 +589,7 @@ public class ItemLineFrameActivity extends Activity {
 
 
     //打开遮罩，并进入编辑状态
-    private void showUp()
-    {
+    private void showUp() {
         mCover.setVisibility(View.VISIBLE);
         mCover.setTranslationY(mContainerEditor.getHeight());
 
@@ -612,8 +603,7 @@ public class ItemLineFrameActivity extends Activity {
     }
 
     //完成后关闭遮罩
-    private void finishOff()
-    {
+    private void finishOff() {
         //隐藏软键盘
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mEditView.getWindowToken(), 0);
@@ -621,8 +611,7 @@ public class ItemLineFrameActivity extends Activity {
         mEditView.setInputType(InputType.TYPE_NULL);
 
         final String content = mEditView.getText().toString();
-        if(TextUtils.isEmpty(content))
-        {
+        if (TextUtils.isEmpty(content)) {
             mContainerEditor.animate().setDuration(500).translationX(-mEditView.getWidth()).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一编辑框消失动画时间
@@ -642,13 +631,12 @@ public class ItemLineFrameActivity extends Activity {
                 }
             });
 
-            if(mUpdateItemId!=0) {
+            if (mUpdateItemId != 0) {
                 getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId)), null, null);
-                mUpdateItemId=0;
+                mUpdateItemId = 0;
                 Log.d(TAG, "Editor EMPTY! Delete it!!");
             }
-        }
-        else {
+        } else {
             mContainerEditor.animate().setDuration(500).alpha(0);// TODO: 16/3/1 编辑框消失动画时间
             mCover.animate().translationY(0).setDuration(500).withEndAction(new Runnable() {
                 @Override
@@ -663,8 +651,7 @@ public class ItemLineFrameActivity extends Activity {
                     mEditView.setText("");
                     if (mUpdateItemId == 0) {
                         postNewContent(content);  //处理一些保存数据的操作
-                    }
-                    else {
+                    } else {
                         updateContent(content);
                     }
                     myListView.requestFocus();
@@ -672,117 +659,110 @@ public class ItemLineFrameActivity extends Activity {
             });
         }
 
-        showEditView =false;
+        showEditView = false;
     }
 
-    private int updateContent(String content)
-    {
-        int updatedCount=0;
+    private int updateContent(String content) {
+        int updatedCount = 0;
         Uri uri = ItemContract.CONTENT_URI;
         String where = ItemContract.Column.ITEM_ID + "=?";
-        String[] params = new String[] {String.valueOf(mUpdateItemId)};
+        String[] params = new String[]{String.valueOf(mUpdateItemId)};
 
-        AlarmUntils alarmUntis=new AlarmUntils();
+        AlarmUntils alarmUntis = new AlarmUntils();
         Calendar calendar = Calendar.getInstance();
-        long itemId=mUpdateItemId;
-        long alarmclock=0;
-        int hasclock=0;
+        long itemId = mUpdateItemId;
+        long alarmclock = 0;
+        int hasclock = 0;
 
-        Cursor cursor = getContentResolver().query(uri,null,where,params,null);
-        if(cursor.moveToFirst()) {
+        Cursor cursor = getContentResolver().query(uri, null, where, params, null);
+        if (cursor.moveToFirst()) {
 
-            alarmclock=cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-            hasclock=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
+            alarmclock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            hasclock = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_HAS_CLOCK));
 
             //step 1，查处原来的闹钟并取消掉
-            if(alarmclock>0)
-            {
+            if (alarmclock > 0) {
                 calendar.setTimeInMillis(alarmclock);
-                alarmUntis.cancelAlarmClock(this,calendar,itemId);
+                alarmUntis.cancelAlarmClock(this, calendar, itemId);
             }
 
             //step 2，更新记录，并设置新闹钟（如果有的）
             ContentValues values = new ContentValues();
             values.put(ItemContract.Column.ITEM_CONTENT, content);
 
-            if (mReminder>0) {
+            if (mReminder > 0) {
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
                 values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
             }
 
             updatedCount = getContentResolver().update(uri, values, where, params);   //方法1
 //          int updatedCount = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI,String.valueOf(mItemId)),values,null,null);//方法2
-            if(updatedCount>0)
-            {
-                if(mReminder>0)
-                {
+            if (updatedCount > 0) {
+                if (mReminder > 0) {
                     calendar.setTimeInMillis(mReminder);
-                    alarmUntis.setAlarmClock(this,calendar,true,60*1000,itemId);
+                    alarmUntis.setAlarmClock(this, calendar, true, 60 * 1000, itemId);
                 }
             }
 
         }
 
         cursor.close();
-        mUpdateItemId=0;    //恢复默认
-        mReminder=0;    //return to 0
+        mUpdateItemId = 0;    //恢复默认
+        mReminder = 0;    //return to 0
         mTextReminder.setText("");
 
         return updatedCount;
     }
-    private boolean postNewContent(String content)
-    {
+
+    private boolean postNewContent(String content) {
         ContentValues values = new ContentValues();
 
-        values.put(ItemContract.Column.ITEM_TITLE,"");
-        values.put(ItemContract.Column.ITEM_CONTENT,content);
-        values.put(ItemContract.Column.ITEM_CREATED_AT,new Date().getTime());
-        values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
+        values.put(ItemContract.Column.ITEM_TITLE, "");
+        values.put(ItemContract.Column.ITEM_CONTENT, content);
+        values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
 
-        if(mReminder>0){
-            values.put(ItemContract.Column.ITEM_HAS_CLOCK,1);
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK,mReminder);
-        }
-        else {
+        if (mReminder > 0) {
+            values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
+        } else {
             values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
             values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
         }
 
-        values.put(ItemContract.Column.ITEM_LIST_ID,-1);
+        values.put(ItemContract.Column.ITEM_LIST_ID, -1);
 
         //用Provider插入新数据，而非用DbHelper。在Fragment里，要用Provider，需获取的当前的Activity。
         Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
 
-        if(uri!=null){
+        if (uri != null) {
             Log.d(TAG, String.format("%s:%s", uri.getLastPathSegment(), values.getAsString(ItemContract.Column.ITEM_CONTENT)));
 
             long itemId = Long.parseLong(uri.getLastPathSegment());
             //Add A Reminder when inserted success.
-            if(mReminder>0) {
+            if (mReminder > 0) {
                 String clock;
                 AlarmUntils alarmUntils = new AlarmUntils();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(mReminder);
-                clock =alarmUntils.setAlarmClock(this, calendar, true, 60*1000, itemId);
-                Log.d(TAG,clock);
+                clock = alarmUntils.setAlarmClock(this, calendar, true, 60 * 1000, itemId);
+                Log.d(TAG, clock);
             }
             mTextReminder.setText("");
-            mReminder=0;
+            mReminder = 0;
             return true;
-        }
-        else
-        {
+        } else {
             mTextReminder.setText("");
-            mReminder=0;
+            mReminder = 0;
             return false;
         }
         //
     }
 
-    public class MyFrameTouchGestureListner extends GestureDetector.SimpleOnGestureListener{
+    public class MyFrameTouchGestureListner extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if(distanceY<0)
+            if (distanceY < 0)
                 return false;
 
             myListView.setTranslationY(distanceY);
@@ -807,7 +787,7 @@ public class ItemLineFrameActivity extends Activity {
             View view = getLayoutInflater().inflate(R.layout.item_frame, null);
 
             holder.textView = (TextView) view.findViewById(R.id.text_content);
-            holder.textReminder =(TextView)view.findViewById(R.id.text_reminder);
+            holder.textReminder = (TextView) view.findViewById(R.id.text_reminder);
 
 //            holder.textView.setOnTouchListener(mTouchListener);
 //            holder.textView.setOnClickListener(new View.OnClickListener() {
@@ -831,23 +811,21 @@ public class ItemLineFrameActivity extends Activity {
             String id = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
             String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
             long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-            int finish=cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
+            int finish = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
             holder.textView.setText(content);
 
-            if(reminder>0) {
-                holder.textReminder.setText(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm",reminder));
+            if (reminder > 0) {
+                holder.textReminder.setText(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", reminder));
                 holder.textReminder.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 holder.textReminder.setVisibility(View.GONE);
             }
             //删除线
-            if(finish==1) {
+            if (finish == 1) {
                 holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.textReminder.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            }
-            else {
+            } else {
                 holder.textView.getPaint().setFlags(0);
                 holder.textReminder.getPaint().setFlags(0);
             }
@@ -902,16 +880,15 @@ public class ItemLineFrameActivity extends Activity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            if(data.getCount()>0) {
+            if (data.getCount() > 0) {
                 mCursorAdapter.swapCursor(data);
-            }
-            else{
+            } else {
                 ContentValues values = new ContentValues();
 
-                values.put(ItemContract.Column.ITEM_CONTENT,"如果你有梦想，就默默去实现它。");
+                values.put(ItemContract.Column.ITEM_CONTENT, "如果你有梦想，就默默去实现它。");
                 values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
 
-                getContentResolver().insert(ItemContract.CONTENT_URI,values);
+                getContentResolver().insert(ItemContract.CONTENT_URI, values);
             }
         }
 

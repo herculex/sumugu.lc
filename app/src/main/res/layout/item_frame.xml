@@ -2,41 +2,44 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-<LinearLayout
-    android:id="@+id/container_del_done"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="2">
-    <TextView
+
+    <LinearLayout
+        android:id="@+id/container_del_done"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#F44336"
-        android:gravity="left|center_vertical"
-        android:padding="10dp"
-        android:text="删除"
-        android:textSize="18sp"
-        android:textColor="#fff"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#4CAF50"
-        android:gravity="right|center_vertical"
-        android:padding="10dp"
-        android:text="完成"
-        android:textSize="18sp"
-        android:textColor="#ffffff"
-        />
-</LinearLayout>
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#F44336"
+            android:gravity="left|center_vertical"
+            android:padding="10dp"
+            android:text="删除"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#4CAF50"
+            android:gravity="right|center_vertical"
+            android:padding="10dp"
+            android:text="完成"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/container_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#fff">
+        android:background="#fff"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/text_content"
             android:layout_width="match_parent"
@@ -44,14 +47,15 @@
             android:gravity="left|center_vertical"
             android:padding="10dp"
             android:text="here we go!"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
+
         <TextView
             android:id="@+id/text_reminder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
             android:paddingBottom="5dp"
-            android:visibility="gone"/>
+            android:paddingLeft="10dp"
+            android:visibility="gone" />
     </LinearLayout>
 
 </FrameLayout>
