@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is layer 3,for setting or about."
+            android:text="..."
             android:textColor="#fff"/>
     </RelativeLayout>
     <LinearLayout
