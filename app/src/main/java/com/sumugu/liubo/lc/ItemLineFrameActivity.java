@@ -89,7 +89,13 @@ public class ItemLineFrameActivity extends Activity {
         public boolean onTouch(final View v, MotionEvent event) {
 
             //获取包含Content和Reminder的TextView的线性布局
-            final LinearLayout containerItem = (LinearLayout) v.getParent();
+//            final LinearLayout containerItem = (LinearLayout) v.getParent();
+            final LinearLayout containerItem = (LinearLayout) myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_item);
+            //获得包含提示"删除"和"完成"的提示的View
+            final RelativeLayout contaierDelDone = (RelativeLayout) myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
+
+            final TextView tvDeleteHint = (TextView) contaierDelDone.findViewById(R.id.tv_delete_hint);
+            final TextView tvDoneHint = (TextView) contaierDelDone.findViewById(R.id.tv_done);
 
             if (mSwipeSlop < 0) {
                 mSwipeSlop = ViewConfiguration.get(ItemLineFrameActivity.this).
@@ -125,14 +131,31 @@ public class ItemLineFrameActivity extends Activity {
 
                     if (mSwiping) {
                         containerItem.setTranslationX((x - mDownX));
-//                        v.setAlpha(1 - deltaXAbs / v.getWidth());
+//                        containerItem.setAlpha(1 - deltaXAbs / v.getWidth());
 
-                        //设置固定距离
-                        if (deltaXAbs > containerItem.getWidth() / 3) {
-                            if (deltaX < 0) {
-                                containerItem.setTranslationX(-containerItem.getWidth() / 3);
+                        if (deltaX > 0) {
+                            //swipe to right --> going to delete item
+                            contaierDelDone.setAlpha(deltaXAbs / tvDeleteHint.getWidth());
+                            contaierDelDone.setBackgroundColor(Color.RED);  //// TODO: 16/3/14 设置为 #F44336
+                            tvDeleteHint.setVisibility(View.VISIBLE);
+                            tvDoneHint.setVisibility(View.GONE);
+
+                            if (deltaXAbs >= tvDeleteHint.getWidth()) {
+                                contaierDelDone.setTranslationX(deltaXAbs - tvDeleteHint.getWidth());
                             } else {
-                                containerItem.setTranslationX(containerItem.getWidth() / 3);
+                                contaierDelDone.setTranslationX(0);
+                            }
+                        } else {
+                            //swipe to left <-- going to finish item
+                            contaierDelDone.setAlpha(deltaXAbs / tvDoneHint.getWidth());
+                            contaierDelDone.setBackgroundColor(Color.GREEN); // TODO: 16/3/14 设置为 #4CAF50
+                            tvDeleteHint.setVisibility(View.GONE);
+                            tvDoneHint.setVisibility(View.VISIBLE);
+
+                            if (deltaXAbs >= tvDoneHint.getWidth()) {
+                                contaierDelDone.setTranslationX(deltaX + tvDoneHint.getWidth());
+                            } else {
+                                contaierDelDone.setTranslationX(0);
                             }
                         }
                     }
@@ -162,7 +185,7 @@ public class ItemLineFrameActivity extends Activity {
                             } else {
                                 remove = false;
                                 swipedResult = 2;// is done.
-                                endX=0; //end of the moving item position to it's started.
+                                endX = 0; //end of the moving item position to it's started.
                             }
                         } else {
                             // Not far enough - animate it back
@@ -179,8 +202,6 @@ public class ItemLineFrameActivity extends Activity {
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
 
-                        //获得包含提示"删除"和"完成"的提示的View
-                        final View contaierDelDone = myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
 
                         if (swipedResult > 0) {
                             contaierDelDone.animate().alpha(0).setDuration(duration / 2);

@@ -3,35 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/container_del_done"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_height="match_parent">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tv_delete_hint"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#F44336"
-            android:gravity="left|center_vertical"
-            android:padding="10dp"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:text="删除"
             android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_alignParentLeft="true"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tv_done"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#4CAF50"
-            android:gravity="right|center_vertical"
-            android:padding="10dp"
+            android:gravity="end|center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:text="完成"
             android:textColor="#ffffff"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:textSize="18sp"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/container_item"
