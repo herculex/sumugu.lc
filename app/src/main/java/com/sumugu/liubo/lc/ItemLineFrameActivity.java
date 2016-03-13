@@ -115,12 +115,14 @@ public class ItemLineFrameActivity extends Activity {
                     float x = event.getX() + containerItem.getTranslationX();
                     float deltaX = x - mDownX;
                     float deltaXAbs = Math.abs(deltaX);
+
                     if (!mSwiping) {
                         if (deltaXAbs > mSwipeSlop) {
                             mSwiping = true;
                             myListView.requestDisallowInterceptTouchEvent(true);
                         }
                     }
+
                     if (mSwiping) {
                         containerItem.setTranslationX((x - mDownX));
 //                        v.setAlpha(1 - deltaXAbs / v.getWidth());
@@ -143,6 +145,7 @@ public class ItemLineFrameActivity extends Activity {
                         float x = event.getX() + containerItem.getTranslationX();
                         float deltaX = x - mDownX;
                         float deltaXAbs = Math.abs(deltaX);
+
                         float fractionCovered;
                         float endX = 0;
                         float endAlpha;
@@ -155,10 +158,11 @@ public class ItemLineFrameActivity extends Activity {
                             if (deltaX > 0) {
                                 remove = true;
                                 swipedResult = 1;// is deleted.
-                                endX = containerItem.getWidth();
+                                endX = containerItem.getWidth();//end of the moving item position
                             } else {
                                 remove = false;
                                 swipedResult = 2;// is done.
+                                endX=0; //end of the moving item position to it's started.
                             }
                         } else {
                             // Not far enough - animate it back
@@ -174,6 +178,8 @@ public class ItemLineFrameActivity extends Activity {
                         // back at an appropriate speed.
                         long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
                         myListView.setEnabled(false);
+
+                        //获得包含提示"删除"和"完成"的提示的View
                         final View contaierDelDone = myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
 
                         if (swipedResult > 0) {
@@ -185,7 +191,7 @@ public class ItemLineFrameActivity extends Activity {
                                     public void run() {
                                         // Restore animated values
                                         containerItem.setAlpha(1);
-                                        containerItem.setTranslationX(0);
+//                                        containerItem.setTranslationX(0);
                                         contaierDelDone.setAlpha(1);
                                         if (swipedResult == 1) {
                                             animateRemoval(myListView, containerItem);
