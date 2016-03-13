@@ -120,19 +120,6 @@ public class ItemLineFrameActivity extends Activity {
                         containerItem.setTranslationX((x - mDownX));
 //                        v.setAlpha(1 - deltaXAbs / v.getWidth());
 
-                        //设置提醒背景色
-                        if(deltaXAbs>containerItem.getWidth()/4)
-                        {
-                            if(deltaX<0)
-                                containerItem.setBackgroundColor(Color.GREEN);
-                            else
-                                containerItem.setBackgroundColor(Color.RED);
-                        }
-                        else
-                        {
-                            containerItem.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
-                        }
-
                         //设置固定距离
                         if(deltaXAbs>containerItem.getWidth()/3)
                         {
@@ -196,7 +183,6 @@ public class ItemLineFrameActivity extends Activity {
                                     @Override
                                     public void run() {
                                         // Restore animated values
-                                        containerItem.setBackgroundColor(Color.WHITE);  // TODO: 16/3/1   是要还原背景色，暂且白色
                                         containerItem.setAlpha(1);
                                         containerItem.setTranslationX(0);
                                         contaierDelDone.setAlpha(1);

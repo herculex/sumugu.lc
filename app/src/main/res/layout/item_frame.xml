@@ -16,6 +16,7 @@
         android:gravity="left|center_vertical"
         android:padding="10dp"
         android:text="删除"
+        android:textSize="18sp"
         android:textColor="#fff"
         />
     <TextView
@@ -26,6 +27,7 @@
         android:gravity="right|center_vertical"
         android:padding="10dp"
         android:text="完成"
+        android:textSize="18sp"
         android:textColor="#ffffff"
         />
 </LinearLayout>
