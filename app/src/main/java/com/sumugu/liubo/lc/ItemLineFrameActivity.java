@@ -130,7 +130,7 @@ public class ItemLineFrameActivity extends Activity {
                     }
 
                     if (mSwiping) {
-                        containerItem.setTranslationX((x - mDownX));
+                        containerItem.setTranslationX(x - mDownX);
 //                        containerItem.setAlpha(1 - deltaXAbs / v.getWidth());
 
                         if (deltaX > 0) {
@@ -218,6 +218,7 @@ public class ItemLineFrameActivity extends Activity {
                                             animateRemoval(myListView, containerItem);
                                         } else if (swipedResult == 2) {
                                             swipeToFinished(myListView, containerItem);
+                                            mSwiping = false;
                                         } else {
                                             mSwiping = false;
                                         }
@@ -225,7 +226,7 @@ public class ItemLineFrameActivity extends Activity {
                                     }
                                 });
                     } else {
-                        Log.d(TAG,"TEXTVIEW__UP_FOR_EDITOR");
+                        Log.d(TAG, "TEXTVIEW__UP_FOR_EDITOR");
                         //no swiping ,but click
                         int currentPosition = myListView.getPositionForView(v);
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
@@ -717,7 +718,7 @@ public class ItemLineFrameActivity extends Activity {
             //step 2，更新记录，并设置新闹钟（如果有的）
             ContentValues values = new ContentValues();
             values.put(ItemContract.Column.ITEM_CONTENT, content);
-            values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
+            values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
 
             if (mReminder > 0) {
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
