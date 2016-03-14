@@ -204,20 +204,26 @@ public class ItemLineFrameActivity extends Activity {
 
 
                         if (swipedResult > 0) {
-                            contaierDelDone.animate().alpha(0).setDuration(duration / 2);
+                            if(swipedResult==2)
+                                contaierDelDone.animate().alpha(0).setDuration(duration / 2);
+                            if(swipedResult==1){
+                                contaierDelDone.animate().translationX(endX).setDuration(duration);
+                            }
                         }
                         containerItem.animate().setDuration(duration).translationX(endX).
                                 withEndAction(new Runnable() {
                                     @Override
                                     public void run() {
                                         // Restore animated values
-                                        containerItem.setAlpha(1);
+//                                        containerItem.setAlpha(1);
 //                                        containerItem.setTranslationX(0);
-                                        contaierDelDone.setAlpha(1);
+//                                        contaierDelDone.setAlpha(1);
                                         if (swipedResult == 1) {
                                             animateRemoval(myListView, containerItem);
                                         } else if (swipedResult == 2) {
                                             swipeToFinished(myListView, containerItem);
+                                            contaierDelDone.setAlpha(1);
+                                            containerItem.setAlpha(1);
                                             mSwiping = false;
                                         } else {
                                             mSwiping = false;
@@ -851,13 +857,17 @@ public class ItemLineFrameActivity extends Activity {
             } else {
                 holder.textReminder.setVisibility(View.GONE);
             }
-            //删除线
+            //删除线&透明
             if (finish == 1) {
                 holder.textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textView.setAlpha(0.3f);
                 holder.textReminder.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textReminder.setAlpha(0.3f);
             } else {
                 holder.textView.getPaint().setFlags(0);
+                holder.textView.setAlpha(1);
                 holder.textReminder.getPaint().setFlags(0);
+                holder.textReminder.setAlpha(1);
             }
             //抗锯齿
             holder.textView.getPaint().setAntiAlias(true);
