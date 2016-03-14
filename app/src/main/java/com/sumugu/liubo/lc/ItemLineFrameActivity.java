@@ -225,6 +225,7 @@ public class ItemLineFrameActivity extends Activity {
                                     }
                                 });
                     } else {
+                        Log.d(TAG,"TEXTVIEW__UP_FOR_EDITOR");
                         //no swiping ,but click
                         int currentPosition = myListView.getPositionForView(v);
                         mUpdateItemId = myListView.getAdapter().getItemId(currentPosition);
@@ -568,7 +569,7 @@ public class ItemLineFrameActivity extends Activity {
                 Log.d(TAG, "AT___UP.");
                 // User let go - figure out whether to animate the view out, or back into place
                 if (mListSwiping) {
-                    float y = event.getY() + myListView.getTranslationY();
+                    float y = event.getY();
                     float deltaY = y - mListDownY;
                     float deltaYAbs = Math.abs(deltaY);
                     float fractionCovered;
@@ -716,6 +717,7 @@ public class ItemLineFrameActivity extends Activity {
             //step 2，更新记录，并设置新闹钟（如果有的）
             ContentValues values = new ContentValues();
             values.put(ItemContract.Column.ITEM_CONTENT, content);
+            values.put(ItemContract.Column.ITEM_IS_FINISHED,0);
 
             if (mReminder > 0) {
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
