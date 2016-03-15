@@ -220,7 +220,7 @@ public class ItemLineFrameActivity extends Activity {
                                     public void run() {
                                         // Restore animated values
                                         containerItem.setAlpha(1);
-                                        containerItem.setTranslationX(0);   //真机API16 没有这句，那么改行就空白的。有这句的话，模拟器API23是有看得见该行复位一闪，没则一切正常
+                                        containerItem.setTranslationX(0);   //真机API16 没有这句，那么改行就空白的，有则看见闪复位。有这句的话，模拟器API23是有看得见该行复位一闪，没则一切正常
                                         contaierDelDone.setAlpha(1);
 
                                         if (swipedResult == 1) {
