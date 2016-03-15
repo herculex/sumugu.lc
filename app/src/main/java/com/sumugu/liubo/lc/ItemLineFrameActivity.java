@@ -208,25 +208,26 @@ public class ItemLineFrameActivity extends Activity {
 
                         if (swipedResult > 0) {
                             if (swipedResult == 2)
-                                contaierDelDone.animate().alpha(0).setDuration(Math.abs(duration) / 2);
+                                contaierDelDone.animate().alpha(0).setDuration(duration / 2);
                             if (swipedResult == 1) {
-                                contaierDelDone.animate().translationX(endX).setDuration(Math.abs(duration));
+                                contaierDelDone.animate().translationX(endX).setDuration(duration);
                             }
                         }
+                        //// TODO: 16/3/15 完善 真机API16和模拟器API23的想要一致
                         containerItem.animate().setDuration(duration).translationX(endX).
                                 withEndAction(new Runnable() {
                                     @Override
                                     public void run() {
                                         // Restore animated values
-//                                        containerItem.setAlpha(1);
-//                                        containerItem.setTranslationX(0);
-//                                        contaierDelDone.setAlpha(1);
+                                        containerItem.setAlpha(1);
+                                        containerItem.setTranslationX(0);   //真机API16 没有这句，那么改行就空白的。有这句的话，模拟器API23是有看得见该行复位一闪，没则一切正常
+                                        contaierDelDone.setAlpha(1);
+
                                         if (swipedResult == 1) {
-                                            animateRemoval(myListView, containerItem);
+//                                            animateRemoval(myListView, containerItem);
+                                            swipeToDelete(myListView,containerItem);
                                         } else if (swipedResult == 2) {
                                             swipeToFinished(myListView, containerItem);
-                                            contaierDelDone.setAlpha(1);
-                                            containerItem.setAlpha(1);
                                             mSwiping = false;
                                         } else {
                                             mSwiping = false;
@@ -415,6 +416,30 @@ public class ItemLineFrameActivity extends Activity {
         return count;
     }
 
+    private void swipeToDelete(final ListView listview,View viewToRemove)
+    {
+        int deletePosition = listview.getPositionForView(viewToRemove);
+              //
+        //0,init.
+        long targetId = myCursorAdapter.getItemId(deletePosition);
+        Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
+        //1,remove the alarmclock
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            AlarmUntils alarmUntils = new AlarmUntils();
+            long clock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+            if (clock > 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(clock);
+                alarmUntils.cancelAlarmClock(this, calendar, targetId);
+            }
+        }
+        //2,delete the data
+        int count = getContentResolver().delete(uri, null, null);
+        Log.d(TAG, "delete ITEM!!!" + String.valueOf(count));
+        //
+
+    }
     private void animateRemoval(final ListView listview, View viewToRemove) {
 
         final int deletePosition = listview.getPositionForView(viewToRemove);
@@ -447,7 +472,7 @@ public class ItemLineFrameActivity extends Activity {
         }
         //2,delete the data
         int count = getContentResolver().delete(uri, null, null);
-        Log.d(TAG, "delete ITEM!!!" + String.valueOf(count));
+        Log.d(TAG, "remove ITEM!!!" + String.valueOf(count));
         //
 //      getLoaderManager().restartLoader(5,null,myCursorLoader);没用！？
 

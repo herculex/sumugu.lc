@@ -243,6 +243,8 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
             switch (motionEvent.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
+                    Log.d(TAG,"unlock accepted donw.start!");
+
                     if (mSwipedView != null) {
                         Log.d(TAG, "an opened should be closed!also outside");
                         mSwipedView.animate()
