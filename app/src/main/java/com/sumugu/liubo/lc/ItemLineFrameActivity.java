@@ -208,7 +208,7 @@ public class ItemLineFrameActivity extends Activity {
 
                         if (swipedResult > 0) {
                             if (swipedResult == 2)
-                                contaierDelDone.animate().alpha(0).setDuration(duration / 2);
+                                contaierDelDone.animate().alpha(0).translationX(endX).setDuration(duration);
                             if (swipedResult == 1) {
                                 contaierDelDone.animate().translationX(endX).setDuration(duration);
                             }
