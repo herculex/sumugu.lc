@@ -90,9 +90,12 @@ public class ItemLineFrameActivity extends Activity {
 
             //获取包含Content和Reminder的TextView的线性布局
 //            final LinearLayout containerItem = (LinearLayout) v.getParent();
-            final LinearLayout containerItem = (LinearLayout) myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_item);
+            final LinearLayout containerItem = (LinearLayout) myListView.getChildAt(myListView.getPositionForView(v) - myListView.getFirstVisiblePosition())
+                    .findViewById(R.id.container_item);
+
             //获得包含提示"删除"和"完成"的提示的View
-            final RelativeLayout contaierDelDone = (RelativeLayout) myListView.getChildAt(myListView.getPositionForView(v)).findViewById(R.id.container_del_done);
+            final RelativeLayout contaierDelDone = (RelativeLayout) myListView.getChildAt(myListView.getPositionForView(v) - myListView.getFirstVisiblePosition())
+                    .findViewById(R.id.container_del_done);
 
             final TextView tvDeleteHint = (TextView) contaierDelDone.findViewById(R.id.tv_delete_hint);
             final TextView tvDoneHint = (TextView) contaierDelDone.findViewById(R.id.tv_done);
@@ -204,10 +207,10 @@ public class ItemLineFrameActivity extends Activity {
 
 
                         if (swipedResult > 0) {
-                            if(swipedResult==2)
-                                contaierDelDone.animate().alpha(0).setDuration(duration / 2);
-                            if(swipedResult==1){
-                                contaierDelDone.animate().translationX(endX).setDuration(duration);
+                            if (swipedResult == 2)
+                                contaierDelDone.animate().alpha(0).setDuration(Math.abs(duration) / 2);
+                            if (swipedResult == 1) {
+                                contaierDelDone.animate().translationX(endX).setDuration(Math.abs(duration));
                             }
                         }
                         containerItem.animate().setDuration(duration).translationX(endX).
