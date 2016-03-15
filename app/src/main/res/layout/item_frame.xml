@@ -43,9 +43,12 @@
         <TextView
             android:id="@+id/text_content"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
-            android:padding="10dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:text="here we go!"
             android:textSize="20sp"
             android:textColor="#000"/>
@@ -55,8 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:visibility="gone" />
+            android:paddingRight="10dp"
+            android:visibility="gone"
+            android:gravity="right"/>
     </LinearLayout>
 
 </FrameLayout>

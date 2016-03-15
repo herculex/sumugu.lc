@@ -19,40 +19,43 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+        android:paddingTop="60dp">
+
         <LinearLayout
             android:id="@+id/layer_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <Button
                 android:id="@+id/btn_new_life"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="enter new life"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_unlock_screen"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="unlock"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <DigitalClock
                 android:id="@+id/dc_clock"
-                style="@style/Base.TextAppearance.AppCompat.Display2"
+                style="@style/Base.TextAppearance.AppCompat.Display3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:paddingRight="10dp"/>
+                android:paddingRight="10dp" />
+
             <TextView
                 android:id="@+id/tv_count_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:hint="今日无事可干？"
+                android:background="#E3F2FD"
                 android:gravity="center_vertical|center"
-                android:background="#E3F2FD"/>
+                android:hint="今日无事可干？" />
 
             <ListView
                 android:id="@+id/lv_lite"

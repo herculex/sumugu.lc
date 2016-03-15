@@ -136,7 +136,7 @@ public class ItemLineFrameActivity extends Activity {
                         if (deltaX > 0) {
                             //swipe to right --> going to delete item
                             contaierDelDone.setAlpha(deltaXAbs / tvDeleteHint.getWidth());
-                            contaierDelDone.setBackgroundColor(Color.RED);  //// TODO: 16/3/14 设置为 #F44336
+                            contaierDelDone.setBackgroundColor(Color.parseColor("#F44336"));
                             tvDeleteHint.setVisibility(View.VISIBLE);
                             tvDoneHint.setVisibility(View.GONE);
 
@@ -148,7 +148,7 @@ public class ItemLineFrameActivity extends Activity {
                         } else {
                             //swipe to left <-- going to finish item
                             contaierDelDone.setAlpha(deltaXAbs / tvDoneHint.getWidth());
-                            contaierDelDone.setBackgroundColor(Color.GREEN); // TODO: 16/3/14 设置为 #4CAF50
+                            contaierDelDone.setBackgroundColor(Color.parseColor("#4CAF50"));
                             tvDeleteHint.setVisibility(View.GONE);
                             tvDoneHint.setVisibility(View.VISIBLE);
 
