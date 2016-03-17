@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
@@ -602,7 +603,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             //接收view的holder里的控件对象，然后赋值
-            MyViewHolder holder = (MyViewHolder) view.getTag();
+            final MyViewHolder holder = (MyViewHolder) view.getTag();
 
             final long id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
             final String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
@@ -627,15 +628,26 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                     }
 
                     //update data
-                    ContentValues values = new ContentValues();
-                    values.put(ItemContract.Column.ITEM_IS_FINISHED, 1);
-                    values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
 
-                    int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), values, null, null);
-                    if (count > 0)
-                        displayUndoCount();
-                    Log.d(TAG, "list lite done:" + String.valueOf(count));
+                    mSwipedView.animate().translationX(0).setDuration(100).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            ContentValues values = new ContentValues();
+                            values.put(ItemContract.Column.ITEM_IS_FINISHED, 1);
+                            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
+                            int count = getContentResolver().update(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), values, null, null);
+                            if (count > 0)
+                                displayUndoCount();
+                            Log.d(TAG, "list lite done:" + String.valueOf(count));
+                        }
+                    });
+
+
                     //
+
+//                    LinearLayout viewParent = (LinearLayout)holder.textView.getParent();
+//                    Log.d(TAG,"holder.text's parent tranX="+String.valueOf(viewParent.getTranslationX()));
+//                    viewParent.animate().translationX(0).setDuration(100);
                 }
             });
             holder.deleteView.setOnClickListener(new View.OnClickListener() {
@@ -652,10 +664,17 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
                     }
                     //delete the data
-                    int count = getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null);
-                    if (count > 0)
-                        displayUndoCount();
-                    Log.d(TAG, "list lite delete:" + String.valueOf(count));
+                    mSwipedView.animate().translationX(0).setDuration(100).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            int count = getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null);
+                            if (count > 0)
+                                displayUndoCount();
+                            Log.d(TAG, "list lite delete:" + String.valueOf(count));
+                            //
+                        }
+                    });
+
                 }
             });
 
@@ -675,6 +694,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 //              在bindView中添加了－2016.03.11
 //               view.findViewById(R.id.tv_done).setOnClickListener();
 //               view.findViewById(R.id.tv_delete_hint).setOnClickListener();
+//                Log.d(TAG,"getView,view TransX="+String.valueOf((view.findViewById(R.id.tv_content)).getTranslationX()));
 
             }
             return view;
