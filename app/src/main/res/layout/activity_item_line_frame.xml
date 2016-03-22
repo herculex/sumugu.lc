@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:background="#fff"
             android:hint="从这里记录将要发生的事情"
-            android:inputType="text"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
             android:paddingTop="15dp"
