@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.LoaderManager;
 import android.app.TimePickerDialog;
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -225,7 +226,7 @@ public class ItemLineFrameActivity extends Activity {
 
                                         if (swipedResult == 1) {
 //                                            animateRemoval(myListView, containerItem);
-                                            swipeToDelete(myListView,containerItem);
+                                            swipeToDelete(myListView, containerItem);
                                         } else if (swipedResult == 2) {
                                             swipeToFinished(myListView, containerItem);
                                             mSwiping = false;
@@ -416,10 +417,9 @@ public class ItemLineFrameActivity extends Activity {
         return count;
     }
 
-    private void swipeToDelete(final ListView listview,View viewToRemove)
-    {
+    private void swipeToDelete(final ListView listview, View viewToRemove) {
         int deletePosition = listview.getPositionForView(viewToRemove);
-              //
+        //
         //0,init.
         long targetId = myCursorAdapter.getItemId(deletePosition);
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(targetId));
@@ -440,6 +440,7 @@ public class ItemLineFrameActivity extends Activity {
         //
 
     }
+
     private void animateRemoval(final ListView listview, View viewToRemove) {
 
         final int deletePosition = listview.getPositionForView(viewToRemove);
@@ -688,6 +689,9 @@ public class ItemLineFrameActivity extends Activity {
                         @Override
                         public void run() {// TODO: 16/3/1 统一列表动画时间
                             mContainerEditor.setTranslationX(0);
+                            mReminder = 0;
+                            mTextReminder.setText("");
+
                             myListView.requestFocus();
                         }
                     });
@@ -695,7 +699,21 @@ public class ItemLineFrameActivity extends Activity {
             });
 
             if (mUpdateItemId != 0) {
-                getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId)), null, null);
+
+                Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(mUpdateItemId));
+                Cursor cursor = getContentResolver().query(uri, null, null, null, ItemContract.DEFAULT_SORT);
+                if (cursor.moveToFirst()) {
+                    long clock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+                    if (clock > 0) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(clock);
+                        AlarmUntils alarmUntils = new AlarmUntils();
+                        alarmUntils.cancelAlarmClock(this, calendar, mUpdateItemId);
+                    }
+                }
+                cursor.close();
+
+                getContentResolver().delete(uri, null, null);
                 mUpdateItemId = 0;
                 Log.d(TAG, "Editor EMPTY! Delete it!!");
             }
@@ -710,17 +728,22 @@ public class ItemLineFrameActivity extends Activity {
             myListView.animate().translationY(0).alpha(1).setDuration(500).withEndAction(new Runnable() {
                 @Override
                 public void run() { // TODO: 16/3/1 统一列表位移复位的动画时间
-                    mContainerEditor.setAlpha(1);
-                    mEditView.setText("");
+
                     if (mUpdateItemId == 0) {
                         postNewContent(content);  //处理一些保存数据的操作
                     } else {
                         updateContent(content);
                     }
+                    mContainerEditor.setAlpha(1);
+                    mEditView.setText("");
+                    mReminder = 0;
+                    mTextReminder.setText("");
+
                     myListView.requestFocus();
                 }
             });
         }
+
 
         showEditView = false;
     }
@@ -757,6 +780,9 @@ public class ItemLineFrameActivity extends Activity {
             if (mReminder > 0) {
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mReminder);
                 values.put(ItemContract.Column.ITEM_HAS_CLOCK, 1);
+            } else {
+                values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
+                values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
             }
 
             updatedCount = getContentResolver().update(uri, values, where, params);   //方法1
@@ -765,6 +791,9 @@ public class ItemLineFrameActivity extends Activity {
                 if (mReminder > 0) {
                     calendar.setTimeInMillis(mReminder);
                     alarmUntis.setAlarmClock(this, calendar, true, 60 * 1000, itemId);
+                } else {
+                    calendar.setTimeInMillis(mReminder);
+                    alarmUntis.cancelAlarmClock(this, calendar, itemId);
                 }
             }
 
@@ -772,8 +801,6 @@ public class ItemLineFrameActivity extends Activity {
 
         cursor.close();
         mUpdateItemId = 0;    //恢复默认
-        mReminder = 0;    //return to 0
-        mTextReminder.setText("");
 
         return updatedCount;
     }
@@ -812,12 +839,8 @@ public class ItemLineFrameActivity extends Activity {
                 clock = alarmUntils.setAlarmClock(this, calendar, true, 60 * 1000, itemId);
                 Log.d(TAG, clock);
             }
-            mTextReminder.setText("");
-            mReminder = 0;
             return true;
         } else {
-            mTextReminder.setText("");
-            mReminder = 0;
             return false;
         }
         //
