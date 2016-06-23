@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/sumugu/liubo/lc/ApplicationTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/MainActivity.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/contract/DbContract.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/contract/ItemContract.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/contract/ListContract.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/provider/DbHelper.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/provider/ItemProvider.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/sumugu/liubo/lc/provider/ListProvider.java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
