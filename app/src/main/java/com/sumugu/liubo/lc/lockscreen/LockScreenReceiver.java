@@ -3,6 +3,7 @@ package com.sumugu.liubo.lc.lockscreen;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.MainActivity;
 
@@ -22,8 +23,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
     }
 
     private void start_lockscreen(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+//        Intent intent = new Intent(context, MainActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(intent);
+        Toast.makeText(context, "alpha5-ScreenReceived.", Toast.LENGTH_SHORT).show();
     }
 }
