@@ -1,29 +1,19 @@
 package com.sumugu.liubo.lc;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.LoaderManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,26 +22,19 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
-import com.sumugu.liubo.lc.contract.ListContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
-import com.sumugu.liubo.lc.missing.MissingUtils;
+import com.sumugu.liubo.lc.xdemo.XdemoActivty;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
 
 ////Named Alpha5 -2016.03.09 PM10:27 marked.
 
@@ -356,7 +339,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         getLoaderManager().initLoader(9, null, mLoaderCallback);
 
         findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
-        findViewById(R.id.btn_new_life).setOnClickListener(this);
+        findViewById(R.id.btn_xdemo).setOnClickListener(this);
 
         //
         makeFullScreen();
@@ -438,8 +421,8 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.btn_new_life:
-                startActivity(new Intent(this, ItemLineFrameActivity.class));
+            case R.id.btn_xdemo:
+                startActivity(new Intent(this, XdemoActivty.class));
                 return;
             case R.id.btn_unlock_screen:
                 unlockHomeButton();
