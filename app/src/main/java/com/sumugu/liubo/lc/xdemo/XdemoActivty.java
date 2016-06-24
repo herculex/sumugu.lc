@@ -1,5 +1,6 @@
 package com.sumugu.liubo.lc.xdemo;
 
+import android.animation.ValueAnimator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,11 +30,28 @@ public class XdemoActivty extends AppCompatActivity {
         welcomeParams = welcomeView.getLayoutParams();
         maxHiddenHeight = hiddenParams.height;
 
+        prepareToShowup();
 
 //        Toast.makeText(MainActivity.this, "hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height, Toast.LENGTH_SHORT).show();
 
         Log.d("MyDemo","hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height);
 
+    }
+
+    private void prepareToShowup()
+    {
+        int height = maxHiddenHeight;
+        ValueAnimator valueAnimator=ValueAnimator.ofInt(0,height);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val = (int)valueAnimator.getAnimatedValue();
+                hiddenParams.height = val;
+                hiddenView.setLayoutParams(hiddenParams);
+            }
+        });
+        valueAnimator.setDuration(3000);
+        valueAnimator.start();
     }
 
     private float downY;
