@@ -28,6 +28,11 @@
             android:background="#fff"
             android:visibility="visible"
             android:textSize="30sp"/>
+        <com.sumugu.liubo.lc.xdemo.MyCustomItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.sumugu.liubo.lc.xdemo.MyCustomItem>
     </LinearLayout>
 
 </RelativeLayout>

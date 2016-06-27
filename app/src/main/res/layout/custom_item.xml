@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#fff">
+
+    <EditText
+        android:id="@+id/edit_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="input samething you interesting."
+        android:visibility="visible"
+        />
+
+    <RelativeLayout
+        android:id="@+id/action_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/text_finish"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:gravity="left|center_vertical"
+            android:text="Finish" />
+
+        <TextView
+            android:id="@+id/text_delete"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="right|center_vertical"
+            android:text="Delete" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_dispaly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="text content sample"
+        android:visibility="visible" />
+</FrameLayout>
