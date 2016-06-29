@@ -30,7 +30,8 @@
             android:textSize="30sp"/>
         <com.sumugu.liubo.lc.xdemo.MyCustomItem
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
         </com.sumugu.liubo.lc.xdemo.MyCustomItem>
     </LinearLayout>
