@@ -6,21 +6,21 @@
     android:background="#fff">
 
     <EditText
-        android:id="@+id/edit_content"
+        android:id="@+id/ci_edit_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="input samething you interesting."
-        android:visibility="visible"
+        android:visibility="gone"
         />
 
     <RelativeLayout
-        android:id="@+id/action_panel"
+        android:id="@+id/ci_action_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
-            android:id="@+id/text_finish"
+            android:id="@+id/ci_text_finish"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -29,7 +29,7 @@
             android:text="Finish" />
 
         <TextView
-            android:id="@+id/text_delete"
+            android:id="@+id/ci_text_delete"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_light"
@@ -40,9 +40,9 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/text_dispaly"
+        android:id="@+id/ci_text_dispaly"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="text content sample"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </FrameLayout>

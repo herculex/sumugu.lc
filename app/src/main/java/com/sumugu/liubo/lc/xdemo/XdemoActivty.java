@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sumugu.liubo.lc.R;
+import com.sumugu.liubo.lc.utils.DisplayUtil;
 
 public class XdemoActivty extends AppCompatActivity {
 
@@ -17,12 +18,16 @@ public class XdemoActivty extends AppCompatActivity {
     private TextView welcomeView;
     private ViewGroup.LayoutParams hiddenParams,welcomeParams;
     private int maxHiddenHeight;
+    private MyCustomItem customItem;
+    private ViewGroup.LayoutParams customItemParams;
+    private int maxCustomItemHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xdemo);
 
+        customItem = (MyCustomItem)findViewById(R.id.customItem);
         hiddenView = (MyTextView)findViewById(R.id.hiddenView);
         welcomeView = (TextView)findViewById(R.id.welcomeView);
 
@@ -30,7 +35,11 @@ public class XdemoActivty extends AppCompatActivity {
         welcomeParams = welcomeView.getLayoutParams();
         maxHiddenHeight = hiddenParams.height;
 
-        prepareToShowup();
+        customItemParams = customItem.getLayoutParams();
+//        maxCustomItemHeight = customItemParams.height;
+        maxCustomItemHeight = DisplayUtil.dip2px(this,80f);
+//        prepareToShowup();
+        customItemShowup();
 
 //        Toast.makeText(MainActivity.this, "hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height, Toast.LENGTH_SHORT).show();
 
@@ -38,6 +47,21 @@ public class XdemoActivty extends AppCompatActivity {
 
     }
 
+    private void customItemShowup()
+    {
+        int height = maxCustomItemHeight;
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0,height);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val= (int)valueAnimator.getAnimatedValue();
+                customItemParams.height = val;
+                customItem.setLayoutParams(customItemParams);
+            }
+        });
+        valueAnimator.setDuration(3000);
+        valueAnimator.start();
+    }
     private void prepareToShowup()
     {
         int height = maxHiddenHeight;
