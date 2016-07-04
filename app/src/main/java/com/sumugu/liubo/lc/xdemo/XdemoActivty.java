@@ -38,6 +38,7 @@ public class XdemoActivty extends AppCompatActivity {
         customItemParams = customItem.getLayoutParams();
 //        maxCustomItemHeight = customItemParams.height;
         maxCustomItemHeight = DisplayUtil.dip2px(this,80f);
+        customItem.setStateType(MyCustomItem.StateType.PREP_MANUAL);
 //        prepareToShowup();
         customItemShowup();
 

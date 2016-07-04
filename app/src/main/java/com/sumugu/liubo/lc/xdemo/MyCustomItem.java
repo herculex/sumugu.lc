@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -24,6 +23,21 @@ import com.sumugu.liubo.lc.utils.DisplayUtil;
  * Created by liubo on 16/6/27.
  */
 public class MyCustomItem extends FrameLayout {
+
+    public interface OnAfterPreparingListener
+    {
+        void doChange();
+    }
+    public final class StateType {
+        public final static int PREP_AUTO = 1;//auto
+        public final static int PREP_MANUAL = 2; //manual
+        public final static int DISPLAY_TEXT = 3;
+        public final static int EDITING_TEXT = 4;
+        public final static int MOVING_OUT = 5;
+
+    }
+
+    private int mStateType = StateType.DISPLAY_TEXT;
 
     private final String TAG = MyCustomItem.class.getSimpleName();
     private Context mContext;
@@ -48,16 +62,24 @@ public class MyCustomItem extends FrameLayout {
         super(context, attrs, defStyleAttr);
         loadLayout(context);
     }
-    private void loadLayout(Context context)
-    {
+
+    public void setStateType(int type) {
+        mStateType = type;
+    }
+
+    public int getStateType() {
+        return mStateType;
+    }
+
+    private void loadLayout(Context context) {
         setWillNotDraw(false);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.custom_item,this,true);
-        tvDelete = (TextView)view.findViewById(R.id.ci_text_delete);
-        tvDisplay = (TextView)view.findViewById(R.id.ci_text_dispaly);
-        tvFinish =  (TextView)view.findViewById(R.id.ci_text_finish);
-        editText = (EditText)view.findViewById(R.id.ci_edit_content);
-        rlActionPanel = (RelativeLayout)view.findViewById(R.id.ci_action_panel);
+        View view = LayoutInflater.from(context).inflate(R.layout.custom_item, this, true);
+        tvDelete = (TextView) view.findViewById(R.id.ci_text_delete);
+        tvDisplay = (TextView) view.findViewById(R.id.ci_text_dispaly);
+        tvFinish = (TextView) view.findViewById(R.id.ci_text_finish);
+        editText = (EditText) view.findViewById(R.id.ci_edit_content);
+        rlActionPanel = (RelativeLayout) view.findViewById(R.id.ci_action_panel);
 
     }
 
@@ -74,6 +96,7 @@ public class MyCustomItem extends FrameLayout {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "mci start onDraw");
@@ -82,18 +105,56 @@ public class MyCustomItem extends FrameLayout {
         int defaultWidth = getMeasuredWidth();
 
         Bitmap bitmap = Bitmap.createBitmap(defaultWidth, defaultHeight, Bitmap.Config.ARGB_8888);
-        Canvas mcanvas = new Canvas(bitmap);
-        mcanvas.drawColor(Color.GRAY);
+        int h = getMeasuredHeight();
+
+
+        if(getStateType()==StateType.PREP_AUTO)
+        {
+            if(h<defaultHeight)
+                drawTrapezium(canvas,bitmap,h,defaultHeight,defaultWidth);
+            else{
+                editText.setVisibility(VISIBLE);
+                editText.requestFocus();
+                setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                super.onDraw(canvas);
+            }
+        }else if(getStateType()==StateType.PREP_MANUAL)
+        {
+            if(h<defaultHeight)
+                drawTrapezium(canvas,bitmap,h,defaultHeight,defaultWidth);
+            else{
+                Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                textPaint.setTextSize(60f);
+                textPaint.setColor(Color.WHITE);
+                Canvas mcanvas = new Canvas(bitmap);
+                mcanvas.drawColor(Color.LTGRAY);
+                mcanvas.drawText("Release.into.editing.mode", 0, 100, textPaint);
+                canvas.drawBitmap(bitmap, 0, 0, null);
+            }
+        }
+
+
+//        canvas.save();
+//        canvas.restore();
+//        super.onDraw(canvas);
+
+
+    }
+
+
+    private void drawTrapezium(Canvas canvas, Bitmap bitmap, int h, int defaultHeight, int defaultWidth) {
 
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(60f);
         textPaint.setColor(Color.WHITE);
 
+        Canvas mcanvas = new Canvas(bitmap);
+        mcanvas.drawColor(Color.GRAY);
+        mcanvas.drawText("This.is.Trapezium.", 0, 100, textPaint);
         float deltaX = 0;
-        int h = getMeasuredHeight();
 
         if (h < defaultHeight) {
-            mcanvas.drawText("This.is.MyDemo.", 0, 100, textPaint);
+
             deltaX = (float) Math.sqrt(Math.pow(defaultHeight, 2) - Math.pow(h, 2));
 
             float[] src = new float[]{
@@ -112,22 +173,79 @@ public class MyCustomItem extends FrameLayout {
             matrix.setPolyToPoly(src, 0, dst, 0, src.length >> 1);
 
             canvas.drawBitmap(bitmap, matrix, null);
-        } else {
-//            mcanvas.drawText("Release.to.restart.", 0, 100, textPaint);
-//            canvas.drawBitmap(bitmap, 0, 0, null);
-            editText.setVisibility(VISIBLE);
-//        ViewGroup.LayoutParams editParams = editText.getLayoutParams();
-//        editParams.height = getMeasuredHeight();
-//        editText.setLayoutParams(editParams);
-            editText.requestFocus();
-            setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            super.onDraw(canvas);
-        }
-
 //        canvas.save();
 //        canvas.restore();
-//        super.onDraw(canvas);
-
-
+        }
     }
+
+    private void drawPolygon(Canvas canvas, Bitmap bitmap, int h, int defaultHeight, int defaultWidth) {
+
+
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setTextSize(60f);
+        textPaint.setColor(Color.WHITE);
+
+        Canvas mcanvas = new Canvas(bitmap);
+        mcanvas.drawColor(Color.GRAY);
+        mcanvas.drawText("This.is.Polygon.Let's.Roll.It.", 0, defaultHeight / 2 + 20, textPaint);
+
+        //取上半部分
+        Bitmap bitmapUp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight() / 2);
+//        Canvas canvasUp = new Canvas(bitmapUp);
+//        canvasUp.drawColor(Color.LTGRAY);
+
+        //取下半部分
+        Bitmap bitmapDown = Bitmap.createBitmap(bitmap, 0, defaultHeight / 2, bitmap.getWidth(), bitmap.getHeight() / 2);
+//        Canvas canvasDown = new Canvas(bitmapDown);
+//        canvasDown.drawColor(Color.LTGRAY);
+
+        float deltaX = 0;
+
+        if (h < defaultHeight) {
+
+            deltaX = (float) Math.sqrt(Math.pow(defaultHeight, 2) - Math.pow(h, 2));
+
+            //下半部分的矩阵
+            float[] src = new float[]{
+                    0, 0,           //左上(x,y)
+                    defaultWidth, 0,//右上
+                    defaultWidth, defaultHeight / 2,//左下
+                    0, defaultHeight / 2            //右下
+            };
+            float[] dst = new float[]{
+                    deltaX, 0,                  //左上(x,y)
+                    defaultWidth - deltaX, 0,   //右上
+                    defaultWidth, getMeasuredHeight() / 2,  //左下
+                    0, getMeasuredHeight() / 2              //右下
+            };
+            Matrix matrix = new Matrix();
+            matrix.setPolyToPoly(src, 0, dst, 0, src.length >> 1);
+            bitmapDown = Bitmap.createBitmap(bitmapDown, 0, 0, bitmapDown.getWidth(), bitmapDown.getHeight(), matrix, false);
+            //
+
+            //上半部分的矩阵
+            float[] upsrc = new float[]{
+                    0, 0,           //左上(x,y)
+                    defaultWidth, 0,//右上
+                    defaultWidth, defaultHeight / 2,//左下
+                    0, defaultHeight / 2            //右下
+            };
+            float[] updst = new float[]{
+                    0, 0,                  //左上(x,y)
+                    defaultWidth, 0,   //右上
+                    defaultWidth - deltaX, getMeasuredHeight() / 2,  //左下
+                    deltaX, getMeasuredHeight() / 2              //右下
+            };
+            Matrix upMatrix = new Matrix();
+            upMatrix.setPolyToPoly(upsrc, 0, updst, 0, upsrc.length >> 1);
+            bitmapUp = Bitmap.createBitmap(bitmapUp, 0, 0, bitmapUp.getWidth(), bitmapUp.getHeight(), upMatrix, false);
+
+
+            canvas.drawBitmap(bitmapUp, 0, 0, null);
+            canvas.drawBitmap(bitmapDown, 0, h / 2, null);
+//        canvas.save();
+//        canvas.restore();
+        }
+    }
+
 }
