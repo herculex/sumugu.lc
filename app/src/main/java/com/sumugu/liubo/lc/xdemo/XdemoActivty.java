@@ -44,10 +44,10 @@ public class XdemoActivty extends AppCompatActivity {
             @Override
             public void end(int index) {
                 Log.d("preparingX","end callback");
-                customItem.animate().translationY(100).setDuration(2000).withEndAction(new Runnable() {
+                customItem.animate().translationX(customItem.getWidth()).setDuration(1000).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        customItem.animate().translationY(0).setDuration(250);
+                        customItem.animate().translationX(0).setDuration(250);
                     }
                 });
             }

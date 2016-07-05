@@ -43,6 +43,26 @@ public class MyCustomItem extends FrameLayout {
         void end(int index);
     }
 
+    public void edit(){
+        if(onEditingListener!=null)
+            onEditingListener.begin(getItemIndex());
+
+        //
+        //
+        if(onEditingListener!=null)
+            onEditingListener.finish(getItemIndex());
+    }
+    public void moveOut(){
+        //
+        //
+        if(onDeleteListner!=null)
+            onDeleteListner.end(getItemIndex());
+    }
+
+    protected int getItemIndex(){
+        return -9;
+    }
+
     public final class PreparingType {
         public final static int NULL = -1;   //null
         public final static int AUTO = 1;//auto
