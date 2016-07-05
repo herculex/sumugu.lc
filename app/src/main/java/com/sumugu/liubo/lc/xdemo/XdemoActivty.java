@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.xdemo;
 
 import android.animation.ValueAnimator;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,7 +39,19 @@ public class XdemoActivty extends AppCompatActivity {
         customItemParams = customItem.getLayoutParams();
 //        maxCustomItemHeight = customItemParams.height;
         maxCustomItemHeight = DisplayUtil.dip2px(this,80f);
-        customItem.setStateType(MyCustomItem.StateType.PREP_MANUAL);
+        customItem.setPreparingType(MyCustomItem.PreparingType.AUTO);
+        customItem.setOnPreparingListener(new MyCustomItem.OnPreparingListener() {
+            @Override
+            public void end(int index) {
+                Log.d("preparingX","end callback");
+                customItem.animate().translationY(100).setDuration(2000).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        customItem.animate().translationY(0).setDuration(250);
+                    }
+                });
+            }
+        });
 //        prepareToShowup();
         customItemShowup();
 
