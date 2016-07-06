@@ -165,11 +165,18 @@ public class MyCustomItem extends FrameLayout {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    boolean isPreparingListenerCalled = false;
+    boolean isPreparingListenerEndCalled = false;
 
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "mci start onDraw");
+
+        if(getStateType()==StateType.DISPLAY_TEXT) {
+            rlActionPanel.setVisibility(VISIBLE);
+            tvDisplay.setVisibility(VISIBLE);
+            super.onDraw(canvas);
+            return;
+        }
 
         int defaultHeight = DisplayUtil.dip2px(getContext(), 45f);
         int defaultWidth = getMeasuredWidth();
@@ -181,7 +188,7 @@ public class MyCustomItem extends FrameLayout {
         if (getPreparingType() == PreparingType.AUTO) {
 
             if (h < defaultHeight) {
-                isPreparingListenerCalled = false;
+                isPreparingListenerEndCalled = false;
                 drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
             } else {
                 editText.setVisibility(VISIBLE);
@@ -189,9 +196,9 @@ public class MyCustomItem extends FrameLayout {
                 setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 super.onDraw(canvas);
 
-                if (!isPreparingListenerCalled && onPreparingListener != null) {
+                if (!isPreparingListenerEndCalled && onPreparingListener != null) {
                     onPreparingListener.end(0);
-                    isPreparingListenerCalled = true;
+                    isPreparingListenerEndCalled = true;
                 }
             }
         } else if (getPreparingType() == PreparingType.MANUAL) {

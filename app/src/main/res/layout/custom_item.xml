@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fff">
 
     <EditText
         android:id="@+id/ci_edit_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:hint="input samething you interesting."
         android:visibility="gone"
         />
@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/ci_text_finish"
             android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:background="@android:color/holo_green_light"
             android:gravity="left|center_vertical"
@@ -31,7 +31,7 @@
         <TextView
             android:id="@+id/ci_text_delete"
             android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@android:color/holo_red_light"
             android:layout_alignParentRight="true"
             android:gravity="right|center_vertical"
@@ -42,7 +42,7 @@
     <TextView
         android:id="@+id/ci_text_dispaly"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:text="text content sample"
         android:visibility="gone" />
 </FrameLayout>

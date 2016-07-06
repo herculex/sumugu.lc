@@ -41,6 +41,7 @@ public class XdemoActivty extends AppCompatActivity {
         maxCustomItemHeight = DisplayUtil.dip2px(this,80f);
         customItem.setPreparingType(MyCustomItem.PreparingType.AUTO);
         customItem.setOnPreparingListener(new MyCustomItem.OnPreparingListener() {
+
             @Override
             public void end(int index) {
                 Log.d("preparingX","end callback");
@@ -53,7 +54,7 @@ public class XdemoActivty extends AppCompatActivity {
             }
         });
 //        prepareToShowup();
-        customItemShowup();
+//        customItemShowup();
 
 //        Toast.makeText(MainActivity.this, "hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height, Toast.LENGTH_SHORT).show();
 
