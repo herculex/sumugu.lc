@@ -43,34 +43,45 @@ public class MyCustomItem extends FrameLayout {
         void end(int index);
     }
 
-    public void edit(){
-        if(onEditingListener!=null)
+    public void setText(String text) {
+        tvDisplay.setVisibility(VISIBLE);
+        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+    }
+
+    public void edit() {
+        if (onEditingListener != null)
             onEditingListener.begin(getItemIndex());
 
         //
+        editText.setVisibility(VISIBLE);
+        editText.requestFocus();
+        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         //
-        if(onEditingListener!=null)
+        if (onEditingListener != null)
             onEditingListener.finish(getItemIndex());
     }
-    public void moveOut(){
+
+    public void moveOut() {
         //
         //
-        if(onDeleteListner!=null)
+        if (onDeleteListner != null)
             onDeleteListner.end(getItemIndex());
     }
 
-    protected int getItemIndex(){
+    protected int getItemIndex() {
         return -9;
     }
 
     public final class PreparingType {
-        public final static int NULL = -1;   //null
-        public final static int AUTO = 1;//auto
-        public final static int MANUAL = 2; //manual
+        public final static int DEFAULT = 1;//default
+        public final static int Trapezium = -1;   //
+        public final static int POLYGON = 2; //polygon
     }
 
     public final class StateType {
 
+        public final static int PREPARING = 1;
         public final static int DISPLAY_TEXT = 3;
         public final static int EDITING_TEXT = 4;
         public final static int MOVING_OUT = 5;
@@ -82,8 +93,8 @@ public class MyCustomItem extends FrameLayout {
     private OnDeleteListner onDeleteListner;
     private OnPreparingListener onPreparingListener;
 
-    private int mPreparingType = PreparingType.NULL;
-    private int mStateType = StateType.DISPLAY_TEXT;
+    private int mPreparingType = PreparingType.DEFAULT;
+    private int mStateType;
 
     private final String TAG = MyCustomItem.class.getSimpleName();
     private Context mContext;
@@ -128,8 +139,11 @@ public class MyCustomItem extends FrameLayout {
         mPreparingType = type;
     }
 
-    public void setStateType(int type) {
-        mStateType = type;
+    private String mPreparingTextBegin = "", mPreparingTextEnd = "";
+
+    public void setPreparingText(String begin, String end) {
+        mPreparingTextEnd = end;
+        mPreparingTextBegin = begin;
     }
 
     protected int getStateType() {
@@ -171,9 +185,13 @@ public class MyCustomItem extends FrameLayout {
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "mci start onDraw");
 
-        if(getStateType()==StateType.DISPLAY_TEXT) {
+        if (tvDisplay.getVisibility() == VISIBLE) {
             rlActionPanel.setVisibility(VISIBLE);
             tvDisplay.setVisibility(VISIBLE);
+            super.onDraw(canvas);
+            return;
+        }
+        if(editText.getVisibility()==VISIBLE){
             super.onDraw(canvas);
             return;
         }
@@ -184,34 +202,33 @@ public class MyCustomItem extends FrameLayout {
         Bitmap bitmap = Bitmap.createBitmap(defaultWidth, defaultHeight, Bitmap.Config.ARGB_8888);
         int h = getMeasuredHeight();
 
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setTextSize(60f);
+        textPaint.setColor(Color.WHITE);
 
-        if (getPreparingType() == PreparingType.AUTO) {
+        Canvas mcanvas = new Canvas(bitmap);
 
-            if (h < defaultHeight) {
-                isPreparingListenerEndCalled = false;
-                drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
-            } else {
-                editText.setVisibility(VISIBLE);
-                editText.requestFocus();
-                setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                super.onDraw(canvas);
 
-                if (!isPreparingListenerEndCalled && onPreparingListener != null) {
-                    onPreparingListener.end(0);
-                    isPreparingListenerEndCalled = true;
-                }
+        if (h < defaultHeight) {
+            isPreparingListenerEndCalled = false;
+            if (!mPreparingTextBegin.isEmpty()) {
+                mcanvas.drawColor(Color.GRAY);
+//                    mcanvas.drawText("This.is.Trapezium.", 0, 100, textPaint);
+                mcanvas.drawText(mPreparingTextBegin, 0, 100, textPaint);
             }
-        } else if (getPreparingType() == PreparingType.MANUAL) {
-            if (h < defaultHeight)
-                drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
-            else {
-                Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                textPaint.setTextSize(60f);
-                textPaint.setColor(Color.WHITE);
-                Canvas mcanvas = new Canvas(bitmap);
+            drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
+        } else {
+
+            if (!mPreparingTextEnd.isEmpty()) {
                 mcanvas.drawColor(Color.LTGRAY);
-                mcanvas.drawText("Release.into.editing.mode", 0, 100, textPaint);
-                canvas.drawBitmap(bitmap, 0, 0, null);
+//                    mcanvas.drawText("Release.into.editing.mode", 0, 100, textPaint);
+                mcanvas.drawText(mPreparingTextEnd, 0, 100, textPaint);
+            }
+            canvas.drawBitmap(bitmap, 0, 0, null);
+
+            if (!isPreparingListenerEndCalled && onPreparingListener != null) {
+                onPreparingListener.end(0);
+                isPreparingListenerEndCalled = true;
             }
         }
 
@@ -226,13 +243,7 @@ public class MyCustomItem extends FrameLayout {
 
     private void drawTrapezium(Canvas canvas, Bitmap bitmap, int h, int defaultHeight, int defaultWidth) {
 
-        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setTextSize(60f);
-        textPaint.setColor(Color.WHITE);
 
-        Canvas mcanvas = new Canvas(bitmap);
-        mcanvas.drawColor(Color.GRAY);
-        mcanvas.drawText("This.is.Trapezium.", 0, 100, textPaint);
         float deltaX = 0;
 
         if (h < defaultHeight) {

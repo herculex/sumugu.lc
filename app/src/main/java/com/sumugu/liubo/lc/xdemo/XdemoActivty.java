@@ -17,7 +17,7 @@ public class XdemoActivty extends AppCompatActivity {
 
     private MyTextView hiddenView;    //// TODO: 16/6/16 扩展这个TextView，自定义MyTextView，观察onSizeChanged和onDraw
     private TextView welcomeView;
-    private ViewGroup.LayoutParams hiddenParams,welcomeParams;
+    private ViewGroup.LayoutParams hiddenParams, welcomeParams;
     private int maxHiddenHeight;
     private MyCustomItem customItem;
     private ViewGroup.LayoutParams customItemParams;
@@ -28,9 +28,9 @@ public class XdemoActivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xdemo);
 
-        customItem = (MyCustomItem)findViewById(R.id.customItem);
-        hiddenView = (MyTextView)findViewById(R.id.hiddenView);
-        welcomeView = (TextView)findViewById(R.id.welcomeView);
+        customItem = (MyCustomItem) findViewById(R.id.customItem);
+        hiddenView = (MyTextView) findViewById(R.id.hiddenView);
+        welcomeView = (TextView) findViewById(R.id.welcomeView);
 
         hiddenParams = hiddenView.getLayoutParams();
         welcomeParams = welcomeView.getLayoutParams();
@@ -38,38 +38,38 @@ public class XdemoActivty extends AppCompatActivity {
 
         customItemParams = customItem.getLayoutParams();
 //        maxCustomItemHeight = customItemParams.height;
-        maxCustomItemHeight = DisplayUtil.dip2px(this,80f);
-        customItem.setPreparingType(MyCustomItem.PreparingType.AUTO);
+        maxCustomItemHeight = DisplayUtil.dip2px(this, 45f);
+        customItem.setPreparingText("jerk off", "on face");
         customItem.setOnPreparingListener(new MyCustomItem.OnPreparingListener() {
 
             @Override
             public void end(int index) {
-                Log.d("preparingX","end callback");
+                Log.d("preparingX", "end callback");
                 customItem.animate().translationX(customItem.getWidth()).setDuration(1000).withEndAction(new Runnable() {
                     @Override
                     public void run() {
                         customItem.animate().translationX(0).setDuration(250);
                     }
                 });
+//                customItem.edit();
             }
         });
 //        prepareToShowup();
-//        customItemShowup();
+        customItemShowup();
 
 //        Toast.makeText(MainActivity.this, "hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height, Toast.LENGTH_SHORT).show();
 
-        Log.d("MyDemo","hidden's height:"+hiddenParams.height+";welcome's height:"+welcomeParams.height);
+        Log.d("MyDemo", "hidden's height:" + hiddenParams.height + ";welcome's height:" + welcomeParams.height);
 
     }
 
-    private void customItemShowup()
-    {
+    private void customItemShowup() {
         int height = maxCustomItemHeight;
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0,height);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, height);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int val= (int)valueAnimator.getAnimatedValue();
+                int val = (int) valueAnimator.getAnimatedValue();
                 customItemParams.height = val;
                 customItem.setLayoutParams(customItemParams);
             }
@@ -77,14 +77,14 @@ public class XdemoActivty extends AppCompatActivity {
         valueAnimator.setDuration(3000);
         valueAnimator.start();
     }
-    private void prepareToShowup()
-    {
+
+    private void prepareToShowup() {
         int height = maxHiddenHeight;
-        ValueAnimator valueAnimator=ValueAnimator.ofInt(0,height);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, height);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int val = (int)valueAnimator.getAnimatedValue();
+                int val = (int) valueAnimator.getAnimatedValue();
                 hiddenParams.height = val;
                 hiddenView.setLayoutParams(hiddenParams);
             }
@@ -94,44 +94,45 @@ public class XdemoActivty extends AppCompatActivity {
     }
 
     private float downY;
-    private boolean pressed=false;
+    private boolean pressed = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getActionMasked()){
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                if(!pressed) {
+                if (!pressed) {
                     downY = event.getY();
                     pressed = true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                float dist = event.getY()- downY;
-                if(dist<0)
-                    dist=0;
+                float dist = event.getY() - downY;
+                if (dist < 0)
+                    dist = 0;
                 float absDist = Math.abs(dist);
 
-                if(hiddenView.getVisibility() == View.GONE){
+                if (hiddenView.getVisibility() == View.GONE) {
                     hiddenView.setVisibility(View.VISIBLE);
                 }
-                if(absDist>=maxHiddenHeight)
-                    absDist=maxHiddenHeight;
+                if (absDist >= maxHiddenHeight)
+                    absDist = maxHiddenHeight;
 
                 hiddenParams.height = (int) absDist;
                 hiddenView.setLayoutParams(hiddenParams);
 
                 break;
             case MotionEvent.ACTION_CANCEL:
-                downY=0;
-                pressed=false;
-                hiddenParams.height=maxHiddenHeight;
+                downY = 0;
+                pressed = false;
+                hiddenParams.height = maxHiddenHeight;
                 hiddenView.setLayoutParams(hiddenParams);
                 hiddenView.setVisibility(View.GONE);
                 break;
             case MotionEvent.ACTION_UP:
-                downY=0;
-                pressed=false;
-                hiddenParams.height=maxHiddenHeight;
+                downY = 0;
+                pressed = false;
+                hiddenParams.height = maxHiddenHeight;
                 hiddenView.setLayoutParams(hiddenParams);
                 hiddenView.setVisibility(View.GONE);
                 break;
