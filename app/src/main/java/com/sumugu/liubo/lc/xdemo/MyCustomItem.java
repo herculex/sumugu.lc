@@ -9,12 +9,15 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
@@ -44,7 +47,10 @@ public class MyCustomItem extends FrameLayout {
     }
 
     public void setText(String text) {
+        tvDisplay.setText(text);
         tvDisplay.setVisibility(VISIBLE);
+        rlActionPanel.setVisibility(VISIBLE);
+
         setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
     }
@@ -164,6 +170,11 @@ public class MyCustomItem extends FrameLayout {
         editText = (EditText) view.findViewById(R.id.ci_edit_content);
         rlActionPanel = (RelativeLayout) view.findViewById(R.id.ci_action_panel);
 
+        //
+
+        tvDisplay.setOnTouchListener(new DisplayTouchListener());
+//        rlActionPanel.setOnTouchListener(new DisplayTouchListener());
+
     }
 
     @Override
@@ -186,12 +197,10 @@ public class MyCustomItem extends FrameLayout {
         Log.d(TAG, "mci start onDraw");
 
         if (tvDisplay.getVisibility() == VISIBLE) {
-            rlActionPanel.setVisibility(VISIBLE);
-            tvDisplay.setVisibility(VISIBLE);
             super.onDraw(canvas);
             return;
         }
-        if(editText.getVisibility()==VISIBLE){
+        if (editText.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
             return;
         }
@@ -338,6 +347,65 @@ public class MyCustomItem extends FrameLayout {
             canvas.drawBitmap(bitmapDown, 0, h / 2, null);
 //        canvas.save();
 //        canvas.restore();
+        }
+    }
+
+    private class DisplayTouchListener implements OnTouchListener {
+
+        float slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        float downX;
+        boolean swiping = false;
+        boolean pressed = false;
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            Log.d(TAG,"display:"+view);
+            switch (motionEvent.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d(TAG,"display DONW");
+                    if (pressed)
+                        return false;
+                    downX = motionEvent.getX();
+                    pressed = true;
+                    return true;
+
+                case MotionEvent.ACTION_MOVE:
+                    Log.d(TAG,"display MOVE");
+                    float x = motionEvent.getX() + view.getTranslationX();
+                    float offsetX = x - downX;
+                    if (!swiping) {
+                        if (Math.abs(offsetX) > slop) {
+                            swiping = true;
+                        }
+                    }
+                    if (swiping) {
+                        view.setTranslationX(offsetX);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case MotionEvent.ACTION_CANCEL:
+                    Log.d(TAG,"display CANCEL");
+                    pressed=false;
+                    swiping=false;
+
+                    view.setTranslationX(0);
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    Log.d(TAG,"display UP");
+                    if (swiping)
+                        view.setTranslationX(0);
+                    else
+                        Toast.makeText(getContext(), "jerk off", Toast.LENGTH_SHORT).show();
+                    pressed=false;
+                    swiping=false;
+
+                    return true;
+
+            }
+            return true;
+
         }
     }
 

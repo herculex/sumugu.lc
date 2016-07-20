@@ -48,10 +48,16 @@ public class XdemoActivty extends AppCompatActivity {
                 customItem.animate().translationX(customItem.getWidth()).setDuration(1000).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        customItem.animate().translationX(0).setDuration(250);
+                        customItem.animate().translationX(0).setDuration(250).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                customItem.setText("jerk again");
+//                                customItem.edit();
+                            }
+                        });
                     }
                 });
-//                customItem.edit();
+//
             }
         });
 //        prepareToShowup();

@@ -16,7 +16,8 @@
         android:id="@+id/ci_action_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:background="@android:color/holo_purple">
 
         <TextView
             android:id="@+id/ci_text_finish"
@@ -43,5 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="text content sample"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:background="@android:color/white"/>
 </FrameLayout>
