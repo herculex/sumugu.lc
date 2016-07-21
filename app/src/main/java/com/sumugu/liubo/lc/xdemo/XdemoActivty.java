@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import com.sumugu.liubo.lc.utils.DisplayUtil;
 
 public class XdemoActivty extends AppCompatActivity {
 
-    private final static String TAG=XdemoActivty.class.getSimpleName();
+    private final static String TAG = XdemoActivty.class.getSimpleName();
     private MyTextView hiddenView;    //// TODO: 16/6/16 扩展这个TextView，自定义MyTextView，观察onSizeChanged和onDraw
     private TextView welcomeView;
     private ViewGroup.LayoutParams hiddenParams, welcomeParams;
@@ -48,10 +49,10 @@ public class XdemoActivty extends AppCompatActivity {
             @Override
             public void end(int index) {
                 Log.d("preparingX", "end callback");
-                customItem.animate().translationX(customItem.getWidth()).setDuration(1000).withEndAction(new Runnable() {
+                customItem.animate().translationX(-customItem.getWidth()).setDuration(250).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        customItem.animate().translationX(0).setDuration(250).withEndAction(new Runnable() {
+                        customItem.animate().translationX(0).setDuration(150).withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 customItem.setText("jerk again");
@@ -66,14 +67,19 @@ public class XdemoActivty extends AppCompatActivity {
             @Override
             public void end(int index) {
                 Toast.makeText(XdemoActivty.this, "well,done!", Toast.LENGTH_SHORT).show();
+//                toast.setGravity(Gravity.TOP,0,0);
+//                toast.show();
             }
         });
         customItem.setOnDeleteListner(new MyCustomItem.OnDeleteListner() {
             @Override
             public void end(int index) {
-                LinearLayout parentView = (LinearLayout)findViewById(R.id.container_item);
+                LinearLayout parentView = (LinearLayout) findViewById(R.id.container_item);
                 parentView.removeView(customItem);
+
                 Toast.makeText(XdemoActivty.this, "remove customItem!!", Toast.LENGTH_SHORT).show();
+//                toast.setGravity(Gravity.TOP,0,0);
+//                toast.show();
             }
         });
 //        prepareToShowup();
@@ -96,7 +102,7 @@ public class XdemoActivty extends AppCompatActivity {
                 customItem.setLayoutParams(customItemParams);
             }
         });
-        valueAnimator.setDuration(3000);
+        valueAnimator.setDuration(1500);
         valueAnimator.start();
     }
 
@@ -118,52 +124,52 @@ public class XdemoActivty extends AppCompatActivity {
     private float downY;
     private boolean pressed = false;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        Log.d(TAG,"xdemo.onTouchEvent go.");
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG,"xdemo.onTouchEvent down.");
-                if (!pressed) {
-                    downY = event.getY();
-                    pressed = true;
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                float dist = event.getY() - downY;
-                if (dist < 0)
-                    dist = 0;
-                float absDist = Math.abs(dist);
-
-                if (hiddenView.getVisibility() == View.GONE) {
-                    hiddenView.setVisibility(View.VISIBLE);
-                }
-                if (absDist >= maxHiddenHeight)
-                    absDist = maxHiddenHeight;
-
-                hiddenParams.height = (int) absDist;
-                hiddenView.setLayoutParams(hiddenParams);
-                Log.d(TAG,"xdemo.onTouchEvent move."+absDist);
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                Log.d(TAG,"xdemo.onTouchEvent cancel.");
-                downY = 0;
-                pressed = false;
-                hiddenParams.height = maxHiddenHeight;
-                hiddenView.setLayoutParams(hiddenParams);
-                hiddenView.setVisibility(View.GONE);
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.d(TAG,"xdemo.onTouchEvent up.");
-                downY = 0;
-                pressed = false;
-                hiddenParams.height = maxHiddenHeight;
-                hiddenView.setLayoutParams(hiddenParams);
-                hiddenView.setVisibility(View.GONE);
-                break;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//
+//        Log.d(TAG,"xdemo.onTouchEvent go.");
+//        switch (event.getActionMasked()) {
+//            case MotionEvent.ACTION_DOWN:
+//                Log.d(TAG,"xdemo.onTouchEvent down.");
+//                if (!pressed) {
+//                    downY = event.getY();
+//                    pressed = true;
+//                }
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//
+//                float dist = event.getY() - downY;
+//                if (dist < 0)
+//                    dist = 0;
+//                float absDist = Math.abs(dist);
+//
+//                if (hiddenView.getVisibility() == View.GONE) {
+//                    hiddenView.setVisibility(View.VISIBLE);
+//                }
+//                if (absDist >= maxHiddenHeight)
+//                    absDist = maxHiddenHeight;
+//
+//                hiddenParams.height = (int) absDist;
+//                hiddenView.setLayoutParams(hiddenParams);
+//                Log.d(TAG,"xdemo.onTouchEvent move."+absDist);
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                Log.d(TAG,"xdemo.onTouchEvent cancel.");
+//                downY = 0;
+//                pressed = false;
+//                hiddenParams.height = maxHiddenHeight;
+//                hiddenView.setLayoutParams(hiddenParams);
+//                hiddenView.setVisibility(View.GONE);
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                Log.d(TAG,"xdemo.onTouchEvent up.");
+//                downY = 0;
+//                pressed = false;
+//                hiddenParams.height = maxHiddenHeight;
+//                hiddenView.setLayoutParams(hiddenParams);
+//                hiddenView.setVisibility(View.GONE);
+//                break;
+//        }
+//        return true;
+//    }
 }

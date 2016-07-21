@@ -22,12 +22,14 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
 
+import java.util.Date;
+
 /**
  * Created by liubo on 16/6/27.
  */
 public class MyCustomItem extends FrameLayout {
 
-    private String diplayText;
+    private String mDiplayText;
 
     public interface OnEditingListener {
         void begin(int index);
@@ -49,10 +51,11 @@ public class MyCustomItem extends FrameLayout {
     }
 
     public void setText(String text) {
-        diplayText = text;
-        tvDisplay.setText(diplayText);
+        mDiplayText = text;
+        tvDisplay.setText(mDiplayText);
         tvDisplay.setVisibility(VISIBLE);
         rlActionPanel.setVisibility(VISIBLE);
+        editText.setVisibility(GONE);
 
         setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
@@ -63,8 +66,12 @@ public class MyCustomItem extends FrameLayout {
             onEditingListener.begin(getItemIndex());
 
         //
+        tvDisplay.setVisibility(GONE);
+        rlActionPanel.setVisibility(GONE);
+        //
         editText.setVisibility(VISIBLE);
         editText.requestFocus();
+        //call softinput // TODO: 16/7/21
         setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         //
         if (onEditingListener != null)
@@ -362,6 +369,7 @@ public class MyCustomItem extends FrameLayout {
         boolean swiping = false;
         boolean pressed = false;
         int maxOffsetX = DisplayUtil.dip2px(getContext(), 60f);
+        long timeDist = 0;
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -374,6 +382,8 @@ public class MyCustomItem extends FrameLayout {
                         return false;
                     downX = motionEvent.getX();
                     pressed = true;
+                    if (timeDist == 0)
+                        timeDist = new Date().getTime();
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
@@ -415,46 +425,48 @@ public class MyCustomItem extends FrameLayout {
                     Log.d(TAG, "display UP");
                     if (swiping) {
                         float absViewX = Math.abs(view.getTranslationX());
-                        float viewX= view.getTranslationX();
+                        float viewX = view.getTranslationX();
 
-                        if(absViewX>=maxOffsetX)
-                        {
+                        if (absViewX >= maxOffsetX) {
                             //do finish or delete
-                            if(viewX>0)
-                            {
+                            if (viewX > 0) {
                                 //do finish
                                 rlActionPanel.animate().translationX(0).setDuration(500);
                                 view.animate().translationX(0).setDuration(500)
-                                .withEndAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onFinishListener.end(getItemIndex());
-                                    }
-                                });
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                onFinishListener.end(getItemIndex());
+                                            }
+                                        });
 
-                            }else
-                            {
+                            } else {
                                 //do delete
-                                view.animate().translationX(viewX-view.getWidth()).setDuration(500);
-                                rlActionPanel.animate().translationX(rlActionPanel.getTranslationX()-rlActionPanel.getWidth()).setDuration(500)
-                                .withEndAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onDeleteListner.end(getItemIndex());
-                                    }
-                                });
+                                view.animate().translationX(viewX - view.getWidth()).setDuration(500);
+                                rlActionPanel.animate().translationX(rlActionPanel.getTranslationX() - rlActionPanel.getWidth()).setDuration(500)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                onDeleteListner.end(getItemIndex());
+                                            }
+                                        });
 
                             }
-                        }else {
-                            view.setTranslationX(0);
-                            rlActionPanel.setTranslationX(0);
+                        } else {
+                            view.animate().translationX(0).setDuration(250);
+                            rlActionPanel.animate().translationX(0).setDuration(250);
                         }
                     } else {
-                        Toast.makeText(getContext(), "jerk off", Toast.LENGTH_SHORT).show();
-//                        return false;
+                        timeDist = new Date().getTime() - timeDist;
+                        if (timeDist <= 1000) {
+                            Toast.makeText(getContext(), "jerk off", Toast.LENGTH_SHORT).show();
+                            //trans to edit mode
+                            edit();
+                        }
                     }
                     pressed = false;
                     swiping = false;
+                    timeDist = 0;
 
                     return true;
 
