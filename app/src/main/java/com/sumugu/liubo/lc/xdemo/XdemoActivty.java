@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
@@ -58,7 +60,20 @@ public class XdemoActivty extends AppCompatActivity {
                         });
                     }
                 });
-//
+            }
+        });
+        customItem.setOnFinishListener(new MyCustomItem.OnFinishListener() {
+            @Override
+            public void end(int index) {
+                Toast.makeText(XdemoActivty.this, "well,done!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        customItem.setOnDeleteListner(new MyCustomItem.OnDeleteListner() {
+            @Override
+            public void end(int index) {
+                LinearLayout parentView = (LinearLayout)findViewById(R.id.container_item);
+                parentView.removeView(customItem);
+                Toast.makeText(XdemoActivty.this, "remove customItem!!", Toast.LENGTH_SHORT).show();
             }
         });
 //        prepareToShowup();

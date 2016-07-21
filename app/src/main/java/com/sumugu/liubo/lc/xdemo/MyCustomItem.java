@@ -27,6 +27,8 @@ import com.sumugu.liubo.lc.utils.DisplayUtil;
  */
 public class MyCustomItem extends FrameLayout {
 
+    private String diplayText;
+
     public interface OnEditingListener {
         void begin(int index);
 
@@ -47,7 +49,8 @@ public class MyCustomItem extends FrameLayout {
     }
 
     public void setText(String text) {
-        tvDisplay.setText(text);
+        diplayText = text;
+        tvDisplay.setText(diplayText);
         tvDisplay.setVisibility(VISIBLE);
         rlActionPanel.setVisibility(VISIBLE);
 
@@ -163,7 +166,10 @@ public class MyCustomItem extends FrameLayout {
     private void loadLayout(Context context) {
         setWillNotDraw(false);
 
+        //inflate the view
         View view = LayoutInflater.from(context).inflate(R.layout.custom_item, this, true);
+
+        //find them out
         tvDelete = (TextView) view.findViewById(R.id.ci_text_delete);
         tvDisplay = (TextView) view.findViewById(R.id.ci_text_dispaly);
         tvFinish = (TextView) view.findViewById(R.id.ci_text_finish);
@@ -173,7 +179,6 @@ public class MyCustomItem extends FrameLayout {
         //
 
         tvDisplay.setOnTouchListener(new DisplayTouchListener());
-//        rlActionPanel.setOnTouchListener(new DisplayTouchListener());
 
     }
 
@@ -353,17 +358,18 @@ public class MyCustomItem extends FrameLayout {
     private class DisplayTouchListener implements OnTouchListener {
 
         float slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-        float downX;
+        float downX = 0;
         boolean swiping = false;
         boolean pressed = false;
+        int maxOffsetX = DisplayUtil.dip2px(getContext(), 60f);
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
 
-            Log.d(TAG,slop+",display:"+view);
+            Log.d(TAG, slop + ",display:" + view);
             switch (motionEvent.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.d(TAG,"display DONW");
+                    Log.d(TAG, "display DONW");
                     if (pressed)
                         return false;
                     downX = motionEvent.getX();
@@ -371,37 +377,84 @@ public class MyCustomItem extends FrameLayout {
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
-                    Log.d(TAG,"display MOVE");
+                    Log.d(TAG, "display MOVE");
                     float x = motionEvent.getX() + view.getTranslationX();
                     float offsetX = x - downX;
+                    float absOffsetX = Math.abs(offsetX);
                     if (!swiping) {
-                        if (Math.abs(offsetX) > slop) {
+                        if (absOffsetX > slop) {
                             swiping = true;
                         }
                     }
                     if (swiping) {
                         view.setTranslationX(offsetX);
+                        if (absOffsetX >= maxOffsetX) {
+                            //start to translate the ci_action_panel
+                            if (offsetX > 0) {
+                                //swiping to right
+                                rlActionPanel.setTranslationX(offsetX - maxOffsetX);
+                            } else {
+                                //swiping to left
+                                rlActionPanel.setTranslationX(offsetX + maxOffsetX);
+                            }
+                        } else {
+                            rlActionPanel.setTranslationX(0);
+                        }
                         return true;
                     } else {
                         return false;
                     }
                 case MotionEvent.ACTION_CANCEL:
-                    Log.d(TAG,"display CANCEL");
-                    pressed=false;
-                    swiping=false;
+                    Log.d(TAG, "display CANCEL");
+                    pressed = false;
+                    swiping = false;
 
                     view.setTranslationX(0);
                     return true;
                 case MotionEvent.ACTION_UP:
-                    Log.d(TAG,"display UP");
-                    if (swiping)
-                        view.setTranslationX(0);
-                    else {
+                    Log.d(TAG, "display UP");
+                    if (swiping) {
+                        float absViewX = Math.abs(view.getTranslationX());
+                        float viewX= view.getTranslationX();
+
+                        if(absViewX>=maxOffsetX)
+                        {
+                            //do finish or delete
+                            if(viewX>0)
+                            {
+                                //do finish
+                                rlActionPanel.animate().translationX(0).setDuration(500);
+                                view.animate().translationX(0).setDuration(500)
+                                .withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        onFinishListener.end(getItemIndex());
+                                    }
+                                });
+
+                            }else
+                            {
+                                //do delete
+                                view.animate().translationX(viewX-view.getWidth()).setDuration(500);
+                                rlActionPanel.animate().translationX(rlActionPanel.getTranslationX()-rlActionPanel.getWidth()).setDuration(500)
+                                .withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        onDeleteListner.end(getItemIndex());
+                                    }
+                                });
+
+                            }
+                        }else {
+                            view.setTranslationX(0);
+                            rlActionPanel.setTranslationX(0);
+                        }
+                    } else {
                         Toast.makeText(getContext(), "jerk off", Toast.LENGTH_SHORT).show();
 //                        return false;
                     }
-                    pressed=false;
-                    swiping=false;
+                    pressed = false;
+                    swiping = false;
 
                     return true;
 
