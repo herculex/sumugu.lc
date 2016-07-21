@@ -360,7 +360,7 @@ public class MyCustomItem extends FrameLayout {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
 
-            Log.d(TAG,"display:"+view);
+            Log.d(TAG,slop+",display:"+view);
             switch (motionEvent.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d(TAG,"display DONW");
@@ -403,8 +403,9 @@ public class MyCustomItem extends FrameLayout {
 
                     return true;
 
+                default:
+                    return false;
             }
-            return true;
 
         }
     }
