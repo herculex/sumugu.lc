@@ -396,8 +396,10 @@ public class MyCustomItem extends FrameLayout {
                     Log.d(TAG,"display UP");
                     if (swiping)
                         view.setTranslationX(0);
-                    else
+                    else {
                         Toast.makeText(getContext(), "jerk off", Toast.LENGTH_SHORT).show();
+//                        return false;
+                    }
                     pressed=false;
                     swiping=false;
 
