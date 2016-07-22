@@ -138,17 +138,17 @@ public class MyCustomItem extends FrameLayout {
 
     public MyCustomItem(Context context) {
         super(context);
-        loadLayout(context);
+        initView(context);
     }
 
     public MyCustomItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-        loadLayout(context);
+        initView(context);
     }
 
     public MyCustomItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        loadLayout(context);
+        initView(context);
     }
 
     public void setPreparingType(int type) {
@@ -170,7 +170,7 @@ public class MyCustomItem extends FrameLayout {
         return mPreparingType;
     }
 
-    private void loadLayout(Context context) {
+    private void initView(Context context) {
         setWillNotDraw(false);
 
         //inflate the view

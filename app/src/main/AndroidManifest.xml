@@ -89,7 +89,8 @@
             android:name=".ItemLineFrameActivity"
             android:label="@string/title_activity_item_line_frame"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".xdemo.XdemoActivty"></activity>
+        <activity android:name=".xdemo.XdemoActivty" />
+        <activity android:name=".xdemo.Xdemo02"></activity>
     </application>
 
 </manifest>
