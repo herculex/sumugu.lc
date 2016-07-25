@@ -34,15 +34,14 @@ public class MyScrollView extends ViewGroup {
         initView(context);
     }
 
-    private void initView(Context context)
-    {
-        WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+    private void initView(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
 
         mScreenHeight = displayMetrics.heightPixels;
-        mScroller  = new Scroller(context);
-        Log.d(TAG,"screenHeight:"+mScreenHeight);
+        mScroller = new Scroller(context);
+        Log.d(TAG, "screenHeight:" + mScreenHeight);
     }
 
     @Override
@@ -50,19 +49,19 @@ public class MyScrollView extends ViewGroup {
 
         int childCount = getChildCount();
 
-        MarginLayoutParams mlp = (MarginLayoutParams)getLayoutParams();//Margin留空？
-        mlp.height=mScreenHeight*childCount;
+        MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();//Margin留空？
+        mlp.height = mScreenHeight * childCount;
         setLayoutParams(mlp);
 
         //编排每个child的布局layout位置
-        for(int i=0;i<childCount;i++){
-            View child=getChildAt(i);
-            if(child.getVisibility()!=GONE){
-                child.layout(left,i*mScreenHeight,
-                        right,(i+1)*mScreenHeight);
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() != View.GONE) {
+                child.layout(left, i * mScreenHeight,
+                        right, (i + 1) * mScreenHeight);
             }
         }
-        Log.d(TAG,"onLayout called.");
+        Log.d(TAG, "onLayout called.");
     }
 
     @Override
@@ -71,14 +70,85 @@ public class MyScrollView extends ViewGroup {
         int childCount = getChildCount();
 
         //需要测量每个child，不然child不会被绘制出来！
-        for(int i=0;i<childCount;i++){
-            measureChild(getChildAt(i),widthMeasureSpec,heightMeasureSpec);
+        for (int i = 0; i < childCount; i++) {
+            measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
         }
-        Log.d(TAG,"onMeasure called.");
+        Log.d(TAG, "onMeasure called.");
     }
+
+    int mLastY;
+    int mStart;
+    int mEnd;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+        int y = (int) event.getY();
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                mLastY = y;
+                mStart = getScrollY();
+                Log.d(TAG, "mLast="+mLastY+";mStart:getScrollY()=" + mStart);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                }
+                int dy = mLastY - y;
+                Log.d(TAG, "getHeight:="+getHeight()+";screeNheight:"+mScreenHeight+";dy="+dy+";getScrollY()=" + getScrollY());
+                if (getScrollY() < 0) {
+                    dy = 0;
+                }
+                if (getScrollY() > getHeight() - mScreenHeight) {
+                    dy = 0;
+                }
+                Log.d(TAG, "dy="+dy+";getScrollY()=" + getScrollY());
+                scrollBy(0, dy);
+                mLastY = y;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                int dScrollY = checkAlignment();
+                Log.d(TAG,"dScrollY="+dScrollY);
+                if (dScrollY > 0) {
+                    if (dScrollY < mScreenHeight / 3) {
+                        mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
+                    } else {
+                        mScroller.startScroll(0, getScrollY(), 0, mScreenHeight - dScrollY);
+                    }
+                } else {
+                    if (-dScrollY < mScreenHeight / 3) {
+                        mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
+                    } else {
+                        mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
+                    }
+                }
+                break;
+        }
+        postInvalidate();
+        return true;
+    }
+
+    private int checkAlignment() {
+        int mEnd = getScrollY();
+        Log.d(TAG, "mStart:" + mStart + ";mEnd:" + mEnd);
+
+        boolean isUP = ((mEnd - mStart) > 0);
+        int lastPrev = mEnd % mScreenHeight;
+        int lastNext = mScreenHeight - lastPrev;
+        Log.d(TAG, "lastPrev=" + lastPrev + ";lastNext=" + lastNext);
+
+        if (isUP)
+            return lastPrev;
+        else
+            return -lastNext;
+    }
+
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        if (mScroller.computeScrollOffset()) {
+            scrollTo(0, mScroller.getCurrY());
+            postInvalidate();
+        }
     }
 }
