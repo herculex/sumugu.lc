@@ -150,5 +150,6 @@ public class MyScrollView extends ViewGroup {
             scrollTo(0, mScroller.getCurrY());
             postInvalidate();
         }
+        Log.d(TAG,"computeScroll() called.");
     }
 }
