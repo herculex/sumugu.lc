@@ -95,12 +95,12 @@ public class MyScrollView extends ViewGroup {
                 }
                 int dy = mLastY - y;
                 Log.d(TAG, "getHeight:="+getHeight()+";screeNheight:"+mScreenHeight+";dy="+dy+";getScrollY()=" + getScrollY());
-                if (getScrollY() < 0) {
-                    dy = 0;
-                }
-                if (getScrollY() > getHeight() - mScreenHeight) {
-                    dy = 0;
-                }
+//                if (getScrollY() < 0) {
+//                    dy = 0;
+//                }
+//                if (getScrollY() > getHeight() - mScreenHeight) {
+//                    dy = 0;
+//                }
                 Log.d(TAG, "dy="+dy+";getScrollY()=" + getScrollY());
                 scrollBy(0, dy);
                 mLastY = y;
