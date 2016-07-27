@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.xdemo;
 
 import android.content.Context;
+import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -79,6 +80,7 @@ public class MyScrollView extends ViewGroup {
     int mLastY;
     int mStart;
     int mEnd;
+    ViewDragHelper mViewDragHelpher;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -107,8 +109,10 @@ public class MyScrollView extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_UP:
-                int dScrollY = checkAlignment();
-                Log.d(TAG,"dScrollY="+dScrollY);
+//                int dScrollY = checkAlignment();
+                int dScrollY = getScrollY()-mStart;
+                Log.d(TAG,"dScrollY="+dScrollY+";translationY="+getTranslationY());
+
                 if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);

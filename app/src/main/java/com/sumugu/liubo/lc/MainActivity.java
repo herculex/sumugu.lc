@@ -32,7 +32,7 @@ import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
-import com.sumugu.liubo.lc.xdemo.Xdemo02;
+import com.sumugu.liubo.lc.xdemo.Xdemo;
 import com.sumugu.liubo.lc.xdemo.XdemoActivty;
 
 import java.util.Calendar;
@@ -341,7 +341,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
         findViewById(R.id.btn_unlock_screen).setOnClickListener(this);
         findViewById(R.id.btn_xdemo).setOnClickListener(this);
-        findViewById(R.id.btn_xdemo02).setOnClickListener(this);
+        findViewById(R.id.btn_xdemoViewgroup).setOnClickListener(this);
 
         //
         makeFullScreen();
@@ -426,8 +426,8 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
             case R.id.btn_xdemo:
                 startActivity(new Intent(this, XdemoActivty.class));
                 return;
-            case R.id.btn_xdemo02:
-                startActivity(new Intent(this, Xdemo02.class));
+            case R.id.btn_xdemoViewgroup:
+                startActivity(new Intent(this, Xdemo.class));
                 return;
             case R.id.btn_unlock_screen:
                 unlockHomeButton();
