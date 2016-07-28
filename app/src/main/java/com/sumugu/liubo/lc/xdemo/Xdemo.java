@@ -19,44 +19,44 @@ public class Xdemo extends Activity {
     }
 
     int mLastX,mLastY;
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        int x=(int)ev.getX();
-        int y=(int)ev.getY();
-        switch (ev.getActionMasked()){
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int delatX = x-mLastX;
-                int delatY=y-mLastY;
-                if(Math.abs(delatY)<Math.abs(delatX)){
-                     return onTouchEvent(ev);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            default:
-                break;
-        }
-        mLastX=x;
-        mLastY=y;
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        int x=(int)ev.getX();
+//        int y=(int)ev.getY();
+//        switch (ev.getActionMasked()){
+//            case MotionEvent.ACTION_DOWN:
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                int delatX = x-mLastX;
+//                int delatY=y-mLastY;
+//                if(Math.abs(delatY)<Math.abs(delatX)){
+//                     return onTouchEvent(ev);
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                break;
+//            default:
+//                break;
+//        }
+//        mLastX=x;
+//        mLastY=y;
+//        return super.dispatchTouchEvent(ev);
+//    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int x=(int)event.getX();
-        int y=(int)event.getY();
-        switch (event.getActionMasked()){
-
-            case MotionEvent.ACTION_MOVE:
-                int deltaX = x-mLastX;
-                myScrollView.setTranslationX(deltaX);
-                Log.d("xdemo","action_move:"+deltaX);
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        int x=(int)event.getX();
+//        int y=(int)event.getY();
+//        switch (event.getActionMasked()){
+//
+//            case MotionEvent.ACTION_MOVE:
+//                int deltaX = x-mLastX;
+//                myScrollView.setTranslationX(deltaX);
+//                Log.d("xdemo","action_move:"+deltaX);
+//                break;
+//            default:
+//                break;
+//        }
+//        return true;
+//    }
 }

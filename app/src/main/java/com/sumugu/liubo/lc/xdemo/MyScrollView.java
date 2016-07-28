@@ -90,6 +90,7 @@ public class MyScrollView extends ViewGroup {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mLastY = y;
+                mLastX=x;
                 mStart = getScrollY();
                 Log.d(TAG, "mLast="+mLastY+";mStart:getScrollY()=" + mStart);
                 break;
@@ -108,7 +109,7 @@ public class MyScrollView extends ViewGroup {
 //                }
                 Log.d(TAG, "dy="+dy+";getScrollY()=" + getScrollY());
 
-                scrollBy(0, dy);
+                scrollBy(dx, dy);
                 mLastY = y;
                 mLastX=x;
                 break;
@@ -156,35 +157,35 @@ public class MyScrollView extends ViewGroup {
     public void computeScroll() {
         super.computeScroll();
         if (mScroller.computeScrollOffset()) {
-            scrollTo(0, mScroller.getCurrY());
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             postInvalidate();
         }
         Log.d(TAG,"computeScroll() called.");
     }
 
-    int mLastXdis,mLastYdis;
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        int x=(int)ev.getX();
-        int y =(int)ev.getY();
-        switch (ev.getActionMasked()){
-            case MotionEvent.ACTION_DOWN:
-                getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int deltaX=x-mLastXdis;
-                int deltaY=y-mLastYdis;
-                if(Math.abs(deltaX)>Math.abs(deltaY)){
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            default:
-                break;
-        }
-        mLastXdis=x;
-        mLastYdis=y;
-        return super.dispatchTouchEvent(ev);
-    }
+//    int mLastXdis,mLastYdis;
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        int x=(int)ev.getX();
+//        int y =(int)ev.getY();
+//        switch (ev.getActionMasked()){
+//            case MotionEvent.ACTION_DOWN:
+//                getParent().requestDisallowInterceptTouchEvent(true);
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                int deltaX=x-mLastXdis;
+//                int deltaY=y-mLastYdis;
+//                if(Math.abs(deltaX)>Math.abs(deltaY)){
+//                    getParent().requestDisallowInterceptTouchEvent(false);
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                break;
+//            default:
+//                break;
+//        }
+//        mLastXdis=x;
+//        mLastYdis=y;
+//        return super.dispatchTouchEvent(ev);
+//    }
 }
