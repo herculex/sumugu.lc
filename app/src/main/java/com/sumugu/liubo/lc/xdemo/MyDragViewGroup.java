@@ -79,6 +79,7 @@ public class MyDragViewGroup extends FrameLayout {
 
     }
 
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -101,6 +102,7 @@ public class MyDragViewGroup extends FrameLayout {
             @Override
             public boolean tryCaptureView(View child, int pointerId) {
                 //如果当前触摸的child是mMainView时候开始检测
+                Log.d("MyDragViewGroup",child.toString());
                 return mMainView==child;
             }
 
@@ -143,4 +145,6 @@ public class MyDragViewGroup extends FrameLayout {
             ViewCompat.postInvalidateOnAnimation(this);
         }
     }
+
+
 }
