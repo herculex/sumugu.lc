@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -86,38 +87,38 @@ public class MyScrollView extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int y = (int) event.getY();
-        int x=(int)event.getX();
+        int x = (int) event.getX();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mLastY = y;
-                mLastX=x;
+                mLastX = x;
                 mStart = getScrollY();
-                Log.d(TAG, "mLast="+mLastY+";mStart:getScrollY()=" + mStart);
+                Log.d(TAG, "mLast=" + mLastY + ";mStart:getScrollY()=" + mStart);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 }
                 int dy = mLastY - y;
-                int dx = mLastX-x;
-                Log.d(TAG, "getHeight:="+getHeight()+";screeNheight:"+mScreenHeight+";dy="+dy+";getScrollY()=" + getScrollY());
+                int dx = mLastX - x;
+                Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
 //                if (getScrollY() < 0) {
 //                    dy = 0;
 //                }
 //                if (getScrollY() > getHeight() - mScreenHeight) {
 //                    dy = 0;
 //                }
-                Log.d(TAG, "dy="+dy+";getScrollY()=" + getScrollY());
+                Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
-                scrollBy(dx, dy);
+                scrollBy(0, dy);
                 mLastY = y;
-                mLastX=x;
+                mLastX = x;
                 break;
 
             case MotionEvent.ACTION_UP:
-//                int dScrollY = checkAlignment();
-                int dScrollY = getScrollY()-mStart;
-                Log.d(TAG,"dScrollY="+dScrollY+";translationY="+getTranslationY());
+                int dScrollY = checkAlignment();
+//                int dScrollY = getScrollY()-mStart;
+                Log.d(TAG, "dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
 
                 if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
@@ -160,7 +161,7 @@ public class MyScrollView extends ViewGroup {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             postInvalidate();
         }
-        Log.d(TAG,"computeScroll() called.");
+        Log.d(TAG, "computeScroll() called.");
     }
 
 //    int mLastXdis,mLastYdis;
