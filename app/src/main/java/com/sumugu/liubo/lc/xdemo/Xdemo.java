@@ -13,7 +13,7 @@ public class Xdemo extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_xdemo02);
+        setContentView(R.layout.activity_xdemo03);
 
         myScrollView=(MyScrollView)findViewById(R.id.customScroller);
     }
