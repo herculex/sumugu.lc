@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,9 +16,31 @@ import android.widget.Scroller;
  */
 public class MyScrollView extends ViewGroup {
 
+
+
+    public interface OnBeforeScrollListener {
+        boolean scrollY(int dy);
+    }
+    public interface OnReleaseScrollListener{
+        boolean stay(int valY);
+        boolean leave(int valY);
+    }
+
     private static final String TAG = MyScrollView.class.getSimpleName();
     private int mScreenHeight;
     private Scroller mScroller;
+
+    public void setOnBeforeScrollListener(OnBeforeScrollListener onBeforeScrollListener) {
+        this.onBeforeScrollListener = onBeforeScrollListener;
+    }
+
+    private OnBeforeScrollListener onBeforeScrollListener;
+
+    public void setOnReleaseScrollListener(OnReleaseScrollListener onReleaseScrollListener) {
+        this.onReleaseScrollListener = onReleaseScrollListener;
+    }
+
+    private OnReleaseScrollListener onReleaseScrollListener;
 
     public MyScrollView(Context context) {
         super(context);
@@ -81,6 +102,7 @@ public class MyScrollView extends ViewGroup {
     int mLastX;
     int mLastY;
     int mStart;
+    int mDownY;
     int mEnd;
     ViewDragHelper mViewDragHelpher;
 
@@ -92,6 +114,7 @@ public class MyScrollView extends ViewGroup {
             case MotionEvent.ACTION_DOWN:
                 mLastY = y;
                 mLastX = x;
+                mDownY = y;
                 mStart = getScrollY();
                 Log.d(TAG, "mLast=" + mLastY + ";mStart:getScrollY()=" + mStart);
                 break;
@@ -102,15 +125,16 @@ public class MyScrollView extends ViewGroup {
                 int dy = mLastY - y;
                 int dx = mLastX - x;
                 Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
-//                if (getScrollY() < 0) {
-//                    dy = 0;
-//                }
-//                if (getScrollY() > getHeight() - mScreenHeight) {
-//                    dy = 0;
-//                }
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
-                scrollBy(0, dy);
+                if(onBeforeScrollListener==null)
+                    scrollBy(0, dy);
+                else{
+                    if(!onBeforeScrollListener.scrollY(y- mDownY))
+                    {
+                        scrollBy(0,dy);
+                    }
+                }
                 mLastY = y;
                 mLastX = x;
                 break;

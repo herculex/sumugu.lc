@@ -9,36 +9,44 @@
         android:layout_height="match_parent"
     >
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:background="@android:color/holo_blue_light">
-
-            <TextView
+                <com.sumugu.liubo.lc.xdemo.MyCustomItem
+                    android:id="@+id/customItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                </com.sumugu.liubo.lc.xdemo.MyCustomItem>
+                <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Child01" />
-        </RelativeLayout>
+        </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:background="@android:color/holo_purple">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Child02" />
-        </RelativeLayout>
+        </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:background="@android:color/holo_orange_light">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Child03" />
-        </RelativeLayout>
+        </LinearLayout>
     </com.sumugu.liubo.lc.xdemo.MyScrollView>
