@@ -17,31 +17,22 @@ import android.widget.Scroller;
 public class MyScrollView extends ViewGroup {
 
 
-    public interface OnBeforeScrollListener {
-        boolean scrollY(int index, int dy, int scrollY);
-    }
+    public interface OnScrollListener {
+        void onStart(int index,int start,int downY);    //current pager index,start scrollY ,downY point
+        boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
+        void onStop(int index,int scrollY); //current pager index,total scrollY
 
-    public interface OnReleaseScrollListener {
-        boolean stay(int valY);
-
-        boolean leave(int valY);
     }
 
     private static final String TAG = MyScrollView.class.getSimpleName();
     private int mScreenHeight;
     private Scroller mScroller;
 
-    public void setOnBeforeScrollListener(OnBeforeScrollListener onBeforeScrollListener) {
-        this.onBeforeScrollListener = onBeforeScrollListener;
+    public void setOnScrollListener(OnScrollListener onScrollListener) {
+        this.onScrollListener = onScrollListener;
     }
 
-    private OnBeforeScrollListener onBeforeScrollListener;
-
-    public void setOnReleaseScrollListener(OnReleaseScrollListener onReleaseScrollListener) {
-        this.onReleaseScrollListener = onReleaseScrollListener;
-    }
-
-    private OnReleaseScrollListener onReleaseScrollListener;
+    private OnScrollListener onScrollListener;
 
     public MyScrollView(Context context) {
         super(context);
@@ -128,10 +119,10 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
-                if (onBeforeScrollListener == null)
+                if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onBeforeScrollListener.scrollY(0, dy, getScrollY() % mScreenHeight))
+                    if (onScrollListener.onScroll(0, dy, getScrollY() % mScreenHeight))
                         scrollBy(0, dy);
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 

@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.sumugu.liubo.lc.R;
@@ -26,8 +25,7 @@ public class Xdemo extends Activity {
         myCustomItem.setPreparingText("下拉创建新的信条", "松开开始键入内容");
 
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
-        myScrollView.setOnBeforeScrollListener(new BeforeScrollListener());
-        myScrollView.setOnReleaseScrollListener(new ReleaseScrollListener());
+        myScrollView.setOnScrollListener(new ScrollListener());
 
     }
 
@@ -35,10 +33,15 @@ public class Xdemo extends Activity {
     int height = 0;
 
 
-    private class BeforeScrollListener implements MyScrollView.OnBeforeScrollListener {
+    private class ScrollListener implements MyScrollView.OnScrollListener {
         @Override
-        public boolean scrollY(int index, int dy, int scrollY) {
-            Log.d("BeforeScrollListener", "call:" + index + "," + dy + "," + scrollY);
+        public void onStart(int index, int start, int downY) {
+            Log.d("ScrollListener", "onStart:" + index + "," + start + "," + downY);
+        }
+
+        @Override
+        public boolean onScroll(int index, int dy, int scrollY) {
+            Log.d("ScrollListener", "onScroll:" + index + "," + dy + "," + scrollY);
             if (!callback) {
                 callback = true;
                 height = 0;
@@ -70,41 +73,10 @@ public class Xdemo extends Activity {
 
             return canTrans;
         }
-    }
-
-    private class ReleaseScrollListener implements MyScrollView.OnReleaseScrollListener {
-        @Override
-        public boolean stay(int valY) {
-            if (valY > maxCustomItemHeight)
-                return false;
-            else
-                customItemCloseup(valY);
-            return true;
-        }
 
         @Override
-        public boolean leave(int valY) {
-            return false;
-        }
-
-        private void customItemCloseup(int valY) {
-            if (valY == 0)
-                valY = maxCustomItemHeight;
-
-            final int maxY = valY;
-
-            ValueAnimator valueAnimator = ValueAnimator.ofInt(0, maxY);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-
-                    myCustomItem.getLayoutParams().height = maxY - (int) valueAnimator.getAnimatedValue();
-                    ;
-                    myCustomItem.requestLayout();
-                }
-            });
-            valueAnimator.setDuration(maxY / maxCustomItemHeight * 1000);
-            valueAnimator.start();
+        public void onStop(int index, int scrollY) {
+            Log.d("ScrollListener", "onScroll:" + index + "," + scrollY);
         }
     }
 
