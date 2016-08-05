@@ -15,52 +15,67 @@ public class Xdemo extends Activity {
     MyScrollView myScrollView;
     MyCustomItem myCustomItem;
     int maxCustomItemHeight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xdemo02);
 
-        maxCustomItemHeight = DisplayUtil.dip2px(this,45f);
-        myCustomItem=(MyCustomItem)findViewById(R.id.customItem);
-        myCustomItem.setPreparingText("下拉创建新的信条","松开开始键入内容");
+        maxCustomItemHeight = DisplayUtil.dip2px(this, 45f);
+        myCustomItem = (MyCustomItem) findViewById(R.id.customItem);
+        myCustomItem.setPreparingText("下拉创建新的信条", "松开开始键入内容");
 
-        myScrollView=(MyScrollView)findViewById(R.id.customScroller);
+        myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnBeforeScrollListener(new BeforeScrollListener());
         myScrollView.setOnReleaseScrollListener(new ReleaseScrollListener());
 
     }
 
-    private class BeforeScrollListener implements MyScrollView.OnBeforeScrollListener
-    {
-        @Override
-        public boolean scrollY(int dy) {
-            Log.d("BeforeScrollListener","call:"+dy);
-            boolean canTrans;
-            int transHeight;
+    boolean callback = false;
+    int height = 0;
 
-            if(dy>maxCustomItemHeight){
-                transHeight=maxCustomItemHeight;
-                canTrans=false;
-            }else{
-                if(dy<0)
-                    transHeight=0;
-                else
-                    transHeight=dy;
-                canTrans=true;
+
+    private class BeforeScrollListener implements MyScrollView.OnBeforeScrollListener {
+        @Override
+        public boolean scrollY(int index, int dy, int scrollY) {
+            Log.d("BeforeScrollListener", "call:" + index + "," + dy + "," + scrollY);
+            if (!callback) {
+                callback = true;
+                height = 0;
             }
-            myCustomItem.setVisibility(View.VISIBLE);
-            myCustomItem.getLayoutParams().height=transHeight;
+            boolean canTrans;
+
+            if (dy <= 0 && scrollY <= 0) {
+                height += -dy;
+                if (height > maxCustomItemHeight) {
+                    height = maxCustomItemHeight;
+                    canTrans = true;
+                } else
+                    canTrans = false;
+            } else if (dy >= 0 && scrollY >= 0) {
+                height += -dy;
+                if (height < 0) {
+                    height = 0;
+                    canTrans = true;
+                } else
+                    canTrans = false;
+            } else {
+                canTrans = true;
+            }
+
+            if (myCustomItem.getVisibility() == View.GONE)
+                myCustomItem.setVisibility(View.VISIBLE);
+            myCustomItem.getLayoutParams().height = height;
             myCustomItem.requestLayout();
 
             return canTrans;
         }
     }
 
-    private class ReleaseScrollListener implements MyScrollView.OnReleaseScrollListener
-    {
+    private class ReleaseScrollListener implements MyScrollView.OnReleaseScrollListener {
         @Override
         public boolean stay(int valY) {
-            if(valY>maxCustomItemHeight)
+            if (valY > maxCustomItemHeight)
                 return false;
             else
                 customItemCloseup(valY);
@@ -73,21 +88,22 @@ public class Xdemo extends Activity {
         }
 
         private void customItemCloseup(int valY) {
-            if(valY==0)
-                valY=maxCustomItemHeight;
+            if (valY == 0)
+                valY = maxCustomItemHeight;
 
-           final int maxY= valY;
+            final int maxY = valY;
 
             ValueAnimator valueAnimator = ValueAnimator.ofInt(0, maxY);
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
 
-                    myCustomItem.getLayoutParams().height= maxY - (int) valueAnimator.getAnimatedValue();;
+                    myCustomItem.getLayoutParams().height = maxY - (int) valueAnimator.getAnimatedValue();
+                    ;
                     myCustomItem.requestLayout();
                 }
             });
-            valueAnimator.setDuration(maxY/maxCustomItemHeight*1000);
+            valueAnimator.setDuration(maxY / maxCustomItemHeight * 1000);
             valueAnimator.start();
         }
     }

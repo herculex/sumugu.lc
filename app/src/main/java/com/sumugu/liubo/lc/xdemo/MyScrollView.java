@@ -17,12 +17,13 @@ import android.widget.Scroller;
 public class MyScrollView extends ViewGroup {
 
 
-
     public interface OnBeforeScrollListener {
-        boolean scrollY(int dy);
+        boolean scrollY(int index, int dy, int scrollY);
     }
-    public interface OnReleaseScrollListener{
+
+    public interface OnReleaseScrollListener {
         boolean stay(int valY);
+
         boolean leave(int valY);
     }
 
@@ -114,7 +115,6 @@ public class MyScrollView extends ViewGroup {
             case MotionEvent.ACTION_DOWN:
                 mLastY = y;
                 mLastX = x;
-                mDownY = y;
                 mStart = getScrollY();
                 Log.d(TAG, "mLast=" + mLastY + ";mStart:getScrollY()=" + mStart);
                 break;
@@ -127,13 +127,14 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
-                if(onBeforeScrollListener==null)
+
+                if (onBeforeScrollListener == null)
                     scrollBy(0, dy);
-                else{
-                    if(!onBeforeScrollListener.scrollY(y- mDownY))
-                    {
-                        scrollBy(0,dy);
-                    }
+                else {
+                    if (onBeforeScrollListener.scrollY(0, dy, getScrollY() % mScreenHeight))
+                        scrollBy(0, dy);
+                    Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
+
                 }
                 mLastY = y;
                 mLastX = x;
@@ -148,7 +149,10 @@ public class MyScrollView extends ViewGroup {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
                     } else {
-                        mScroller.startScroll(0, getScrollY(), 0, mScreenHeight - dScrollY);
+                        if (getScrollY() > mScreenHeight * (getChildCount() - 1))
+                            mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
+                        else
+                            mScroller.startScroll(0, getScrollY(), 0, mScreenHeight - dScrollY);
                     }
                 } else {
                     if (-dScrollY < mScreenHeight / 3) {
@@ -165,12 +169,11 @@ public class MyScrollView extends ViewGroup {
 
     private int checkAlignment() {
         int mEnd = getScrollY();
-        Log.d(TAG, "mStart:" + mStart + ";mEnd:" + mEnd);
 
         boolean isUP = ((mEnd - mStart) > 0);
         int lastPrev = mEnd % mScreenHeight;
         int lastNext = mScreenHeight - lastPrev;
-        Log.d(TAG, "lastPrev=" + lastPrev + ";lastNext=" + lastNext);
+        Log.d(TAG, "mStart:" + mStart + ";mEnd:" + mEnd + ";isUP:" + isUP + ";lastPrev=" + lastPrev + ";lastNext=" + lastNext);
 
         if (isUP)
             return lastPrev;
@@ -185,7 +188,7 @@ public class MyScrollView extends ViewGroup {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             postInvalidate();
         }
-        Log.d(TAG, "computeScroll() called.");
+//        Log.d(TAG, "computeScroll() called.");
     }
 
 //    int mLastXdis,mLastYdis;
