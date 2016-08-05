@@ -97,7 +97,10 @@ public class MyCustomItem extends FrameLayout {
 
     public final class StateType {
 
-        public final static int PREPARING = 1;
+        public final static int PREPARING_FULL=1;
+        public final static int PREPARING_DISMISS=0;
+        public final static int PREPARING_PROGRESS = -1;
+
         public final static int DISPLAY_TEXT = 3;
         public final static int EDITING_TEXT = 4;
         public final static int MOVING_OUT = 5;
@@ -210,10 +213,12 @@ public class MyCustomItem extends FrameLayout {
 
         if (tvDisplay.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
+            mStateType=StateType.DISPLAY_TEXT;
             return;
         }
         if (editText.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
+            mStateType=StateType.EDITING_TEXT;
             return;
         }
 
@@ -238,6 +243,12 @@ public class MyCustomItem extends FrameLayout {
                 mcanvas.drawText(mPreparingTextBegin, 0, 100, textPaint);
             }
             drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
+
+            if(h==0)
+                mStateType=StateType.PREPARING_DISMISS;
+            else
+                mStateType=StateType.PREPARING_PROGRESS;
+
         } else {
 
             if (!mPreparingTextEnd.isEmpty()) {
@@ -246,6 +257,8 @@ public class MyCustomItem extends FrameLayout {
                 mcanvas.drawText(mPreparingTextEnd, 0, 100, textPaint);
             }
             canvas.drawBitmap(bitmap, 0, 0, null);
+
+            mStateType=StateType.PREPARING_FULL;
 
             if (!isPreparingListenerEndCalled && onPreparingListener != null) {
                 onPreparingListener.end(0);

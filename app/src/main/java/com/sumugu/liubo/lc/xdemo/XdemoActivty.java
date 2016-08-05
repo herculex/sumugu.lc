@@ -98,8 +98,11 @@ public class XdemoActivty extends AppCompatActivity {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int val = (int) valueAnimator.getAnimatedValue();
-                customItemParams.height = val;
-                customItem.setLayoutParams(customItemParams);
+//                customItemParams.height = val;
+//                customItem.setLayoutParams(customItemParams);
+                //同上
+                customItem.getLayoutParams().height=val;
+                customItem.requestLayout();
             }
         });
         valueAnimator.setDuration(1500);
