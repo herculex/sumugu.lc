@@ -81,6 +81,8 @@ public class Xdemo extends Activity {
             int lastHeight = myCustomItem.getLayoutParams().height;
             if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
                 customItemCloseup(myCustomItem, lastHeight);
+                height = 0;   //rest to 0
+                callback = false;
             }
         }
     }
@@ -98,8 +100,7 @@ public class Xdemo extends Activity {
         float fraction = (float) startHeight / maxCustomItemHeight;
         valueAnimator.setDuration((int) (fraction * 500));
         valueAnimator.start();
-        height = 0;   //rest to 0
-        callback = false;
+
     }
 
 }
