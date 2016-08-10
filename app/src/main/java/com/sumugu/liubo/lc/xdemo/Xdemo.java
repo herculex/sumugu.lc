@@ -76,8 +76,30 @@ public class Xdemo extends Activity {
 
         @Override
         public void onStop(int index, int scrollY) {
-            Log.d("ScrollListener", "onScroll:" + index + "," + scrollY);
+            Log.d("ScrollListener", "onScroll:" + index + "," + scrollY + "," + myCustomItem.getLayoutParams().height);
+
+            int lastHeight = myCustomItem.getLayoutParams().height;
+            if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
+                customItemCloseup(myCustomItem, lastHeight);
+            }
         }
+    }
+
+    private void customItemCloseup(final View custom, final int startHeight) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, startHeight);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val = startHeight - (int) valueAnimator.getAnimatedValue();
+                custom.getLayoutParams().height = val;
+                custom.requestLayout();
+            }
+        });
+        float fraction = (float) startHeight / maxCustomItemHeight;
+        valueAnimator.setDuration((int) (fraction * 500));
+        valueAnimator.start();
+        height = 0;   //rest to 0
+        callback = false;
     }
 
 }

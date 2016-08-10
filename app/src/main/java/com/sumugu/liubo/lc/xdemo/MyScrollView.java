@@ -152,6 +152,9 @@ public class MyScrollView extends ViewGroup {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
                 }
+                if(onScrollListener!=null)
+                    onScrollListener.onStop(0,dScrollY);
+
                 break;
         }
         postInvalidate();
