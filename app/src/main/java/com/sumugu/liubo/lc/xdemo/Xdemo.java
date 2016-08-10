@@ -100,7 +100,6 @@ public class Xdemo extends Activity {
         float fraction = (float) startHeight / maxCustomItemHeight;
         valueAnimator.setDuration((int) (fraction * 500));
         valueAnimator.start();
-
     }
 
 }
