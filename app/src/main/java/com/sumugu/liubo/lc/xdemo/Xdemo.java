@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
@@ -26,6 +29,18 @@ public class Xdemo extends Activity {
 
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnScrollListener(new ScrollListener());
+
+//        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.layer_cover);
+//        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)relativeLayout.getLayoutParams();
+////        lp.setMargins(0,100,0,0);
+//        relativeLayout.setTranslationY(100);
+//        Log.d("Xdemo","relation TOP:"+relativeLayout.getTop());
+//        relativeLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(Xdemo.this, "hello", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 
