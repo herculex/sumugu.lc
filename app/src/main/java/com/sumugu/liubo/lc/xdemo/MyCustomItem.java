@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ public class MyCustomItem extends FrameLayout {
     }
 
     public void setText(String text) {
+
         mDiplayText = text;
         tvDisplay.setText(mDiplayText);
         tvDisplay.setVisibility(VISIBLE);
@@ -63,6 +65,10 @@ public class MyCustomItem extends FrameLayout {
         requestLayout();
 //        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+    }
+
+    public Editable getText() {
+        return editText.getText();
     }
 
     public void edit() {
@@ -90,6 +96,12 @@ public class MyCustomItem extends FrameLayout {
         //
         if (onDeleteListner != null)
             onDeleteListner.end(getItemIndex());
+    }
+    public void readyPreparing()
+    {
+        tvDisplay.setVisibility(GONE);
+        editText.setVisibility(GONE);
+        rlActionPanel.setVisibility(GONE);
     }
 
     protected int getItemIndex() {
@@ -216,7 +228,9 @@ public class MyCustomItem extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "mci start onDraw");
+        Log.d(TAG, "mci start onDraw:" + getMeasuredHeight());
+        int defaultHeight = DisplayUtil.dip2px(getContext(), 45f);
+        int defaultWidth = getMeasuredWidth();
 
         if (tvDisplay.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
@@ -229,8 +243,8 @@ public class MyCustomItem extends FrameLayout {
             return;
         }
 
-        int defaultHeight = DisplayUtil.dip2px(getContext(), 45f);
-        int defaultWidth = getMeasuredWidth();
+
+        Log.d(TAG, "drawing trans ");
 
         Bitmap bitmap = Bitmap.createBitmap(defaultWidth, defaultHeight, Bitmap.Config.ARGB_8888);
         int h = getMeasuredHeight();
@@ -456,7 +470,8 @@ public class MyCustomItem extends FrameLayout {
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
-                                                onFinishListener.end(getItemIndex());
+                                                if (onFinishListener != null)
+                                                    onFinishListener.end(getItemIndex());
                                             }
                                         });
 
@@ -467,7 +482,8 @@ public class MyCustomItem extends FrameLayout {
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
-                                                onDeleteListner.end(getItemIndex());
+                                                if (onFinishListener != null)
+                                                    onDeleteListner.end(getItemIndex());
                                             }
                                         });
 

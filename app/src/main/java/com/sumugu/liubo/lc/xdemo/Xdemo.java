@@ -32,18 +32,32 @@ public class Xdemo extends Activity {
         myScrollView.setOnScrollListener(new ScrollListener());
 
         myCover = (RelativeLayout)findViewById(R.id.layer_cover);
-//        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)relativeLayout.getLayoutParams();
-////        lp.setMargins(0,100,0,0);
-//        relativeLayout.setTranslationY(100);
-//        Log.d("Xdemo","relation TOP:"+relativeLayout.getTop());
-//        relativeLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(Xdemo.this, "hello", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        myCover.setOnClickListener(coverOnClickListener);
 
     }
+
+    private View.OnClickListener coverOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String content = myCustomItem.getText().toString();
+            if(content.isEmpty())
+            {
+                myCustomItem.setText("");
+                myCustomItem.readyPreparing();
+
+                customItemCloseup(myCustomItem,maxCustomItemHeight);
+                myCover.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        myCover.setVisibility(View.GONE);
+                        myCover.setAlpha(1);
+                    }
+                });
+            }else{
+                myCustomItem.setText(content);
+            }
+        }
+    };
 
     boolean callback = false;
     int height = 0;
