@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -57,7 +58,10 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel.setVisibility(VISIBLE);
         editText.setVisibility(GONE);
 
-        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        requestLayout();
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
     }
 
@@ -72,7 +76,10 @@ public class MyCustomItem extends FrameLayout {
         editText.setVisibility(VISIBLE);
         editText.requestFocus();
         //call softinput // TODO: 16/7/21
-        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        requestLayout();
         //
         if (onEditingListener != null)
             onEditingListener.finish(getItemIndex());
@@ -97,8 +104,8 @@ public class MyCustomItem extends FrameLayout {
 
     public final class StateType {
 
-        public final static int PREPARING_FULL=1;
-        public final static int PREPARING_DISMISS=0;
+        public final static int PREPARING_FULL = 1;
+        public final static int PREPARING_DISMISS = 0;
         public final static int PREPARING_PROGRESS = -1;
 
         public final static int DISPLAY_TEXT = 3;
@@ -213,12 +220,12 @@ public class MyCustomItem extends FrameLayout {
 
         if (tvDisplay.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
-            mStateType=StateType.DISPLAY_TEXT;
+            mStateType = StateType.DISPLAY_TEXT;
             return;
         }
         if (editText.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
-            mStateType=StateType.EDITING_TEXT;
+            mStateType = StateType.EDITING_TEXT;
             return;
         }
 
@@ -244,10 +251,10 @@ public class MyCustomItem extends FrameLayout {
             }
             drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
 
-            if(h==0)
-                mStateType=StateType.PREPARING_DISMISS;
+            if (h <= 0)
+                mStateType = StateType.PREPARING_DISMISS;
             else
-                mStateType=StateType.PREPARING_PROGRESS;
+                mStateType = StateType.PREPARING_PROGRESS;
 
         } else {
 
@@ -258,7 +265,7 @@ public class MyCustomItem extends FrameLayout {
             }
             canvas.drawBitmap(bitmap, 0, 0, null);
 
-            mStateType=StateType.PREPARING_FULL;
+            mStateType = StateType.PREPARING_FULL;
 
             if (!isPreparingListenerEndCalled && onPreparingListener != null) {
                 onPreparingListener.end(0);

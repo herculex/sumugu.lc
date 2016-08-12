@@ -122,7 +122,7 @@ public class MyScrollView extends ViewGroup {
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(0, dy, getScrollY() % mScreenHeight))
+                    if (onScrollListener.onScroll(getScrollY()/mScreenHeight, dy, getScrollY() % mScreenHeight))
                         scrollBy(0, dy);
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 

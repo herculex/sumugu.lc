@@ -17,6 +17,7 @@ public class Xdemo extends Activity {
     MyScrollView myScrollView;
     MyCustomItem myCustomItem;
     int maxCustomItemHeight;
+    RelativeLayout myCover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class Xdemo extends Activity {
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnScrollListener(new ScrollListener());
 
-//        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.layer_cover);
+        myCover = (RelativeLayout)findViewById(R.id.layer_cover);
 //        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)relativeLayout.getLayoutParams();
 ////        lp.setMargins(0,100,0,0);
 //        relativeLayout.setTranslationY(100);
@@ -57,6 +58,9 @@ public class Xdemo extends Activity {
         @Override
         public boolean onScroll(int index, int dy, int scrollY) {
             Log.d("ScrollListener", "onScroll:" + index + "," + dy + "," + scrollY);
+            if(index!=0)
+                return true;
+
             if (!callback) {
                 callback = true;
                 height = 0;
@@ -96,9 +100,17 @@ public class Xdemo extends Activity {
             int lastHeight = myCustomItem.getLayoutParams().height;
             if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
                 customItemCloseup(myCustomItem, lastHeight);
-                height = 0;   //rest to 0
-                callback = false;
             }
+            else {
+                if(myCustomItem.getLayoutParams().height==maxCustomItemHeight) {
+                    myCustomItem.edit();
+                    myCover.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            height = 0;   //rest to 0
+            callback = false;
         }
     }
 

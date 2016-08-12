@@ -7,35 +7,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_blue_light"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.sumugu.liubo.lc.xdemo.MyCustomItem
+            android:id="@+id/customItem"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_blue_light"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-            <com.sumugu.liubo.lc.xdemo.MyCustomItem
-                android:id="@+id/customItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"></com.sumugu.liubo.lc.xdemo.MyCustomItem>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/customItem"
+            android:text="Page01" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Page01" />
-        </LinearLayout>
         <RelativeLayout
             android:id="@+id/layer_cover"
-            android:background="#b0000000"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"></RelativeLayout>
-    </FrameLayout>
-
+            android:layout_below="@+id/customItem"
+            android:background="#b0000000"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
