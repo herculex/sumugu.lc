@@ -21,10 +21,17 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/page01"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/customItem"
             android:text="Page01" />
+
+        <com.sumugu.liubo.lc.xdemo.MyListView
+            android:id="@+id/myListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/page01"/>
 
         <RelativeLayout
             android:id="@+id/layer_cover"

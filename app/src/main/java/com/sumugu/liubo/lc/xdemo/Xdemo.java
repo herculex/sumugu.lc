@@ -11,11 +11,14 @@ import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
+import com.sumugu.liubo.lc.xdemo.data.MyCursorAdapter;
+import com.sumugu.liubo.lc.xdemo.data.MyLoaderCallback;
 
 public class Xdemo extends Activity {
 
     MyScrollView myScrollView;
     MyCustomItem myCustomItem;
+    MyListView myListView;
     int maxCustomItemHeight;
     RelativeLayout myCover;
 
@@ -31,21 +34,29 @@ public class Xdemo extends Activity {
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnScrollListener(new ScrollListener());
 
-        myCover = (RelativeLayout)findViewById(R.id.layer_cover);
+        myCover = (RelativeLayout) findViewById(R.id.layer_cover);
         myCover.setOnClickListener(coverOnClickListener);
 
+        int loaderId = 5;
+        MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, null, 0);
+        MyLoaderCallback myLoaderCallback = new MyLoaderCallback(this, myCursorAdapter, loaderId);
+
+        myListView = (MyListView) findViewById(R.id.myListView);
+        myListView.setAdapter(myCursorAdapter);
+
+        getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
+        
     }
 
     private View.OnClickListener coverOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             String content = myCustomItem.getText().toString();
-            if(content.isEmpty())
-            {
+            if (content.isEmpty()) {
                 myCustomItem.setText("");
                 myCustomItem.readyPreparing();
 
-                customItemCloseup(myCustomItem,maxCustomItemHeight);
+                customItemCloseup(myCustomItem, maxCustomItemHeight);
                 myCover.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
                     @Override
                     public void run() {
@@ -53,7 +64,7 @@ public class Xdemo extends Activity {
                         myCover.setAlpha(1);
                     }
                 });
-            }else{
+            } else {
                 myCustomItem.setText(content);
             }
         }
@@ -72,7 +83,7 @@ public class Xdemo extends Activity {
         @Override
         public boolean onScroll(int index, int dy, int scrollY) {
             Log.d("ScrollListener", "onScroll:" + index + "," + dy + "," + scrollY);
-            if(index!=0)
+            if (index != 0)
                 return true;
 
             if (!callback) {
@@ -114,9 +125,8 @@ public class Xdemo extends Activity {
             int lastHeight = myCustomItem.getLayoutParams().height;
             if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
                 customItemCloseup(myCustomItem, lastHeight);
-            }
-            else {
-                if(myCustomItem.getLayoutParams().height==maxCustomItemHeight) {
+            } else {
+                if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
                     myCustomItem.edit();
                     myCover.setVisibility(View.VISIBLE);
                 }
