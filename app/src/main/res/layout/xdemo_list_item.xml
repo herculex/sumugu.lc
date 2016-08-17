@@ -11,12 +11,10 @@
         android:layout_height="match_parent"
         android:gravity="left|center_vertical"
         android:text="jerk"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <com.sumugu.liubo.lc.xdemo.MyCustomItem
         android:id="@+id/customItem"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent"/>
 
-    </com.sumugu.liubo.lc.xdemo.MyCustomItem>
 </LinearLayout>

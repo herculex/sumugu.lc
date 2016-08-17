@@ -80,6 +80,8 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel.setVisibility(GONE);
         //
         editText.setVisibility(VISIBLE);
+        if(mDiplayText!=null && !mDiplayText.isEmpty())
+            editText.setText(mDiplayText);
         editText.requestFocus();
         //call softinput // TODO: 16/7/21
 //        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -430,6 +432,8 @@ public class MyCustomItem extends FrameLayout {
                         }
                     }
                     if (swiping) {
+                        getParent().requestDisallowInterceptTouchEvent(true);
+
                         view.setTranslationX(offsetX);
                         if (absOffsetX >= maxOffsetX) {
                             //start to translate the ci_action_panel
