@@ -213,9 +213,8 @@ public class MyCustomItem extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d(TAG, "onMeasure,width=" + MeasureSpec.getSize(widthMeasureSpec) + ",height=" + MeasureSpec.getSize(heightMeasureSpec));
+        Log.d(TAG, "onMeasure,width=" +MeasureSpec.getMode(widthMeasureSpec)+","+ MeasureSpec.getSize(widthMeasureSpec) + ",height=" + +MeasureSpec.getMode(heightMeasureSpec)+","+MeasureSpec.getSize(heightMeasureSpec));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
     }
 
     @Override
