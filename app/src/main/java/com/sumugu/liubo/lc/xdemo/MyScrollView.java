@@ -18,10 +18,16 @@ public class MyScrollView extends ViewGroup {
 
 
     public interface OnScrollListener {
-        void onStart(int index,int start,int downY);    //current pager index,start scrollY ,downY point
-        boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
-        void onStop(int index,int scrollY); //current pager index,total scrollY
+        void onStart(int index, int start, int downY);    //current pager index,start scrollY ,downY point
 
+        boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
+
+        void onStop(int index, int scrollY); //current pager index,total scrollY
+
+    }
+
+    public interface OnInterceptTouchListner {
+        boolean intercept(MotionEvent event, int pageIndex);
     }
 
     private static final String TAG = MyScrollView.class.getSimpleName();
@@ -33,6 +39,12 @@ public class MyScrollView extends ViewGroup {
     }
 
     private OnScrollListener onScrollListener;
+
+    public void setOnInterceptTouchListner(OnInterceptTouchListner onInterceptTouchListner) {
+        this.onInterceptTouchListner = onInterceptTouchListner;
+    }
+
+    private OnInterceptTouchListner onInterceptTouchListner;
 
     public MyScrollView(Context context) {
         super(context);
@@ -122,7 +134,7 @@ public class MyScrollView extends ViewGroup {
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(getScrollY()/mScreenHeight, dy, getScrollY() % mScreenHeight))
+                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight))
                         scrollBy(0, dy);
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 
@@ -152,8 +164,8 @@ public class MyScrollView extends ViewGroup {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
                 }
-                if(onScrollListener!=null)
-                    onScrollListener.onStop(0,dScrollY);
+                if (onScrollListener != null)
+                    onScrollListener.onStop(0, dScrollY);
 
                 break;
         }
@@ -185,7 +197,47 @@ public class MyScrollView extends ViewGroup {
 //        Log.d(TAG, "computeScroll() called.");
     }
 
-//    int mLastXdis,mLastYdis;
+    int mLastXIntercept = 0;
+    int mLastYIntercept = 0;
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        int intercept = 0;
+        int x = (int) ev.getX();
+        int y = (int) ev.getY();
+
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                mLastX = x;
+                mLastY = y;
+                mLastXIntercept = x;
+                mLastYIntercept = y;
+                intercept = 0;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int deltaX = x - mLastXIntercept;
+                int deltaY = y - mLastYIntercept;
+
+                if (Math.abs(deltaY) < Math.abs(deltaX)) {
+                    intercept = 0;
+                } else if (onInterceptTouchListner != null) {
+                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight))
+                        intercept = 1;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                mLastYIntercept = mLastXIntercept = 0;
+                intercept = 0;
+                break;
+            default:
+                intercept = 0;
+                break;
+        }
+
+        return intercept == 1;
+    }
+
+    //    int mLastXdis,mLastYdis;
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
 //        int x=(int)ev.getX();

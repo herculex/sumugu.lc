@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -33,6 +34,7 @@ public class Xdemo extends Activity {
 
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnScrollListener(new ScrollListener());
+        myScrollView.setOnInterceptTouchListner(new ScrollerIntercepterListner());
 
         myCover = (RelativeLayout) findViewById(R.id.layer_cover);
         myCover.setOnClickListener(coverOnClickListener);
@@ -151,6 +153,30 @@ public class Xdemo extends Activity {
         float fraction = (float) startHeight / maxCustomItemHeight;
         valueAnimator.setDuration((int) (fraction * 500));
         valueAnimator.start();
+    }
+
+    private class  ScrollerIntercepterListner implements MyScrollView.OnInterceptTouchListner{
+
+        @Override
+        public boolean intercept(MotionEvent event, int pageIndex) {
+
+
+            if(myListView.getFirstVisiblePosition()==0){
+                View view = myListView.getChildAt(0);
+                if(view!=null && view.getTop()>=0){
+                    Log.d("ScrollerIntercepter","listview first child at:"+view.getTop());
+                    return true;
+                }
+            }else if(myListView.getLastVisiblePosition()==myListView.getChildCount()-1){
+                View view = myListView.getChildAt(myListView.getChildCount()-1);
+                if(view!=null && view.getTop()>=0){
+                    Log.d("ScrollerIntercepter","listview last child at:"+view.getTop());
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
 }
