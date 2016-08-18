@@ -160,8 +160,9 @@ public class Xdemo extends Activity {
         @Override
         public boolean intercept(MotionEvent event, int pageIndex) {
 
+            Log.d("ScrollerIntercepter","listview "+myListView.getFirstVisiblePosition()+",last="+myListView.getLastVisiblePosition());
 
-            if(myListView.getFirstVisiblePosition()==0){
+            if(myListView.getFirstVisiblePosition()==0 && myListView.getLastVisiblePosition()==myListView.getChildCount()-1){
                 View view = myListView.getChildAt(0);
                 if(view!=null && view.getTop()>=0){
                     Log.d("ScrollerIntercepter","listview first child at:"+view.getTop());
