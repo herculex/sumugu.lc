@@ -76,13 +76,16 @@ public class MyScrollView extends ViewGroup {
 
         int childCount = getChildCount();
 
-        MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();//Margin留空？
-        mlp.height = mScreenHeight * childCount;
-        setLayoutParams(mlp);
+//        MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();//Margin留空？
+//        mlp.height = mScreenHeight * childCount;
+//        setLayoutParams(mlp);
+
 
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
+            Log.d(TAG, i + " child's height=" + child.getHeight() + ",top=" + child.getTop());
+
             if (child.getVisibility() != View.GONE) {
                 child.layout(left, i * mScreenHeight,
                         right, (i + 1) * mScreenHeight);
@@ -99,8 +102,9 @@ public class MyScrollView extends ViewGroup {
         //需要测量每个child，不然child不会被绘制出来！
         for (int i = 0; i < childCount; i++) {
             measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
+            Log.d(TAG, "onMeasure called." + i + ",height=" + MeasureSpec.getMode(heightMeasureSpec) + "," + MeasureSpec.getSize(heightMeasureSpec));
+            Log.d(TAG, "onMeasure called." + i + ",width=" + MeasureSpec.getMode(widthMeasureSpec) + "," + MeasureSpec.getSize(widthMeasureSpec));
         }
-        Log.d(TAG, "onMeasure called.");
     }
 
     int mLastX;
@@ -202,26 +206,30 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "MyScrollView intercept start.");
         int intercept = 0;
         int x = (int) ev.getX();
         int y = (int) ev.getY();
 
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                    intercept = 1;
+                }
                 mLastX = x;
                 mLastY = y;
                 mLastXIntercept = x;
                 mLastYIntercept = y;
-                intercept = 0;
                 break;
             case MotionEvent.ACTION_MOVE:
                 int deltaX = x - mLastXIntercept;
                 int deltaY = y - mLastYIntercept;
-
+                Log.d(TAG, "MyScrollerView deltaY=" + deltaY);
                 if (Math.abs(deltaY) < Math.abs(deltaX)) {
                     intercept = 0;
                 } else if (onInterceptTouchListner != null) {
-                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight))
+                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight) && deltaY > 0)
                         intercept = 1;
                 }
                 break;

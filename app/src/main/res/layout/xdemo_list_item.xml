@@ -15,6 +15,7 @@
     <com.sumugu.liubo.lc.xdemo.MyCustomItem
         android:id="@+id/customItem"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
 
 </LinearLayout>

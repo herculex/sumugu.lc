@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -47,7 +48,6 @@ public class Xdemo extends Activity {
         myListView.setAdapter(myCursorAdapter);
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
-        
     }
 
     private View.OnClickListener coverOnClickListener = new View.OnClickListener() {
@@ -155,26 +155,27 @@ public class Xdemo extends Activity {
         valueAnimator.start();
     }
 
-    private class  ScrollerIntercepterListner implements MyScrollView.OnInterceptTouchListner{
+    private class ScrollerIntercepterListner implements MyScrollView.OnInterceptTouchListner {
 
         @Override
         public boolean intercept(MotionEvent event, int pageIndex) {
 
-            Log.d("ScrollerIntercepter","listview "+myListView.getFirstVisiblePosition()+",last="+myListView.getLastVisiblePosition());
+            Log.d("ScrollerIntercepter", "listview'height= " + myListView.getHeight() + ",last=" + myListView.getLastVisiblePosition() + "," + myListView.getChildAt(myListView.getChildCount() - 1).getTop());
 
-            if(myListView.getFirstVisiblePosition()==0 && myListView.getLastVisiblePosition()==myListView.getChildCount()-1){
+            if (myListView.getFirstVisiblePosition() == 0) {
                 View view = myListView.getChildAt(0);
-                if(view!=null && view.getTop()>=0){
-                    Log.d("ScrollerIntercepter","listview first child at:"+view.getTop());
-                    return true;
-                }
-            }else if(myListView.getLastVisiblePosition()==myListView.getChildCount()-1){
-                View view = myListView.getChildAt(myListView.getChildCount()-1);
-                if(view!=null && view.getTop()>=0){
-                    Log.d("ScrollerIntercepter","listview last child at:"+view.getTop());
+                if (view != null && view.getTop() >= 0) {
+                    Log.d("ScrollerIntercepter", "listview first child at:" + view.getTop());
                     return true;
                 }
             }
+//            else if (myListView.getLastVisiblePosition() == myListView.getChildCount() - 1) {
+//                View view = myListView.getChildAt(myListView.getChildCount() - 1);
+//                if (view != null && (view.getTop() + view.getHeight() == myListView.getHeight())) {
+//                    Log.d("ScrollerIntercepter", "listview last child at:" + view.getTop());
+//                    return true;
+//                }
+//            }
 
             return false;
         }

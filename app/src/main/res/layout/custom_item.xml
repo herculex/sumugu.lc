@@ -27,7 +27,8 @@
             android:layout_alignParentLeft="true"
             android:background="@android:color/holo_green_light"
             android:gravity="left"
-            android:text="Finish" />
+            android:text="完成"
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/ci_text_delete"
@@ -36,7 +37,8 @@
             android:background="@android:color/holo_red_light"
             android:layout_alignParentRight="true"
             android:gravity="right"
-            android:text="Delete" />
+            android:text="删除"
+            android:textColor="@android:color/white"/>
 
     </RelativeLayout>
 

@@ -208,7 +208,6 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel = (RelativeLayout) view.findViewById(R.id.ci_action_panel);
 
         //
-
         tvDisplay.setOnTouchListener(new DisplayTouchListener());
 
     }
