@@ -32,13 +32,23 @@ public class MyListView extends ListView {
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if(getFirstVisiblePosition()==0){
-            View view=getChildAt(0);
-            if(view!=null && view.getTop()==0) {
+        if (getFirstVisiblePosition() == 0) {
+            //达到最顶部
+            View view = getChildAt(0);
+            if (view != null && view.getTop() == 0) {
                 Log.d("MyListView.scrollchange", "at the top of list");
+
+                //要求Parent进行事件拦截
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
+        } else if (getLastVisiblePosition() == getCount() - 1) {
+            //达到最底部
+            View view = getChildAt(getChildCount() - 1);
+            if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
+                Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+            }
         }
+
     }
 
     //    @Override
