@@ -29,6 +29,18 @@ public class MyListView extends ListView {
     int mLastInterceptX = 0;
     int mLastInterceptY = 0;
 
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if(getFirstVisiblePosition()==0){
+            View view=getChildAt(0);
+            if(view!=null && view.getTop()==0) {
+                Log.d("MyListView.scrollchange", "at the top of list");
+                getParent().requestDisallowInterceptTouchEvent(false);
+            }
+        }
+    }
+
     //    @Override
 //    public boolean onInterceptTouchEvent(MotionEvent ev) {
 //        int intercept = 0;
