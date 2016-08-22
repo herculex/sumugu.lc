@@ -515,4 +515,10 @@ public class MyCustomItem extends FrameLayout {
         }
     }
 
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result= super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyCustomItem dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
+        return result;
+    }
+
 }

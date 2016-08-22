@@ -24,6 +24,11 @@ public class MyListView extends ListView {
         super(context, attrs, defStyleAttr);
     }
 
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result= super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyListView dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
+        return result;
+    }
     int mLastY = 0;
     int mLastX = 0;
     int mLastInterceptX = 0;

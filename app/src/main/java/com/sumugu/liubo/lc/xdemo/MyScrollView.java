@@ -107,6 +107,13 @@ public class MyScrollView extends ViewGroup {
         }
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result= super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyScrollerView dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
+        return result;
+    }
+
     int mLastX;
     int mLastY;
     int mStart;
