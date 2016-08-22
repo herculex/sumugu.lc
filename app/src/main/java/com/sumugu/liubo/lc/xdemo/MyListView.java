@@ -24,27 +24,88 @@ public class MyListView extends ListView {
         super(context, attrs, defStyleAttr);
     }
 
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        boolean result= super.dispatchTouchEvent(ev);
-        Log.d("dispatchTest","MyListView dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
-        return result;
-    }
     int mLastY = 0;
     int mLastX = 0;
+
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        boolean result= super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyListView dispatchtouchevent:"+",action:"+ev.getActionMasked());
+//        return result;
+/*        int x = (int) ev.getX();
+        int y = (int) ev.getY();
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                mLastX = x;
+                mLastY = y;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int deltaX = x - mLastX;
+                int deltaY = y - mLastY;
+
+                if (deltaY > 0) {
+                    //向下拉
+                    if (getFirstVisiblePosition() == 0) {
+                        //达到最顶部
+                        View view = getChildAt(0);
+                        if (view != null && view.getTop() == 0) {
+                            Log.d("MyListView.scrollchange", "at the top of list");
+                            return false;
+                        }
+                    }
+                } else if (deltaY < 0) {
+                    //向上
+                    //达到最底部
+                    View view = getChildAt(getChildCount() - 1);
+                    if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
+                        Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+                        return false;
+                    }
+                }
+                mLastY=y;
+                mLastX=x;
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mLastY = 0;
+                mLastX = 0;
+                break;
+        }*/
+       /* if (getFirstVisiblePosition() == 0) {
+            //达到最顶部
+            View view = getChildAt(0);
+            if (view != null && view.getTop() == 0) {
+                Log.d("MyListView.scrollchange", "at the top of list");
+                return false;
+            }
+        } else */if (getLastVisiblePosition() == getCount() - 1) {
+            //达到最底部
+            View view = getChildAt(getChildCount() - 1);
+            if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
+                Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+
+                getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        }
+        Log.d("dispatchTest","MyListView dispatchtouchevent:super."+",action:"+ev.getActionMasked());
+        return super.dispatchTouchEvent(ev);
+    }
+
+
     int mLastInterceptX = 0;
     int mLastInterceptY = 0;
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if (getFirstVisiblePosition() == 0) {
+        /*if (getFirstVisiblePosition() == 0) {
             //达到最顶部
             View view = getChildAt(0);
             if (view != null && view.getTop() == 0) {
                 Log.d("MyListView.scrollchange", "at the top of list");
 
                 //要求Parent进行事件拦截
-                getParent().requestDisallowInterceptTouchEvent(false);
+                *//*getParent().requestDisallowInterceptTouchEvent(false);*//*
             }
         } else if (getLastVisiblePosition() == getCount() - 1) {
             //达到最底部
@@ -52,7 +113,7 @@ public class MyListView extends ListView {
             if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
                 Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
             }
-        }
+        }*/
 
     }
 

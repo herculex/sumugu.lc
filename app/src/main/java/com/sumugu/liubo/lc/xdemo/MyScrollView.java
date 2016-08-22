@@ -213,7 +213,10 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "MyScrollView intercept start.");
+
+        return super.onInterceptTouchEvent(ev);
+
+/*        Log.d(TAG, "MyScrollView intercept start.");
         int intercept = 0;
         int x = (int) ev.getX();
         int y = (int) ev.getY();
@@ -249,7 +252,7 @@ public class MyScrollView extends ViewGroup {
                 break;
         }
 
-        return intercept == 1;
+        return intercept == 1;*/
     }
 
     //    int mLastXdis,mLastYdis;
