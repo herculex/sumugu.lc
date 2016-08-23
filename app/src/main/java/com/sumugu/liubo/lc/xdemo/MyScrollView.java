@@ -123,6 +123,8 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG,"MyScrollerView,onTouchEvent called:"+event.getActionMasked());
+
         int y = (int) event.getY();
         int x = (int) event.getX();
         switch (event.getActionMasked()) {
@@ -141,15 +143,16 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
-
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight))
+                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
                         scrollBy(0, dy);
+                    }
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 
                 }
+
                 mLastY = y;
                 mLastX = x;
                 break;
@@ -214,7 +217,9 @@ public class MyScrollView extends ViewGroup {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
-        return super.onInterceptTouchEvent(ev);
+        boolean result = super.onInterceptTouchEvent(ev);
+        Log.d(TAG,"MyScrollerView onInterceptTouchEvent.super:"+ev.getActionMasked()+",result="+result);
+        return result;
 
 /*        Log.d(TAG, "MyScrollView intercept start.");
         int intercept = 0;

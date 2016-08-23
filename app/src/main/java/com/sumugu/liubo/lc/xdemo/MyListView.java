@@ -27,49 +27,48 @@ public class MyListView extends ListView {
     int mLastY = 0;
     int mLastX = 0;
 
+
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 //        boolean result= super.dispatchTouchEvent(ev);
-        Log.d("dispatchTest","MyListView dispatchtouchevent:"+",action:"+ev.getActionMasked());
+//        Log.d("dispatchTest","MyListView dispatchtouchevent:"+",action:"+ev.getActionMasked());
 //        return result;
-/*        int x = (int) ev.getX();
-        int y = (int) ev.getY();
-        switch (ev.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastX = x;
-                mLastY = y;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int deltaX = x - mLastX;
-                int deltaY = y - mLastY;
 
-                if (deltaY > 0) {
-                    //向下拉
-                    if (getFirstVisiblePosition() == 0) {
-                        //达到最顶部
-                        View view = getChildAt(0);
-                        if (view != null && view.getTop() == 0) {
-                            Log.d("MyListView.scrollchange", "at the top of list");
-                            return false;
-                        }
-                    }
-                } else if (deltaY < 0) {
-                    //向上
-                    //达到最底部
-                    View view = getChildAt(getChildCount() - 1);
-                    if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
-                        Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
-                        return false;
-                    }
-                }
-                mLastY=y;
-                mLastX=x;
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                mLastY = 0;
-                mLastX = 0;
-                break;
-        }*/
+//        int x = (int) ev.getX();
+//        int y = (int) ev.getY();
+//        switch (ev.getActionMasked()) {
+//            case MotionEvent.ACTION_DOWN:
+//                mLastX = x;
+//                mLastY = y;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                int deltaX = x - mLastX;
+//                int deltaY = y - mLastY;
+//
+//                if (deltaY > 0) {
+//                    //向下拉
+//                    if (getFirstVisiblePosition() == 0) {
+//                        //达到最顶部
+//                        View view = getChildAt(0);
+//                        if (view != null && view.getTop() == 0) {
+//                            Log.d("MyListView.scrollchange", "at the top of list");
+//                            return true;
+//                        }
+//                    }
+//                } else if (deltaY < 0) {
+//                    //向上
+//                    //达到最底部
+//                    View view = getChildAt(getChildCount() - 1);
+//                    if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
+//                        Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+//                        return true;
+//                    }
+//                }
+//                mLastY=y;
+//                mLastX=x;
+//                break;
+//        }
        /* if (getFirstVisiblePosition() == 0) {
             //达到最顶部
             View view = getChildAt(0);
@@ -77,7 +76,7 @@ public class MyListView extends ListView {
                 Log.d("MyListView.scrollchange", "at the top of list");
                 return false;
             }
-        } else */if (getLastVisiblePosition() == getCount() - 1) {
+        } else if (getLastVisiblePosition() == getCount() - 1) {
             //达到最底部
             View view = getChildAt(getChildCount() - 1);
             if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
@@ -86,11 +85,64 @@ public class MyListView extends ListView {
                 getParent().requestDisallowInterceptTouchEvent(false);
                 return false;
             }
-        }
-        Log.d("dispatchTest","MyListView dispatchtouchevent:super."+",action:"+ev.getActionMasked());
-        return super.dispatchTouchEvent(ev);
+        }*/
+
+        boolean result = super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyListView dispatchtouchevent:super."+"action:"+ev.getActionMasked()+"result:"+result);
+        return result;
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        //
+
+//        int x = (int) ev.getX();
+//        int y = (int) ev.getY();
+//        switch (ev.getActionMasked()) {
+//            case MotionEvent.ACTION_DOWN:
+//                mLastX = x;
+//                mLastY = y;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                int deltaX = x - mLastX;
+//                int deltaY = y - mLastY;
+//
+//                if (deltaY > 0) {
+//                    //向下拉
+//                    if (getFirstVisiblePosition() == 0) {
+//                        //达到最顶部
+//                        View view = getChildAt(0);
+//                        if (view != null && view.getTop() == 0) {
+//                            Log.d("MyListView.scrollchange", "at the top of list");
+//                            return false;
+//                        }
+//                    }
+//                } else if (deltaY < 0) {
+//                    //向上
+//                    //达到最底部
+//                    View view = getChildAt(getChildCount() - 1);
+//                    if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
+//                        Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+//                        return false;
+//                    }
+//                }
+//                mLastY=y;
+//                mLastX=x;
+//                break;
+//        }
+//        //
+        boolean result = super.onTouchEvent(ev);
+        Log.d("dispatchTest","MyListView ontouchevent:super."+"action:"+ev.getActionMasked()+"result:"+result);
+        return result;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+        boolean result = super.onInterceptTouchEvent(ev);
+        Log.d("dispatchTest","MyListView onInterceptTouchEvent:super."+"action:"+ev.getActionMasked()+"result:"+result);
+        return result;
+    }
 
     int mLastInterceptX = 0;
     int mLastInterceptY = 0;
