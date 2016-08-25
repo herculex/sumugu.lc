@@ -431,7 +431,7 @@ public class MyCustomItem extends FrameLayout {
                         }
                     }
                     if (swiping) {
-//                        getParent().requestDisallowInterceptTouchEvent(true);
+                        getParent().requestDisallowInterceptTouchEvent(true);
 
                         view.setTranslationX(offsetX);
                         if (absOffsetX >= maxOffsetX) {
