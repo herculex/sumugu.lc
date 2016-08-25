@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.xdemo;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -143,11 +144,15 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
+
+
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
                     if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
+                        Log.d(TAG,"1MyScrollerView scrollBy:"+dy);
                         scrollBy(0, dy);
+
                     }
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 
@@ -217,11 +222,11 @@ public class MyScrollView extends ViewGroup {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
-        boolean result = super.onInterceptTouchEvent(ev);
+/*        boolean result = super.onInterceptTouchEvent(ev);
         Log.d(TAG,"MyScrollerView onInterceptTouchEvent.super:"+ev.getActionMasked()+",result="+result);
-        return result;
+        return result;*/
 
-/*        Log.d(TAG, "MyScrollView intercept start.");
+        Log.d(TAG, "MyScrollerView intercept start.");
         int intercept = 0;
         int x = (int) ev.getX();
         int y = (int) ev.getY();
@@ -244,8 +249,10 @@ public class MyScrollView extends ViewGroup {
                 if (Math.abs(deltaY) < Math.abs(deltaX)) {
                     intercept = 0;
                 } else if (onInterceptTouchListner != null) {
-                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight) && deltaY > 0)
+                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight) && deltaY < 0) {
+                        Log.d(TAG,"MyScrollerView intercept action:"+ev.getActionMasked());
                         intercept = 1;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -257,7 +264,7 @@ public class MyScrollView extends ViewGroup {
                 break;
         }
 
-        return intercept == 1;*/
+        return intercept == 1;
     }
 
     //    int mLastXdis,mLastYdis;

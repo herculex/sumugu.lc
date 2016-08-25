@@ -157,15 +157,17 @@ public class MyListView extends ListView {
                 Log.d("MyListView.scrollchange", "at the top of list");
 
                 //要求Parent进行事件拦截
-                *//*getParent().requestDisallowInterceptTouchEvent(false);*//*
+                getParent().requestDisallowInterceptTouchEvent(false);
             }
-        } else if (getLastVisiblePosition() == getCount() - 1) {
+        } else*/ if (getLastVisiblePosition() == getCount() - 1) {
             //达到最底部
             View view = getChildAt(getChildCount() - 1);
             if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
                 Log.d("MyListView.scrollchange", "at the botom of list" + view.getTop() + "," + view.getHeight());
+                //要求Parent进行事件拦截
+                getParent().requestDisallowInterceptTouchEvent(false);
             }
-        }*/
+        }
 
     }
 
