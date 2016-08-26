@@ -159,28 +159,33 @@ public class Xdemo extends Activity {
     private class ScrollerIntercepterListner implements MyScrollView.OnInterceptTouchListner {
 
         @Override
-        public boolean intercept(MotionEvent event, int pageIndex) {
+        public boolean intercept(MotionEvent event, int pageIndex, int deltaY) {
 
             Log.d("ScrollerIntercepter", "listview'height= " + myListView.getHeight() + ",last=" + myListView.getLastVisiblePosition() + "," + myListView.getChildAt(myListView.getChildCount() - 1).getTop());
 
-            /*if (myListView.getFirstVisiblePosition() == 0) {
-            //达到最顶部
-            View view = myListView.getChildAt(0);
-            if (view != null && view.getTop() == 0) {
-                Log.d("MyListView.scrollchange", "at the top of list");
-
-                //要求Parent进行事件拦截
-                return true;
+            if (deltaY > 0) {
+                //swiping down
+                if (myListView.getFirstVisiblePosition() == 0) {
+                    //达到最顶部
+                    View view = myListView.getChildAt(0);
+                    if (view != null && view.getTop() == 0) {
+                        Log.d("MyListView.scrollchange", "at the top of list");
+                        //要求Parent进行事件拦截
+                        return true;
+                    }
+                }
+            } else {
+                //swiping up
+                if (myListView.getLastVisiblePosition() == myListView.getCount() - 1) {
+                    //达到最底部
+                    View view = myListView.getChildAt(myListView.getChildCount() - 1);
+                    if (view != null && (view.getTop() + view.getHeight() == myListView.getHeight())) {
+                        Log.d("ScrollerIntercepter", "at the botom of list" + view.getTop() + "," + view.getHeight());
+                        //要求Parent进行事件拦截
+                        return true;
+                    }
+                }
             }
-        } else*/ if (myListView.getLastVisiblePosition() == myListView.getCount() - 1) {
-            //达到最底部
-            View view = myListView.getChildAt(myListView.getChildCount() - 1);
-            if (view != null && (view.getTop() + view.getHeight() == myListView.getHeight())) {
-                Log.d("ScrollerIntercepter", "at the botom of list" + view.getTop() + "," + view.getHeight());
-                //要求Parent进行事件拦截
-                return true;
-            }
-        }
 
             return false;
         }

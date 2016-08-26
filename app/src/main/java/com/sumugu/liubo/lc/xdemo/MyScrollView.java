@@ -28,7 +28,7 @@ public class MyScrollView extends ViewGroup {
     }
 
     public interface OnInterceptTouchListner {
-        boolean intercept(MotionEvent event, int pageIndex);
+        boolean intercept(MotionEvent event, int pageIndex, int deltaY);    //event,current pager index,scrollBy-Y(scrolling up or down)
     }
 
     private static final String TAG = MyScrollView.class.getSimpleName();
@@ -110,8 +110,8 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        boolean result= super.dispatchTouchEvent(ev);
-        Log.d("dispatchTest","MyScrollerView dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
+        boolean result = super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest", "MyScrollerView dispatchtouchevent:" + result + ",action:" + ev.getActionMasked());
         return result;
     }
 
@@ -124,7 +124,7 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG,"MyScrollerView,onTouchEvent called:"+event.getActionMasked());
+        Log.d(TAG, "MyScrollerView,onTouchEvent called:" + event.getActionMasked());
 
         int y = (int) event.getY();
         int x = (int) event.getX();
@@ -145,12 +145,11 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
-
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
                     if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
-                        Log.d(TAG,"1MyScrollerView scrollBy:"+dy);
+                        Log.d(TAG, "1MyScrollerView scrollBy:" + dy);
                         scrollBy(0, dy);
 
                     }
@@ -249,8 +248,8 @@ public class MyScrollView extends ViewGroup {
                 if (Math.abs(deltaY) < Math.abs(deltaX)) {
                     intercept = 0;
                 } else if (onInterceptTouchListner != null) {
-                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight) && deltaY < 0) {
-                        Log.d(TAG,"MyScrollerView intercept action:"+ev.getActionMasked());
+                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight, deltaY)) {
+                        Log.d(TAG, "MyScrollerView intercept action:" + ev.getActionMasked());
                         intercept = 1;
                     }
                 }

@@ -159,7 +159,7 @@ public class MyListView extends ListView {
                 //要求Parent进行事件拦截
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
-        } else*/ if (getLastVisiblePosition() == getCount() - 1) {
+        } else*/ /*if (getLastVisiblePosition() == getCount() - 1) {
             //达到最底部
             View view = getChildAt(getChildCount() - 1);
             if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
@@ -167,7 +167,7 @@ public class MyListView extends ListView {
                 //要求Parent进行事件拦截
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
-        }
+        }*/
 
     }
 
