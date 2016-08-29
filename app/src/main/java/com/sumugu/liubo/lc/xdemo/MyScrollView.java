@@ -85,7 +85,7 @@ public class MyScrollView extends ViewGroup {
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            Log.d(TAG, i + " child's height=" + child.getHeight() + ",top=" + child.getTop());
+            Log.d(TAG, "onLayout called."+i + " child's height=" + child.getMeasuredHeight() + ",top=" + child.getTop());
 
             if (child.getVisibility() != View.GONE) {
                 child.layout(left, i * mScreenHeight,
@@ -103,8 +103,18 @@ public class MyScrollView extends ViewGroup {
         //需要测量每个child，不然child不会被绘制出来！
         for (int i = 0; i < childCount; i++) {
             measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
-            Log.d(TAG, "onMeasure called." + i + ",height=" + MeasureSpec.getMode(heightMeasureSpec) + "," + MeasureSpec.getSize(heightMeasureSpec));
-            Log.d(TAG, "onMeasure called." + i + ",width=" + MeasureSpec.getMode(widthMeasureSpec) + "," + MeasureSpec.getSize(widthMeasureSpec));
+            Log.d(TAG, "onMeasure called." + i + ",height=" + getModeName(MeasureSpec.getMode(heightMeasureSpec)) + "," + MeasureSpec.getSize(heightMeasureSpec));
+            Log.d(TAG, "onMeasure called." + i + ",width=" + getModeName(MeasureSpec.getMode(widthMeasureSpec)) + "," + MeasureSpec.getSize(widthMeasureSpec));
+        }
+    }
+    private String getModeName(int measureSpecMode){
+        switch (measureSpecMode){
+            case MeasureSpec.AT_MOST:
+                return "AT_MOST";
+            case MeasureSpec.EXACTLY:
+                return "EXACTLY";
+            default:
+                return "UNSPECIFED";
         }
     }
 
@@ -145,7 +155,10 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
-                if (onScrollListener == null)
+                //// TODO: 16/8/29 wait for back
+                scrollBy(0,dy);
+
+/*                if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
                     if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
@@ -155,7 +168,7 @@ public class MyScrollView extends ViewGroup {
                     }
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 
-                }
+                }*/
 
                 mLastY = y;
                 mLastX = x;
@@ -166,7 +179,8 @@ public class MyScrollView extends ViewGroup {
 //                int dScrollY = getScrollY()-mStart;
                 Log.d(TAG, "dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
 
-                if (dScrollY > 0) {
+                //// TODO: 16/8/29 wait for back
+/*                if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
                     } else {
@@ -181,7 +195,7 @@ public class MyScrollView extends ViewGroup {
                     } else {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
-                }
+                }*/
                 if (onScrollListener != null)
                     onScrollListener.onStop(0, dScrollY);
 

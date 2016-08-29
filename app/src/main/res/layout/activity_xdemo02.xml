@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/customScroller"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
     <RelativeLayout
@@ -45,7 +45,7 @@
     <LinearLayout
         android:id="@+id/container02"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/holo_purple"
         android:orientation="vertical">
 
@@ -57,10 +57,10 @@
 
     <LinearLayout
         android:id="@+id/container03"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/holo_orange_light"
-        android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_orange_light"
+            android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
