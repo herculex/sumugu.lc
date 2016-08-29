@@ -50,6 +50,17 @@ public class Xdemo extends Activity {
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        myListView.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("onStart","myListView,height="+myListView.getHeight()+",width="+myListView.getWidth()+",count="+myListView.getCount());
+            }
+        });
+    }
+
     private View.OnClickListener coverOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {

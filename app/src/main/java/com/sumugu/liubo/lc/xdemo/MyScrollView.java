@@ -99,12 +99,16 @@ public class MyScrollView extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int childCount = getChildCount();
+        Log.d(TAG, "onMeasure called." + ",height=" + getModeName(MeasureSpec.getMode(heightMeasureSpec)) + "," + MeasureSpec.getSize(heightMeasureSpec));
+        Log.d(TAG, "onMeasure called." + ",width=" + getModeName(MeasureSpec.getMode(widthMeasureSpec)) + "," + MeasureSpec.getSize(widthMeasureSpec));
 
         //需要测量每个child，不然child不会被绘制出来！
         for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
             measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
-            Log.d(TAG, "onMeasure called." + i + ",height=" + getModeName(MeasureSpec.getMode(heightMeasureSpec)) + "," + MeasureSpec.getSize(heightMeasureSpec));
-            Log.d(TAG, "onMeasure called." + i + ",width=" + getModeName(MeasureSpec.getMode(widthMeasureSpec)) + "," + MeasureSpec.getSize(widthMeasureSpec));
+
+            Log.d(TAG, "Child onMeasure called." + i + ",height=" + child.getMeasuredHeight());
+            Log.d(TAG, "Child onMeasure called." + i + ",width=" + child.getMeasuredWidth());
         }
     }
     private String getModeName(int measureSpecMode){

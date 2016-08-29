@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 /**
@@ -26,7 +27,6 @@ public class MyListView extends ListView {
 
     int mLastY = 0;
     int mLastX = 0;
-
 
 
     @Override

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/container01"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/holo_blue_light">
 
         <com.sumugu.liubo.lc.xdemo.MyCustomItem
@@ -30,7 +30,7 @@
         <com.sumugu.liubo.lc.xdemo.MyListView
             android:id="@+id/myListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/page01"/>
 
         <RelativeLayout
