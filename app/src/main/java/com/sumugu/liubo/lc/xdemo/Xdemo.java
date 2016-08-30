@@ -59,28 +59,33 @@ public class Xdemo extends Activity {
             public void run() {
                 Log.d("onStart","myListView,height="+myListView.getMeasuredHeight()+",width="+myListView.getMeasuredWidth()+",count="+myListView.getCount());
                 int totalHeight=0;
-                Adapter adapter = myListView.getAdapter();
+  /*              Adapter adapter = myListView.getAdapter();
                 if(adapter.getCount()>0)
                 {
                     for(int i=0;i<adapter.getCount();i++) {
                         View item = adapter.getView(i, null, myListView);
                         item.measure(0,0);
-                        Log.d("onStart","myListView,item "+i+" height="+item.getMeasuredWidth());
+                        Log.d("onStart","myListView,item "+i+" height="+item.getMeasuredHeight());
                         totalHeight+=item.getMeasuredHeight();
                     }
                 }
                 Log.d("onStart","myListView,all items height="+totalHeight);
 
-                int th=0;
-                for(int i=0;i<myListView.getCount();i++){
+                myListView.getLayoutParams().height=totalHeight+myListView.getDividerHeight()*(myListView.getCount()-1);*/
+//                myListView.requestLayout();
+
+/*                int th=0;
+                Log.d("onStart","myListView,all children ="+myListView.getChildCount());
+                for(int i=0;i<myListView.getChildCount();i++){
                     View item = myListView.getChildAt(i);
                     th+=item.getHeight();
                     Log.d("onStart","myListView,child "+i+" height"+item.getMeasuredHeight());
                 }
                 Log.d("onStart","myListView,childs "+th);
                 myListView.getLayoutParams().height=th+myListView.getDividerHeight()*(myListView.getCount()-1);
-                myListView.requestLayout();
-                Log.d("onStart","final myListView,height="+myListView.getMeasuredHeight()+",width="+myListView.getMeasuredWidth()+",count="+myListView.getCount());
+                myListView.requestLayout();*/
+                Log.d("onStart","final myListView,height="+myListView.getHeight()+",width="+myListView.getWidth()+",count="+myListView.getCount());
+                Log.d("onStart","final myScrollerView,height="+myScrollView.getHeight()+","+myScrollView.getMeasuredHeight());
             }
         });
     }

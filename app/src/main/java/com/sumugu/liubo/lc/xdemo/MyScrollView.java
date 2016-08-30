@@ -85,7 +85,7 @@ public class MyScrollView extends ViewGroup {
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            Log.d(TAG, "onLayout called."+i + " child's height=" + child.getMeasuredHeight() + ",top=" + child.getTop());
+            Log.d(TAG, "onLayout called."+i + " child's height=" + child.getHeight() + ",top=" + child.getTop());
 
             if (child.getVisibility() != View.GONE) {
                 child.layout(left, i * mScreenHeight,
