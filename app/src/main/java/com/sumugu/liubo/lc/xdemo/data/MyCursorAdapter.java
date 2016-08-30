@@ -33,7 +33,7 @@ public class MyCursorAdapter extends CursorAdapter {
         ViewHolder holder = new ViewHolder();
         View view = View.inflate(context, R.layout.xdemo_list_item, null);
         holder.textView = (TextView) view.findViewById(R.id.textView);
-        holder.customItem = (MyCustomItem)view.findViewById(R.id.customItem);
+//        holder.customItem = (MyCustomItem)view.findViewById(R.id.customItem);
 
         view.setTag(holder);
         return view;
@@ -49,7 +49,7 @@ public class MyCursorAdapter extends CursorAdapter {
         int finish = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
         holder.textView.setText(content);
-        holder.customItem.setText(content);
+//        holder.customItem.setText(content);
 
         //ok finished.
     }
@@ -65,6 +65,6 @@ public class MyCursorAdapter extends CursorAdapter {
 
     private class ViewHolder {
         public TextView textView;
-        public MyCustomItem customItem;
+//        public MyCustomItem customItem;
     }
 }
