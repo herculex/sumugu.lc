@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ListView;
 
 import com.sumugu.liubo.lc.R;
@@ -31,6 +32,38 @@ public class Xdemo03 extends Activity {
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
 
+        listView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+//                listView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Log.d("xdemo3","onViewTree,listview.height="+listView.getHeight());
+            }
+        });
+        listView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            int precallcount=0;
+            @Override
+            public boolean onPreDraw() {
+                listView.getViewTreeObserver().removeOnPreDrawListener(this);
+                Log.d("xdemo3",precallcount+",onPreDraw,listview.height="+listView.getHeight());
+                precallcount++;
+                return true;
+            }
+        });
+//        listView.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+//            @Override
+//            public void onDraw() {
+//                Log.d("xdemo3","onDraw,listview.height="+listView.getHeight());
+//            }
+//        });
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus){
+            Log.d("xdemo3","onWindowsFocus,listview.height="+listView.getHeight());
+        }
     }
 
     @Override
