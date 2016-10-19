@@ -6,12 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -51,14 +53,22 @@ public class MyCustomItem extends FrameLayout {
     }
 
     public void setText(String text) {
+
         mDiplayText = text;
         tvDisplay.setText(mDiplayText);
         tvDisplay.setVisibility(VISIBLE);
         rlActionPanel.setVisibility(VISIBLE);
         editText.setVisibility(GONE);
 
-        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        requestLayout();
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+    }
+
+    public Editable getText() {
+        return editText.getText();
     }
 
     public void edit() {
@@ -70,9 +80,14 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel.setVisibility(GONE);
         //
         editText.setVisibility(VISIBLE);
+        if(mDiplayText!=null && !mDiplayText.isEmpty())
+            editText.setText(mDiplayText);
         editText.requestFocus();
         //call softinput // TODO: 16/7/21
-        setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        requestLayout();
         //
         if (onEditingListener != null)
             onEditingListener.finish(getItemIndex());
@@ -83,6 +98,12 @@ public class MyCustomItem extends FrameLayout {
         //
         if (onDeleteListner != null)
             onDeleteListner.end(getItemIndex());
+    }
+    public void readyPreparing()
+    {
+        tvDisplay.setVisibility(GONE);
+        editText.setVisibility(GONE);
+        rlActionPanel.setVisibility(GONE);
     }
 
     protected int getItemIndex() {
@@ -97,8 +118,8 @@ public class MyCustomItem extends FrameLayout {
 
     public final class StateType {
 
-        public final static int PREPARING_FULL=1;
-        public final static int PREPARING_DISMISS=0;
+        public final static int PREPARING_FULL = 1;
+        public final static int PREPARING_DISMISS = 0;
         public final static int PREPARING_PROGRESS = -1;
 
         public final static int DISPLAY_TEXT = 3;
@@ -187,16 +208,14 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel = (RelativeLayout) view.findViewById(R.id.ci_action_panel);
 
         //
-
         tvDisplay.setOnTouchListener(new DisplayTouchListener());
 
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d(TAG, "onMeasure,width=" + MeasureSpec.getSize(widthMeasureSpec) + ",height=" + MeasureSpec.getSize(heightMeasureSpec));
+        Log.d(TAG, "onMeasure,width=" +MeasureSpec.getMode(widthMeasureSpec)+","+ MeasureSpec.getSize(widthMeasureSpec) + ",height=" + +MeasureSpec.getMode(heightMeasureSpec)+","+MeasureSpec.getSize(heightMeasureSpec));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
     }
 
     @Override
@@ -209,21 +228,23 @@ public class MyCustomItem extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "mci start onDraw");
+        Log.d(TAG, "mci start onDraw:" + getMeasuredHeight());
+        int defaultHeight = DisplayUtil.dip2px(getContext(), 45f);
+        int defaultWidth = getMeasuredWidth();
 
         if (tvDisplay.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
-            mStateType=StateType.DISPLAY_TEXT;
+            mStateType = StateType.DISPLAY_TEXT;
             return;
         }
         if (editText.getVisibility() == VISIBLE) {
             super.onDraw(canvas);
-            mStateType=StateType.EDITING_TEXT;
+            mStateType = StateType.EDITING_TEXT;
             return;
         }
 
-        int defaultHeight = DisplayUtil.dip2px(getContext(), 45f);
-        int defaultWidth = getMeasuredWidth();
+
+        Log.d(TAG, "drawing trans ");
 
         Bitmap bitmap = Bitmap.createBitmap(defaultWidth, defaultHeight, Bitmap.Config.ARGB_8888);
         int h = getMeasuredHeight();
@@ -244,10 +265,10 @@ public class MyCustomItem extends FrameLayout {
             }
             drawTrapezium(canvas, bitmap, h, defaultHeight, defaultWidth);
 
-            if(h==0)
-                mStateType=StateType.PREPARING_DISMISS;
+            if (h <= 0)
+                mStateType = StateType.PREPARING_DISMISS;
             else
-                mStateType=StateType.PREPARING_PROGRESS;
+                mStateType = StateType.PREPARING_PROGRESS;
 
         } else {
 
@@ -258,7 +279,7 @@ public class MyCustomItem extends FrameLayout {
             }
             canvas.drawBitmap(bitmap, 0, 0, null);
 
-            mStateType=StateType.PREPARING_FULL;
+            mStateType = StateType.PREPARING_FULL;
 
             if (!isPreparingListenerEndCalled && onPreparingListener != null) {
                 onPreparingListener.end(0);
@@ -410,6 +431,8 @@ public class MyCustomItem extends FrameLayout {
                         }
                     }
                     if (swiping) {
+                        getParent().requestDisallowInterceptTouchEvent(true);
+
                         view.setTranslationX(offsetX);
                         if (absOffsetX >= maxOffsetX) {
                             //start to translate the ci_action_panel
@@ -449,7 +472,8 @@ public class MyCustomItem extends FrameLayout {
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
-                                                onFinishListener.end(getItemIndex());
+                                                if (onFinishListener != null)
+                                                    onFinishListener.end(getItemIndex());
                                             }
                                         });
 
@@ -460,7 +484,8 @@ public class MyCustomItem extends FrameLayout {
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
-                                                onDeleteListner.end(getItemIndex());
+                                                if (onFinishListener != null)
+                                                    onDeleteListner.end(getItemIndex());
                                             }
                                         });
 
@@ -488,6 +513,12 @@ public class MyCustomItem extends FrameLayout {
             }
 
         }
+    }
+
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result= super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest","MyCustomItem dispatchtouchevent:"+result+",action:"+ev.getActionMasked());
+        return result;
     }
 
 }

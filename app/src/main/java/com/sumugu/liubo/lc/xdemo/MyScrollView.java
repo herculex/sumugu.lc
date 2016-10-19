@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.xdemo;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -18,10 +19,16 @@ public class MyScrollView extends ViewGroup {
 
 
     public interface OnScrollListener {
-        void onStart(int index,int start,int downY);    //current pager index,start scrollY ,downY point
-        boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
-        void onStop(int index,int scrollY); //current pager index,total scrollY
+        void onStart(int index, int start, int downY);    //current pager index,start scrollY ,downY point
 
+        boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
+
+        void onStop(int index, int scrollY); //current pager index,total scrollY
+
+    }
+
+    public interface OnInterceptTouchListner {
+        boolean intercept(MotionEvent event, int pageIndex, int deltaY);    //event,current pager index,scrollBy-Y(scrolling up or down)
     }
 
     private static final String TAG = MyScrollView.class.getSimpleName();
@@ -33,6 +40,12 @@ public class MyScrollView extends ViewGroup {
     }
 
     private OnScrollListener onScrollListener;
+
+    public void setOnInterceptTouchListner(OnInterceptTouchListner onInterceptTouchListner) {
+        this.onInterceptTouchListner = onInterceptTouchListner;
+    }
+
+    private OnInterceptTouchListner onInterceptTouchListner;
 
     public MyScrollView(Context context) {
         super(context);
@@ -64,13 +77,16 @@ public class MyScrollView extends ViewGroup {
 
         int childCount = getChildCount();
 
-        MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();//Margin留空？
-        mlp.height = mScreenHeight * childCount;
-        setLayoutParams(mlp);
+//        MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();//Margin留空？
+//        mlp.height = mScreenHeight * childCount;
+//        setLayoutParams(mlp);
+
 
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
+            Log.d(TAG, "onLayout called."+i + " child's height=" + child.getHeight() + ",top=" + child.getTop());
+
             if (child.getVisibility() != View.GONE) {
                 child.layout(left, i * mScreenHeight,
                         right, (i + 1) * mScreenHeight);
@@ -83,12 +99,34 @@ public class MyScrollView extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int childCount = getChildCount();
+        Log.d(TAG, "onMeasure called." + ",height=" + getModeName(MeasureSpec.getMode(heightMeasureSpec)) + "," + MeasureSpec.getSize(heightMeasureSpec));
+        Log.d(TAG, "onMeasure called." + ",width=" + getModeName(MeasureSpec.getMode(widthMeasureSpec)) + "," + MeasureSpec.getSize(widthMeasureSpec));
 
         //需要测量每个child，不然child不会被绘制出来！
         for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
             measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
+
+            Log.d(TAG, "Child onMeasure called." + i + ",height=" + child.getMeasuredHeight());
+            Log.d(TAG, "Child onMeasure called." + i + ",width=" + child.getMeasuredWidth());
         }
-        Log.d(TAG, "onMeasure called.");
+    }
+    private String getModeName(int measureSpecMode){
+        switch (measureSpecMode){
+            case MeasureSpec.AT_MOST:
+                return "AT_MOST";
+            case MeasureSpec.EXACTLY:
+                return "EXACTLY";
+            default:
+                return "UNSPECIFED";
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result = super.dispatchTouchEvent(ev);
+        Log.d("dispatchTest", "MyScrollerView dispatchtouchevent:" + result + ",action:" + ev.getActionMasked());
+        return result;
     }
 
     int mLastX;
@@ -100,6 +138,8 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "MyScrollerView,onTouchEvent called:" + event.getActionMasked());
+
         int y = (int) event.getY();
         int x = (int) event.getX();
         switch (event.getActionMasked()) {
@@ -119,14 +159,21 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
-                if (onScrollListener == null)
+                //// TODO: 16/8/29 wait for back
+                scrollBy(0,dy);
+
+/*                if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(0, dy, getScrollY() % mScreenHeight))
+                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
+                        Log.d(TAG, "1MyScrollerView scrollBy:" + dy);
                         scrollBy(0, dy);
+
+                    }
                     Log.d("onScrollListener", "getScrollY=" + getScrollY() + ";top=" + getTop());
 
-                }
+                }*/
+
                 mLastY = y;
                 mLastX = x;
                 break;
@@ -136,7 +183,8 @@ public class MyScrollView extends ViewGroup {
 //                int dScrollY = getScrollY()-mStart;
                 Log.d(TAG, "dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
 
-                if (dScrollY > 0) {
+                //// TODO: 16/8/29 wait for back
+/*                if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
                     } else {
@@ -151,7 +199,10 @@ public class MyScrollView extends ViewGroup {
                     } else {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
-                }
+                }*/
+                if (onScrollListener != null)
+                    onScrollListener.onStop(0, dScrollY);
+
                 break;
         }
         postInvalidate();
@@ -182,7 +233,58 @@ public class MyScrollView extends ViewGroup {
 //        Log.d(TAG, "computeScroll() called.");
     }
 
-//    int mLastXdis,mLastYdis;
+    int mLastXIntercept = 0;
+    int mLastYIntercept = 0;
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+/*        boolean result = super.onInterceptTouchEvent(ev);
+        Log.d(TAG,"MyScrollerView onInterceptTouchEvent.super:"+ev.getActionMasked()+",result="+result);
+        return result;*/
+
+        Log.d(TAG, "MyScrollerView intercept start.");
+        int intercept = 0;
+        int x = (int) ev.getX();
+        int y = (int) ev.getY();
+
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                    intercept = 1;
+                }
+                mLastX = x;
+                mLastY = y;
+                mLastXIntercept = x;
+                mLastYIntercept = y;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int deltaX = x - mLastXIntercept;
+                int deltaY = y - mLastYIntercept;
+                Log.d(TAG, "MyScrollerView deltaY=" + deltaY);
+                if (Math.abs(deltaY) < Math.abs(deltaX)) {
+                    intercept = 0;
+                } else if (onInterceptTouchListner != null) {
+                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight, deltaY)) {
+                        Log.d(TAG, "MyScrollerView intercept action:" + ev.getActionMasked());
+                        intercept = 1;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                mLastYIntercept = mLastXIntercept = 0;
+                intercept = 0;
+                break;
+            default:
+                intercept = 0;
+                break;
+        }
+
+        return intercept == 1;
+    }
+
+    //    int mLastXdis,mLastYdis;
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
 //        int x=(int)ev.getX();

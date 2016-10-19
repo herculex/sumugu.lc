@@ -4,16 +4,26 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.utils.DisplayUtil;
+import com.sumugu.liubo.lc.xdemo.data.MyCursorAdapter;
+import com.sumugu.liubo.lc.xdemo.data.MyLoaderCallback;
 
 public class Xdemo extends Activity {
 
     MyScrollView myScrollView;
     MyCustomItem myCustomItem;
+    MyListView myListView;
     int maxCustomItemHeight;
+    RelativeLayout myCover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +36,81 @@ public class Xdemo extends Activity {
 
         myScrollView = (MyScrollView) findViewById(R.id.customScroller);
         myScrollView.setOnScrollListener(new ScrollListener());
+        myScrollView.setOnInterceptTouchListner(new ScrollerIntercepterListner());
 
+        myCover = (RelativeLayout) findViewById(R.id.layer_cover);
+        myCover.setOnClickListener(coverOnClickListener);
+
+        int loaderId = 5;
+        MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, null, 0);
+        MyLoaderCallback myLoaderCallback = new MyLoaderCallback(this, myCursorAdapter, loaderId);
+
+        myListView = (MyListView) findViewById(R.id.myListView);
+        myListView.setAdapter(myCursorAdapter);
+
+        getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        myListView.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("onStart","myListView,height="+myListView.getMeasuredHeight()+",width="+myListView.getMeasuredWidth()+",count="+myListView.getCount());
+                int totalHeight=0;
+  /*              Adapter adapter = myListView.getAdapter();
+                if(adapter.getCount()>0)
+                {
+                    for(int i=0;i<adapter.getCount();i++) {
+                        View item = adapter.getView(i, null, myListView);
+                        item.measure(0,0);
+                        Log.d("onStart","myListView,item "+i+" height="+item.getMeasuredHeight());
+                        totalHeight+=item.getMeasuredHeight();
+                    }
+                }
+                Log.d("onStart","myListView,all items height="+totalHeight);
+
+                myListView.getLayoutParams().height=totalHeight+myListView.getDividerHeight()*(myListView.getCount()-1);*/
+//                myListView.requestLayout();
+
+/*                int th=0;
+                Log.d("onStart","myListView,all children ="+myListView.getChildCount());
+                for(int i=0;i<myListView.getChildCount();i++){
+                    View item = myListView.getChildAt(i);
+                    th+=item.getHeight();
+                    Log.d("onStart","myListView,child "+i+" height"+item.getMeasuredHeight());
+                }
+                Log.d("onStart","myListView,childs "+th);
+                myListView.getLayoutParams().height=th+myListView.getDividerHeight()*(myListView.getCount()-1);
+                myListView.requestLayout();*/
+                Log.d("onStart","final myListView,height="+myListView.getHeight()+",width="+myListView.getWidth()+",count="+myListView.getCount());
+                Log.d("onStart","final myScrollerView,height="+myScrollView.getHeight()+","+myScrollView.getMeasuredHeight());
+            }
+        });
+    }
+
+    private View.OnClickListener coverOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String content = myCustomItem.getText().toString();
+            if (content.isEmpty()) {
+                myCustomItem.setText("");
+                myCustomItem.readyPreparing();
+
+                customItemCloseup(myCustomItem, maxCustomItemHeight);
+                myCover.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        myCover.setVisibility(View.GONE);
+                        myCover.setAlpha(1);
+                    }
+                });
+            } else {
+                myCustomItem.setText(content);
+            }
+        }
+    };
 
     boolean callback = false;
     int height = 0;
@@ -42,6 +125,9 @@ public class Xdemo extends Activity {
         @Override
         public boolean onScroll(int index, int dy, int scrollY) {
             Log.d("ScrollListener", "onScroll:" + index + "," + dy + "," + scrollY);
+            if (index != 0)
+                return true;
+
             if (!callback) {
                 callback = true;
                 height = 0;
@@ -76,8 +162,74 @@ public class Xdemo extends Activity {
 
         @Override
         public void onStop(int index, int scrollY) {
-            Log.d("ScrollListener", "onScroll:" + index + "," + scrollY);
+            Log.d("ScrollListener", "onScroll:" + index + "," + scrollY + "," + myCustomItem.getLayoutParams().height);
+
+            int lastHeight = myCustomItem.getLayoutParams().height;
+            if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
+                customItemCloseup(myCustomItem, lastHeight);
+            } else {
+                if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
+                    myCustomItem.edit();
+                    myCover.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            height = 0;   //rest to 0
+            callback = false;
         }
+
+    }
+
+    private void customItemCloseup(final View custom, final int startHeight) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, startHeight);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val = startHeight - (int) valueAnimator.getAnimatedValue();
+                custom.getLayoutParams().height = val;
+                custom.requestLayout();
+            }
+        });
+        float fraction = (float) startHeight / maxCustomItemHeight;
+        valueAnimator.setDuration((int) (fraction * 500));
+        valueAnimator.start();
+    }
+
+    private class ScrollerIntercepterListner implements MyScrollView.OnInterceptTouchListner {
+
+        @Override
+        public boolean intercept(MotionEvent event, int pageIndex, int deltaY) {
+
+            Log.d("ScrollerIntercepter", "listview'height= " + myListView.getHeight() + ",last=" + myListView.getLastVisiblePosition() + "," + myListView.getChildAt(myListView.getChildCount() - 1).getTop());
+
+            if (deltaY > 0) {
+                //swiping down
+                if (myListView.getFirstVisiblePosition() == 0) {
+                    //达到最顶部
+                    View view = myListView.getChildAt(0);
+                    if (view != null && view.getTop() == 0) {
+                        Log.d("MyListView.scrollchange", "at the top of list");
+                        //要求Parent进行事件拦截
+                        return true;
+                    }
+                }
+            } else {
+                //swiping up
+                if (myListView.getLastVisiblePosition() == myListView.getCount() - 1) {
+                    //达到最底部
+                    View view = myListView.getChildAt(myListView.getChildCount() - 1);
+                    if (view != null && (view.getTop() + view.getHeight() == myListView.getHeight())) {
+                        Log.d("ScrollerIntercepter", "at the botom of list" + view.getTop() + "," + view.getHeight());
+                        //要求Parent进行事件拦截
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 
 }

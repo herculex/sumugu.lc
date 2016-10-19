@@ -1,52 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <com.sumugu.liubo.lc.xdemo.MyScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/customScroller"
+<com.sumugu.liubo.lc.xdemo.MyScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/customScroller"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:id="@+id/container01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light">
+
+        <com.sumugu.liubo.lc.xdemo.MyCustomItem
+            android:id="@+id/customItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/page01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/customItem"
+            android:text="Page01" />
+
+        <com.sumugu.liubo.lc.xdemo.MyListView
+            android:id="@+id/myListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/page01"/>
+
+        <RelativeLayout
+            android:id="@+id/layer_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/customItem"
+            android:background="#b0000000"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/container02"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-    >
+        android:background="@android:color/holo_purple"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Page02" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container03"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/holo_blue_light">
-                <com.sumugu.liubo.lc.xdemo.MyCustomItem
-                    android:id="@+id/customItem"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-                </com.sumugu.liubo.lc.xdemo.MyCustomItem>
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Child01" />
-        </LinearLayout>
+            android:background="@android:color/holo_orange_light"
+            android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/holo_purple">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Child02" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/holo_orange_light">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Child03" />
-        </LinearLayout>
-    </com.sumugu.liubo.lc.xdemo.MyScrollView>
+            android:layout_height="wrap_content"
+            android:text="Page03" />
+    </LinearLayout>
+</com.sumugu.liubo.lc.xdemo.MyScrollView>
