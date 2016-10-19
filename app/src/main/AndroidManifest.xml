@@ -90,8 +90,13 @@
             android:label="@string/title_activity_item_line_frame"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".xdemo.XdemoActivty" />
-        <activity android:name=".xdemo.Xdemo"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity
+            android:name=".xdemo.Xdemo"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".xdemo.Xdemo03"
+            android:label="@string/title_activity_xdemo03"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>
