@@ -40,34 +40,22 @@ public class Xdemo03 extends Activity {
             @Override
             public void onGlobalLayout() {
 //                listView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Log.d("xdemo3","onViewTree,listview.height="+listView.getHeight());
+                Log.d("xdemo3","onViewTree.GlobalLayout,listview.height="+listView.getHeight());
+                Log.d("xdemo3","onViewTree.GlobalLayout,listview.count="+listView.getCount());
             }
         });
-        listView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            int precallcount=0;
-            @Override
-            public boolean onPreDraw() {
-                listView.getViewTreeObserver().removeOnPreDrawListener(this);
-                Log.d("xdemo3",precallcount+",onPreDraw,listview.height="+listView.getHeight());
-                precallcount++;
-                return true;
-            }
-        });
-//        listView.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+//        listView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//            int precallcount=0;
 //            @Override
-//            public void onDraw() {
-//                Log.d("xdemo3","onDraw,listview.height="+listView.getHeight());
+//            public boolean onPreDraw() {
+//                listView.getViewTreeObserver().removeOnPreDrawListener(this);
+//                Log.d("xdemo3",precallcount+",onPreDraw,listview.height="+listView.getHeight());
+//                precallcount++;
+//                return true;
 //            }
 //        });
 
-        textView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                Log.d("xdemo3","onPreDraw,textview.height="+textView.getHeight());
-                return true;
-            }
-        });
-        Log.d("xdemo3","onCreated,textview.height="+textView.getHeight());
+
     }
 
     @Override
@@ -84,20 +72,13 @@ public class Xdemo03 extends Activity {
         listView.post(new Runnable() {
             @Override
             public void run() {
-                Log.d("xdemo3","listview.height="+listView.getHeight());
-                Log.d("xdemo3","listview.childcount="+listView.getCount());
-                Log.d("xdemo3","listview.adapter.childcount="+listView.getAdapter().getCount());
-
+//
+//                Log.d("xdemo3","listview.childcount="+listView.getCount());
+//                Log.d("xdemo3","listview.adapter.childcount="+listView.getAdapter().getCount());
+//                Log.d("xdemo3","listview.height="+listView.getHeight());
 //                for(int i=0;i<listView.getCount();i++){
 //                    Log.d("xdemo3","listview.child:"+i+",height="+listView.getChildAt(i).getHeight());
 //                }
-            }
-        });
-
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("xdemo3","onStart,textview.height="+textView.getHeight());
             }
         });
     }

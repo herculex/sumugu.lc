@@ -81,16 +81,34 @@ public class MyScrollView extends ViewGroup {
 //        mlp.height = mScreenHeight * childCount;
 //        setLayoutParams(mlp);
 
-
+        int last_bottom = 0;
+        int last_top;
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            Log.d(TAG, "onLayout called."+i + " child's height=" + child.getHeight() + ",top=" + child.getTop());
+            Log.d(TAG, "onLayout called." + i + "before child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
+
+//            if (child.getVisibility() != View.GONE) {
+//                child.layout(left, i * mScreenHeight,
+//                        right, (i + 1) * mScreenHeight);
+//            }
+
+
 
             if (child.getVisibility() != View.GONE) {
-                child.layout(left, i * mScreenHeight,
-                        right, (i + 1) * mScreenHeight);
+
+                int h = child.getMeasuredHeight();
+                if (h < mScreenHeight)
+                    h = mScreenHeight;
+
+                last_top = last_bottom;
+                last_bottom = h + last_top;
+
+                child.layout(left, last_top,
+                        right, last_bottom);
+
             }
+            Log.d(TAG, "onLayout called." + i + "after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
         }
         Log.d(TAG, "onLayout called.");
     }
@@ -111,8 +129,9 @@ public class MyScrollView extends ViewGroup {
             Log.d(TAG, "Child onMeasure called." + i + ",width=" + child.getMeasuredWidth());
         }
     }
-    private String getModeName(int measureSpecMode){
-        switch (measureSpecMode){
+
+    private String getModeName(int measureSpecMode) {
+        switch (measureSpecMode) {
             case MeasureSpec.AT_MOST:
                 return "AT_MOST";
             case MeasureSpec.EXACTLY:
@@ -160,7 +179,7 @@ public class MyScrollView extends ViewGroup {
 
 
                 //// TODO: 16/8/29 wait for back
-                scrollBy(0,dy);
+                scrollBy(0, dy);
 
 /*                if (onScrollListener == null)
                     scrollBy(0, dy);
