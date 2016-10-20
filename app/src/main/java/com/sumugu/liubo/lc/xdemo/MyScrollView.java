@@ -71,7 +71,7 @@ public class MyScrollView extends ViewGroup {
         mScroller = new Scroller(context);
         Log.d(TAG, "screenHeight:" + mScreenHeight);
     }
-
+    private int[] pageHeight = new int[3];
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
@@ -93,8 +93,7 @@ public class MyScrollView extends ViewGroup {
 //                        right, (i + 1) * mScreenHeight);
 //            }
 
-
-
+            //2016.10.20 modified.
             if (child.getVisibility() != View.GONE) {
 
                 int h = child.getMeasuredHeight();
@@ -107,11 +106,14 @@ public class MyScrollView extends ViewGroup {
                 child.layout(left, last_top,
                         right, last_bottom);
 
+                pageHeight[i]=h;
             }
             Log.d(TAG, "onLayout called." + i + "after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
         }
         Log.d(TAG, "onLayout called.");
     }
+
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -202,8 +204,8 @@ public class MyScrollView extends ViewGroup {
 //                int dScrollY = getScrollY()-mStart;
                 Log.d(TAG, "dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
 
-                //// TODO: 16/8/29 wait for back
-/*                if (dScrollY > 0) {
+                //// // TODO: 16/10/20 need to modifity
+                if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
                     } else {
@@ -218,7 +220,7 @@ public class MyScrollView extends ViewGroup {
                     } else {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
-                }*/
+                }
                 if (onScrollListener != null)
                     onScrollListener.onStop(0, dScrollY);
 
