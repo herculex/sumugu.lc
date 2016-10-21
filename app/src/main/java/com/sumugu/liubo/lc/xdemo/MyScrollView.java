@@ -1,7 +1,6 @@
 package com.sumugu.liubo.lc.xdemo;
 
 import android.content.Context;
-import android.nfc.Tag;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -71,7 +70,9 @@ public class MyScrollView extends ViewGroup {
         mScroller = new Scroller(context);
         Log.d(TAG, "screenHeight:" + mScreenHeight);
     }
-    private int[] pageHeight = new int[3];
+
+    private int[] childBottoms = new int[3];
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
@@ -106,13 +107,12 @@ public class MyScrollView extends ViewGroup {
                 child.layout(left, last_top,
                         right, last_bottom);
 
-                pageHeight[i]=h;
+                childBottoms[i] = last_bottom;
             }
             Log.d(TAG, "onLayout called." + i + "after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
         }
         Log.d(TAG, "onLayout called.");
     }
-
 
 
     @Override
@@ -150,12 +150,28 @@ public class MyScrollView extends ViewGroup {
         return result;
     }
 
+    private int getCurrentChild(int scrollY) {
+        int ph = 0;
+        int lastHeight = 0;
+        for (int i = 0; i < childBottoms.length; i++) {
+            if (scrollY > (lastHeight + childBottoms[i])) {
+                lastHeight += childBottoms[i];
+            } else {
+                ph = childBottoms[i];
+                break;
+            }
+        }
+        //
+        return ph;
+    }
     int mLastX;
     int mLastY;
     int mStart;
     int mDownY;
     int mEnd;
     ViewDragHelper mViewDragHelpher;
+
+    int mLastChild=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -200,12 +216,40 @@ public class MyScrollView extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_UP:
-                int dScrollY = checkAlignment();
-//                int dScrollY = getScrollY()-mStart;
-                Log.d(TAG, "ACTION_UP,dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
-
                 //// // TODO: 16/10/20 need to modifity
-                if (dScrollY > 0) {
+
+                int sh=mScreenHeight;
+                int ph=getCurrentChild(getScrollY());
+                int endY = getScrollY();
+                int deltaY=0;
+
+                if(endY<0) {
+                    //
+                    mScroller.startScroll(0,endY,0,-endY);
+                }
+                else {
+
+                    deltaY=ph-endY;
+                    if(deltaY>sh){
+                        //不动
+                    }else {
+                        if(deltaY>sh/2)
+                        {
+                            mScroller.startScroll(0,endY,0,-(sh-deltaY));
+                        }else{
+                            mScroller.startScroll(0,endY,0,deltaY);
+                        }
+                    }
+                }
+
+                Log.d(TAG,"xxx.action_up.sh="+sh+",ph="+ph+",endY="+endY+",deltaY="+deltaY);
+
+/*                int dScrollY = checkAlignment();    //int dScrollY = getScrollY()-mStart;
+
+                Log.d(TAG, "ACTION_UP,dScrollY=" + dScrollY + ";translationY=" + getTranslationY());*/
+
+
+/*                if (dScrollY > 0) {
                     if (dScrollY < mScreenHeight / 3) {
                         mScroller.startScroll(0, getScrollY(), 0, -dScrollY);
                     } else {
@@ -222,13 +266,16 @@ public class MyScrollView extends ViewGroup {
                     }
                 }
                 if (onScrollListener != null)
-                    onScrollListener.onStop(0, dScrollY);
+                    onScrollListener.onStop(0, dScrollY);*/
+
+
 
                 break;
         }
         postInvalidate();
         return true;
     }
+
 
     private int checkAlignment() {
         int mEnd = getScrollY();
