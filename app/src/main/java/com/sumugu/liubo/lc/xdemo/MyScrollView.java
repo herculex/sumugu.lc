@@ -150,28 +150,27 @@ public class MyScrollView extends ViewGroup {
         return result;
     }
 
-    private int getCurrentChild(int scrollY) {
-        int ph = 0;
+    private int findChildBottom(int scrollY) {
+        int butt = 0;
         int lastHeight = 0;
         for (int i = 0; i < childBottoms.length; i++) {
             if (scrollY > (lastHeight + childBottoms[i])) {
                 lastHeight += childBottoms[i];
             } else {
-                ph = childBottoms[i];
+                butt = childBottoms[i];
                 break;
             }
         }
         //
-        return ph;
+        return butt;
     }
+
     int mLastX;
     int mLastY;
     int mStart;
     int mDownY;
     int mEnd;
     ViewDragHelper mViewDragHelpher;
-
-    int mLastChild=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -196,7 +195,7 @@ public class MyScrollView extends ViewGroup {
                 Log.d(TAG, "ACTION_MOVE,dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
-                //// TODO: 16/8/29 wait for back
+                // TODO: 16/10/21 need to be improved below.
                 scrollBy(0, dy);
 
 /*                if (onScrollListener == null)
@@ -216,33 +215,33 @@ public class MyScrollView extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_UP:
-                //// // TODO: 16/10/20 need to modifity
 
-                int sh=mScreenHeight;
-                int ph=getCurrentChild(getScrollY());
+                //// // 16/10/20 improved.
+
+                int sh = mScreenHeight;
+                int bt = findChildBottom(getScrollY());
                 int endY = getScrollY();
-                int deltaY=0;
+                int deltaY = 0;
 
-                if(endY<0) {
-                    //
-                    mScroller.startScroll(0,endY,0,-endY);
-                }
-                else {
+                if (endY < 0) {
+                    //复位
+                    mScroller.startScroll(0, endY, 0, -endY);
+                } else {
 
-                    deltaY=ph-endY;
-                    if(deltaY>sh){
-                        //不动
-                    }else {
-                        if(deltaY>sh/2)
-                        {
-                            mScroller.startScroll(0,endY,0,-(sh-deltaY));
-                        }else{
-                            mScroller.startScroll(0,endY,0,deltaY);
+                    deltaY = bt - endY;
+                    if (deltaY > sh) {
+                        //大于屏幕，不动
+                    } else {
+                        //大于屏幕，滑动；最终显示占比的child。
+                        if (deltaY > sh / 2) {
+                            mScroller.startScroll(0, endY, 0, -(sh - deltaY));
+                        } else {
+                            mScroller.startScroll(0, endY, 0, deltaY);
                         }
                     }
                 }
 
-                Log.d(TAG,"xxx.action_up.sh="+sh+",ph="+ph+",endY="+endY+",deltaY="+deltaY);
+                Log.d(TAG, "xxx.action_up.sh=" + sh + ",bt=" + bt + ",endY=" + endY + ",deltaY=" + deltaY);
 
 /*                int dScrollY = checkAlignment();    //int dScrollY = getScrollY()-mStart;
 
@@ -269,7 +268,6 @@ public class MyScrollView extends ViewGroup {
                     onScrollListener.onStop(0, dScrollY);*/
 
 
-
                 break;
         }
         postInvalidate();
@@ -277,7 +275,7 @@ public class MyScrollView extends ViewGroup {
     }
 
 
-    private int checkAlignment() {
+/*    private int checkAlignment() {
         int mEnd = getScrollY();
 
         boolean isUP = ((mEnd - mStart) > 0);
@@ -289,7 +287,7 @@ public class MyScrollView extends ViewGroup {
             return lastPrev;
         else
             return -lastNext;
-    }
+    }*/
 
     @Override
     public void computeScroll() {
