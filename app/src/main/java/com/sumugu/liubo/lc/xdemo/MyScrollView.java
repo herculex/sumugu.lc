@@ -168,7 +168,7 @@ public class MyScrollView extends ViewGroup {
                 mLastY = y;
                 mLastX = x;
                 mStart = getScrollY();
-                Log.d(TAG, "mLast=" + mLastY + ";mStart:getScrollY()=" + mStart);
+                Log.d(TAG, "ACTION_DOWN,mLast=" + mLastY + ";mStart:getScrollY()=" + mStart);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScroller.isFinished()) {
@@ -176,8 +176,8 @@ public class MyScrollView extends ViewGroup {
                 }
                 int dy = mLastY - y;
                 int dx = mLastX - x;
-                Log.d(TAG, "getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
-                Log.d(TAG, "dy=" + dy + ";getScrollY()=" + getScrollY());
+                Log.d(TAG, "ACTION_MOVE,getHeight:=" + getHeight() + ";screeNheight:" + mScreenHeight + ";dy=" + dy + ";getScrollY()=" + getScrollY());
+                Log.d(TAG, "ACTION_MOVE,dy=" + dy + ";getScrollY()=" + getScrollY());
 
 
                 //// TODO: 16/8/29 wait for back
@@ -202,7 +202,7 @@ public class MyScrollView extends ViewGroup {
             case MotionEvent.ACTION_UP:
                 int dScrollY = checkAlignment();
 //                int dScrollY = getScrollY()-mStart;
-                Log.d(TAG, "dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
+                Log.d(TAG, "ACTION_UP,dScrollY=" + dScrollY + ";translationY=" + getTranslationY());
 
                 //// // TODO: 16/10/20 need to modifity
                 if (dScrollY > 0) {

@@ -35,7 +35,7 @@ public class MyListView extends ListView {
         super.onMeasure(widthMeasureSpec, expandSpec);
     }
 
-
+/*
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 //        boolean result= super.dispatchTouchEvent(ev);
@@ -76,7 +76,7 @@ public class MyListView extends ListView {
 //                mLastX=x;
 //                break;
 //        }
-       /* if (getFirstVisiblePosition() == 0) {
+       *//* if (getFirstVisiblePosition() == 0) {
             //达到最顶部
             View view = getChildAt(0);
             if (view != null && view.getTop() == 0) {
@@ -92,7 +92,7 @@ public class MyListView extends ListView {
                 getParent().requestDisallowInterceptTouchEvent(false);
                 return false;
             }
-        }*/
+        }*//*
 
         boolean result = super.dispatchTouchEvent(ev);
         Log.d("dispatchTest","MyListView dispatchtouchevent:super."+"action:"+ev.getActionMasked()+"result:"+result);
@@ -157,7 +157,7 @@ public class MyListView extends ListView {
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        /*if (getFirstVisiblePosition() == 0) {
+        *//*if (getFirstVisiblePosition() == 0) {
             //达到最顶部
             View view = getChildAt(0);
             if (view != null && view.getTop() == 0) {
@@ -166,7 +166,7 @@ public class MyListView extends ListView {
                 //要求Parent进行事件拦截
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
-        } else*/ /*if (getLastVisiblePosition() == getCount() - 1) {
+        } else*//* *//*if (getLastVisiblePosition() == getCount() - 1) {
             //达到最底部
             View view = getChildAt(getChildCount() - 1);
             if (view != null && (view.getTop() + view.getHeight() == getHeight())) {
@@ -174,7 +174,7 @@ public class MyListView extends ListView {
                 //要求Parent进行事件拦截
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
-        }*/
+        }*//*
 
     }
 
@@ -241,4 +241,6 @@ public class MyListView extends ListView {
 //        mLastYdis=y;
 //        return super.dispatchTouchEvent(ev);
 //    }
+
+*/
 }
