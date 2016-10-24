@@ -27,11 +27,11 @@
             android:layout_below="@+id/customItem"
             android:text="Page01" />
 
-        <com.sumugu.liubo.lc.xdemo.MyListView
+<!--        <com.sumugu.liubo.lc.xdemo.MyListView
             android:id="@+id/myListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/page01"/>
+            android:layout_below="@+id/page01"/>-->
 
         <RelativeLayout
             android:id="@+id/layer_cover"
@@ -45,9 +45,14 @@
     <LinearLayout
         android:id="@+id/container02"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/holo_purple"
         android:orientation="vertical">
+
+        <com.sumugu.liubo.lc.xdemo.MyListView
+            android:id="@+id/myListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -58,7 +63,7 @@
     <LinearLayout
         android:id="@+id/container03"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@android:color/holo_orange_light"
             android:orientation="vertical">
 

@@ -26,7 +26,7 @@ public class Xdemo extends Activity {
     int maxCustomItemHeight;
     RelativeLayout myCover;
 
-    RelativeLayout container01;
+    View container01;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class Xdemo extends Activity {
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
 
-        container01 = (RelativeLayout)findViewById(R.id.container01);
+        container01 = findViewById(R.id.container02);
         myListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

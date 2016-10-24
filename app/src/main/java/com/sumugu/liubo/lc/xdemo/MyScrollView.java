@@ -72,6 +72,7 @@ public class MyScrollView extends ViewGroup {
     }
 
     private int[] childBottoms = new int[3];
+    private int[] childTops = new int[3];
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -87,14 +88,14 @@ public class MyScrollView extends ViewGroup {
         //编排每个child的布局layout位置
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            Log.d(TAG, "onLayout called." + i + "before child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
+            Log.d(TAG, "onLayout called.child " + i + ",before child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop() + ",bottom=" + child.getBottom());
 
 //            if (child.getVisibility() != View.GONE) {
 //                child.layout(left, i * mScreenHeight,
 //                        right, (i + 1) * mScreenHeight);
 //            }
 
-            //2016.10.20 modified.
+            //2016.10.20 improved.
             if (child.getVisibility() != View.GONE) {
 
                 int h = child.getMeasuredHeight();
@@ -108,8 +109,9 @@ public class MyScrollView extends ViewGroup {
                         right, last_bottom);
 
                 childBottoms[i] = last_bottom;
+                childTops[i] = last_top;
             }
-            Log.d(TAG, "onLayout called." + i + "after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop());
+            Log.d(TAG, "onLayout called.child " + i + ",after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop() + ",bottom=" + child.getBottom() + ",[" + childBottoms[i] + "]");
         }
         Log.d(TAG, "onLayout called.");
     }
@@ -127,8 +129,7 @@ public class MyScrollView extends ViewGroup {
             View child = getChildAt(i);
             measureChild(getChildAt(i), widthMeasureSpec, heightMeasureSpec);
 
-            Log.d(TAG, "Child onMeasure called." + i + ",height=" + child.getMeasuredHeight());
-            Log.d(TAG, "Child onMeasure called." + i + ",width=" + child.getMeasuredWidth());
+            Log.d(TAG, "Child onMeasure called." + i + ",height=" + child.getMeasuredHeight() + ",width=" + child.getMeasuredWidth());
         }
     }
 
@@ -163,6 +164,25 @@ public class MyScrollView extends ViewGroup {
         }
         //
         return butt;
+    }
+
+    private int mLastChildIndex = 0;
+
+    private void setLastChildIndex(int scrollY) {
+        int index = 0;
+        if (scrollY > 0) {
+
+            for (int i = 0; i < childTops.length; i++) {
+                index = i;
+
+                if (childTops[i] > scrollY) {
+                    if ((childTops[i] - scrollY) > mScreenHeight / 2)
+                        index = i - 1;
+                    break;
+                }
+            }
+        }
+        mLastChildIndex = index;
     }
 
     int mLastX;
@@ -201,7 +221,7 @@ public class MyScrollView extends ViewGroup {
 /*                if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy, getScrollY() % mScreenHeight)) {
+                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy,  () % mScreenHeight)) {
                         Log.d(TAG, "1MyScrollerView scrollBy:" + dy);
                         scrollBy(0, dy);
 
@@ -240,8 +260,9 @@ public class MyScrollView extends ViewGroup {
                         }
                     }
                 }
+                setLastChildIndex(getScrollY());
 
-                Log.d(TAG, "xxx.action_up.sh=" + sh + ",bt=" + bt + ",endY=" + endY + ",deltaY=" + deltaY);
+                Log.d(TAG, "xxx.action_up.sh=" + sh + ",bt=" + bt + ",endY=" + endY + ",deltaY=" + deltaY + ",lastChildIndex=" + mLastChildIndex);
 
 /*                int dScrollY = checkAlignment();    //int dScrollY = getScrollY()-mStart;
 
