@@ -156,16 +156,10 @@ public class Xdemo extends Activity {
                 height = 0;
             }
 
+            //2016.10.25 AM improved
             boolean canRoll = false;
-            if (height == maxCustomItemHeight && scrollY > 0) {
-                canRoll=true;
-            } else
-                height += -dy;
 
-            if(scrollY<0)
-                height=0;
-            if(scrollY>maxCustomItemHeight)
-                height=maxCustomItemHeight;
+            height += -dy;
 
             if (height >= maxCustomItemHeight) {
                 height = maxCustomItemHeight;
