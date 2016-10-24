@@ -216,12 +216,25 @@ public class MyScrollView extends ViewGroup {
 
 
                 // TODO: 16/10/21 need to be improved below.
-                scrollBy(0, dy);
+
+//                scrollBy(0, dy);
+
+                if (onScrollListener == null)
+                    scrollBy(0, dy);
+                else {
+                    if (onScrollListener.onScroll(mLastChildIndex, dy, childTops[mLastChildIndex] - getScrollY())) {
+                        scrollBy(0, dy);
+
+                        Log.d("onScrollListener", "action.move.childIndex=" + mLastChildIndex
+                                + ",child top=" + childTops[mLastChildIndex] + ",getScrollY=" + getScrollY()
+                                + ";deltaY=" + (childTops[mLastChildIndex] - getScrollY()));
+                    }
+                }
 
 /*                if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
-                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy,  () % mScreenHeight)) {
+                    if (onScrollListener.onScroll(getScrollY() / mScreenHeight, dy,  getScrollY() % mScreenHeight)) {
                         Log.d(TAG, "1MyScrollerView scrollBy:" + dy);
                         scrollBy(0, dy);
 

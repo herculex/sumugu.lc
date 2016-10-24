@@ -27,6 +27,7 @@ public class Xdemo extends Activity {
     RelativeLayout myCover;
 
     View container01;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,14 +53,14 @@ public class Xdemo extends Activity {
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
 
-        container01 = findViewById(R.id.container02);
+        container01 = findViewById(R.id.container01);
         myListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.d("ViewTree","onGlobalLayout.myListView.height="+myListView.getHeight()+",measuredHeight="+myListView.getMeasuredHeight());
+                Log.d("ViewTree", "onGlobalLayout.myListView.height=" + myListView.getHeight() + ",measuredHeight=" + myListView.getMeasuredHeight());
                 //set listview's parent height requestlayout
-                Log.d("ViewTree","onGlobalLayout.container01.height="+container01.getHeight()+",measuredHeight="+container01.getMeasuredHeight());
-                container01.getLayoutParams().height=myListView.getHeight();
+                Log.d("ViewTree", "onGlobalLayout.container01.height=" + container01.getHeight() + ",measuredHeight=" + container01.getMeasuredHeight());
+                container01.getLayoutParams().height = myListView.getHeight();
 //                container01.requestLayout();
 
             }
@@ -79,8 +80,8 @@ public class Xdemo extends Activity {
         myListView.post(new Runnable() {
             @Override
             public void run() {
-                Log.d("onStart","myListView,height="+myListView.getMeasuredHeight()+",width="+myListView.getMeasuredWidth()+",count="+myListView.getCount());
-                int totalHeight=0;
+                Log.d("onStart", "myListView,height=" + myListView.getMeasuredHeight() + ",width=" + myListView.getMeasuredWidth() + ",count=" + myListView.getCount());
+                int totalHeight = 0;
   /*              Adapter adapter = myListView.getAdapter();
                 if(adapter.getCount()>0)
                 {
@@ -106,8 +107,8 @@ public class Xdemo extends Activity {
                 Log.d("onStart","myListView,childs "+th);
                 myListView.getLayoutParams().height=th+myListView.getDividerHeight()*(myListView.getCount()-1);
                 myListView.requestLayout();*/
-                Log.d("onStart","final myListView,height="+myListView.getHeight()+",width="+myListView.getWidth()+",count="+myListView.getCount());
-                Log.d("onStart","final myScrollerView,height="+myScrollView.getHeight()+","+myScrollView.getMeasuredHeight());
+                Log.d("onStart", "final myListView,height=" + myListView.getHeight() + ",width=" + myListView.getWidth() + ",count=" + myListView.getCount());
+                Log.d("onStart", "final myScrollerView,height=" + myScrollView.getHeight() + "," + myScrollView.getMeasuredHeight());
             }
         });
     }
@@ -154,7 +155,27 @@ public class Xdemo extends Activity {
                 callback = true;
                 height = 0;
             }
-            boolean canTrans;
+
+            boolean canRoll = false;
+            if (height == maxCustomItemHeight && scrollY > 0) {
+                canRoll=true;
+            } else
+                height += -dy;
+
+            if(scrollY<0)
+                height=0;
+            if(scrollY>maxCustomItemHeight)
+                height=maxCustomItemHeight;
+
+            if (height >= maxCustomItemHeight) {
+                height = maxCustomItemHeight;
+                canRoll = true;
+            } else if (height < 0) {
+                height = 0;
+                canRoll = true;
+            }
+
+/*            boolean canTrans;
 
             if (dy <= 0 && scrollY <= 0) {
                 height += -dy;
@@ -172,14 +193,15 @@ public class Xdemo extends Activity {
                     canTrans = false;
             } else {
                 canTrans = true;
-            }
+            }*/
 
             if (myCustomItem.getVisibility() == View.GONE)
                 myCustomItem.setVisibility(View.VISIBLE);
             myCustomItem.getLayoutParams().height = height;
             myCustomItem.requestLayout();
 
-            return canTrans;
+//            return canTrans;
+            return canRoll;
         }
 
         @Override
