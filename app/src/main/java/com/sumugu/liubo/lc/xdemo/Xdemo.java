@@ -57,7 +57,7 @@ public class Xdemo extends Activity {
                 Log.d("ViewTree", "onGlobalLayout.myListView.height=" + myListView.getHeight() + ",measuredHeight=" + myListView.getMeasuredHeight());
                 //set listview's parent height requestlayout
                 Log.d("ViewTree", "onGlobalLayout.container02.height=" + container02.getHeight() + ",measuredHeight=" + container02.getMeasuredHeight());
-
+// TODO: 2016/10/25 find out 顺序 
                 if(myListView.getHeight()>myScrollView.getScreenHeight())
                     container02.getLayoutParams().height = myListView.getHeight();
 
