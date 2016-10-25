@@ -265,7 +265,7 @@ public class MyScrollView extends ViewGroup {
                     if (deltaY > sh) {
                         //大于屏幕，不动
                     } else {
-                        //大于屏幕，滑动；最终显示占比的child。
+                        //大于屏幕，滑动；最终显示占比大的child。
                         if (deltaY > sh / 2) {
                             mScroller.startScroll(0, endY, 0, -(sh - deltaY));
                         } else {
@@ -298,8 +298,9 @@ public class MyScrollView extends ViewGroup {
                         mScroller.startScroll(0, getScrollY(), 0, -mScreenHeight - dScrollY);
                     }
                 }
+                */
                 if (onScrollListener != null)
-                    onScrollListener.onStop(0, dScrollY);*/
+                    onScrollListener.onStop(0, childTops[mLastChildIndex] - endY);
 
 
                 break;
