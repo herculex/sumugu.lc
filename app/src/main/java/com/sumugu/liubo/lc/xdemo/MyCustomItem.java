@@ -60,9 +60,11 @@ public class MyCustomItem extends FrameLayout {
         rlActionPanel.setVisibility(VISIBLE);
         editText.setVisibility(GONE);
 
-        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-        requestLayout();
+        //removed.2016.10.25
+//        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+//        requestLayout();
+
 //        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
     }
