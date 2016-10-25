@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Adapter;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -26,7 +23,7 @@ public class Xdemo extends Activity {
     int maxCustomItemHeight;
     RelativeLayout myCover;
 
-    View container01;
+    View container02;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +50,19 @@ public class Xdemo extends Activity {
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
 
-        container01 = findViewById(R.id.container02);
+        container02 = findViewById(R.id.container02);
         myListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 Log.d("ViewTree", "onGlobalLayout.myListView.height=" + myListView.getHeight() + ",measuredHeight=" + myListView.getMeasuredHeight());
                 //set listview's parent height requestlayout
-                Log.d("ViewTree", "onGlobalLayout.container01.height=" + container01.getHeight() + ",measuredHeight=" + container01.getMeasuredHeight());
+                Log.d("ViewTree", "onGlobalLayout.container02.height=" + container02.getHeight() + ",measuredHeight=" + container02.getMeasuredHeight());
 
                 if(myListView.getHeight()>myScrollView.getScreenHeight())
-                    container01.getLayoutParams().height = myListView.getHeight();
+                    container02.getLayoutParams().height = myListView.getHeight();
 
                 Log.d("ViewTree", "onGlobalLayout.myscrollview.height=" + myScrollView.getHeight() + ",measuredHeight=" + myScrollView.getMeasuredHeight());
-//                container01.requestLayout();
+//                container02.requestLayout();
 
             }
         });
@@ -205,7 +202,7 @@ public class Xdemo extends Activity {
                     if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
                         myCustomItem.edit();
                         myCover.setVisibility(View.VISIBLE);
-                        myCover.getLayoutParams().height=container01.getHeight();
+                        myCover.getLayoutParams().height= container02.getHeight();
                         myCover.requestLayout();
 
                         Toast.makeText(Xdemo.this, "myCover.height="+myCover.getLayoutParams().height, Toast.LENGTH_SHORT).show();
@@ -241,6 +238,10 @@ public class Xdemo extends Activity {
         public boolean intercept(MotionEvent event, int pageIndex, int deltaY) {
 
             Log.d("ScrollerIntercepter", "listview'height= " + myListView.getHeight() + ",last=" + myListView.getLastVisiblePosition() + "," + myListView.getChildAt(myListView.getChildCount() - 1).getTop());
+
+            //improved.2016.10.25
+            if(myCover.getVisibility()==View.VISIBLE)
+                return false;
 
             if (deltaY > 0) {
                 //swiping down

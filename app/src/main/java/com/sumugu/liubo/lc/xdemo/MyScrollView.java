@@ -337,17 +337,17 @@ public class MyScrollView extends ViewGroup {
 //        Log.d(TAG, "computeScroll() called.");
     }
 
-//    int mLastXIntercept = 0;
-//    int mLastYIntercept = 0;
+    int mLastXIntercept = 0;
+    int mLastYIntercept = 0;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
-        boolean result = super.onInterceptTouchEvent(ev);
-        Log.d(TAG,"MyScrollerView onInterceptTouchEvent.super:"+ev.getActionMasked()+",result="+result);
-        return result;
+/*        boolean result = super.onInterceptTouchEvent(ev);
+        Log.d(TAG, "MyScrollerView onInterceptTouchEvent.super:" + ev.getActionMasked() + ",result=" + result);
+        return result;*/
 
-/*        2016.10.25 improved.
+/*        2016.10.25 get remember and improved.*/
         Log.d(TAG, "MyScrollerView intercept start.");
         int intercept = 0;
         int x = (int) ev.getX();
@@ -371,7 +371,7 @@ public class MyScrollView extends ViewGroup {
                 if (Math.abs(deltaY) < Math.abs(deltaX)) {
                     intercept = 0;
                 } else if (onInterceptTouchListner != null) {
-                    if (onInterceptTouchListner.intercept(ev, getScrollY() % mScreenHeight, deltaY)) {
+                    if (onInterceptTouchListner.intercept(ev, mLastChildIndex, deltaY)) {
                         Log.d(TAG, "MyScrollerView intercept action:" + ev.getActionMasked());
                         intercept = 1;
                     }
@@ -386,7 +386,7 @@ public class MyScrollView extends ViewGroup {
                 break;
         }
 
-        return intercept == 1;*/
+        return intercept == 1;
     }
 
     //    int mLastXdis,mLastYdis;
