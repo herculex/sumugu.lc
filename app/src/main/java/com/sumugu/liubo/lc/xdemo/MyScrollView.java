@@ -22,7 +22,7 @@ public class MyScrollView extends ViewGroup {
 
         boolean onScroll(int index, int dy, int scrollY);   //current pager index,scrollBy-Y,total scrollY
 
-        void onStop(int index, int scrollY); //current pager index,total scrollY
+        void onStop(int index, int scrollY,boolean goNext); //current pager index,total scrollY
 
     }
 
@@ -217,8 +217,6 @@ public class MyScrollView extends ViewGroup {
 
                 // TODO: 16/10/21 need to be improved below.
 
-//                scrollBy(0, dy);
-
                 if (onScrollListener == null)
                     scrollBy(0, dy);
                 else {
@@ -299,8 +297,9 @@ public class MyScrollView extends ViewGroup {
                     }
                 }
                 */
+                int currentChildMove = childTops[mLastChildIndex] - endY;
                 if (onScrollListener != null)
-                    onScrollListener.onStop(0, childTops[mLastChildIndex] - endY);
+                    onScrollListener.onStop(0,currentChildMove ,deltaY>sh/2);
 
 
                 break;

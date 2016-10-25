@@ -44,8 +44,17 @@ public class Xdemo extends Activity {
         myCover = (RelativeLayout) findViewById(R.id.layer_cover);
         myCover.setOnClickListener(coverOnClickListener);
 
+
+        findViewById(R.id.buttonTest).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(Xdemo.this, "button test", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         int loaderId = 5;
-        MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, null, 0);
+        final MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, null, 0);
         MyLoaderCallback myLoaderCallback = new MyLoaderCallback(this, myCursorAdapter, loaderId);
 
         myListView = (MyListView) findViewById(R.id.myListView);
@@ -53,7 +62,7 @@ public class Xdemo extends Activity {
 
         getLoaderManager().initLoader(loaderId, null, myLoaderCallback);
 
-        container01 = findViewById(R.id.container01);
+        container01 = findViewById(R.id.container02);
         myListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -61,6 +70,8 @@ public class Xdemo extends Activity {
                 //set listview's parent height requestlayout
                 Log.d("ViewTree", "onGlobalLayout.container01.height=" + container01.getHeight() + ",measuredHeight=" + container01.getMeasuredHeight());
                 container01.getLayoutParams().height = myListView.getHeight();
+
+                Log.d("ViewTree", "onGlobalLayout.myscrollview.height=" + myScrollView.getHeight() + ",measuredHeight=" + myScrollView.getMeasuredHeight());
 //                container01.requestLayout();
 
             }
@@ -148,7 +159,7 @@ public class Xdemo extends Activity {
         @Override
         public boolean onScroll(int index, int dy, int scrollY) {
             Log.d("ScrollListener", "onScroll:" + index + "," + dy + "," + scrollY);
-            if (index != 0)
+            if (index != 1)
                 return true;
 
             if (!callback) {
@@ -186,16 +197,22 @@ public class Xdemo extends Activity {
         }
 
         @Override
-        public void onStop(int index, int scrollY) {
+        public void onStop(int index, int scrollY, boolean goNext) {
             Log.d("ScrollListener", "onScroll:" + index + "," + scrollY + "," + myCustomItem.getLayoutParams().height);
 
             int lastHeight = myCustomItem.getLayoutParams().height;
             if (lastHeight > 0 && lastHeight < maxCustomItemHeight) {
                 customItemCloseup(myCustomItem, lastHeight);
             } else {
-                if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
-                    myCustomItem.edit();
-                    myCover.setVisibility(View.VISIBLE);
+                if (goNext) {
+                    myCustomItem.getLayoutParams().height = 0;
+                    myCustomItem.requestLayout();
+                    myCover.setVisibility(View.GONE);
+                } else {
+                    if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
+                        myCustomItem.edit();
+                        myCover.setVisibility(View.VISIBLE);
+                    }
                 }
 
             }
