@@ -157,44 +157,31 @@ public class Xdemo extends Activity {
             }
 
             //2016.10.25 AM improved
-            boolean canRoll = false;
+            boolean canRoll;
 
-            height += -dy;
-
-            if (height >= maxCustomItemHeight) {
-                height = maxCustomItemHeight;
-                canRoll = true;
-            } else if (height < 0) {
-                height = 0;
-                canRoll = true;
-            }
-
-/*            boolean canTrans;
-
-            if (dy <= 0 && scrollY <= 0) {
+            if (dy <= 0 && scrollY >= 0) {
                 height += -dy;
                 if (height > maxCustomItemHeight) {
                     height = maxCustomItemHeight;
-                    canTrans = true;
+                    canRoll = true;
                 } else
-                    canTrans = false;
-            } else if (dy >= 0 && scrollY >= 0) {
+                    canRoll = false;
+            } else if (dy >= 0 && scrollY <= 0) {
                 height += -dy;
                 if (height < 0) {
                     height = 0;
-                    canTrans = true;
+                    canRoll = true;
                 } else
-                    canTrans = false;
+                    canRoll = false;
             } else {
-                canTrans = true;
-            }*/
+                canRoll = true;
+            }
 
             if (myCustomItem.getVisibility() == View.GONE)
                 myCustomItem.setVisibility(View.VISIBLE);
             myCustomItem.getLayoutParams().height = height;
             myCustomItem.requestLayout();
 
-//            return canTrans;
             return canRoll;
         }
 
