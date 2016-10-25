@@ -44,15 +44,6 @@ public class Xdemo extends Activity {
         myCover = (RelativeLayout) findViewById(R.id.layer_cover);
         myCover.setOnClickListener(coverOnClickListener);
 
-
-        findViewById(R.id.buttonTest).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(Xdemo.this, "button test", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
         int loaderId = 5;
         final MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, null, 0);
         MyLoaderCallback myLoaderCallback = new MyLoaderCallback(this, myCursorAdapter, loaderId);
@@ -69,7 +60,9 @@ public class Xdemo extends Activity {
                 Log.d("ViewTree", "onGlobalLayout.myListView.height=" + myListView.getHeight() + ",measuredHeight=" + myListView.getMeasuredHeight());
                 //set listview's parent height requestlayout
                 Log.d("ViewTree", "onGlobalLayout.container01.height=" + container01.getHeight() + ",measuredHeight=" + container01.getMeasuredHeight());
-                container01.getLayoutParams().height = myListView.getHeight();
+
+                if(myListView.getHeight()>myScrollView.getScreenHeight())
+                    container01.getLayoutParams().height = myListView.getHeight();
 
                 Log.d("ViewTree", "onGlobalLayout.myscrollview.height=" + myScrollView.getHeight() + ",measuredHeight=" + myScrollView.getMeasuredHeight());
 //                container01.requestLayout();
@@ -212,6 +205,10 @@ public class Xdemo extends Activity {
                     if (myCustomItem.getLayoutParams().height == maxCustomItemHeight) {
                         myCustomItem.edit();
                         myCover.setVisibility(View.VISIBLE);
+                        myCover.getLayoutParams().height=container01.getHeight();
+                        myCover.requestLayout();
+
+                        Toast.makeText(Xdemo.this, "myCover.height="+myCover.getLayoutParams().height, Toast.LENGTH_SHORT).show();
                     }
                 }
 

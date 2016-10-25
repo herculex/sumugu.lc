@@ -71,6 +71,10 @@ public class MyScrollView extends ViewGroup {
         Log.d(TAG, "screenHeight:" + mScreenHeight);
     }
 
+    public int getScreenHeight(){
+        return mScreenHeight;
+    }
+
     private int[] childBottoms = new int[3];
     private int[] childTops = new int[3];
 
@@ -95,7 +99,7 @@ public class MyScrollView extends ViewGroup {
 //                        right, (i + 1) * mScreenHeight);
 //            }
 
-            //2016.10.20 improved.
+            //improved.2016.10.20
             if (child.getVisibility() != View.GONE) {
 
                 int h = child.getMeasuredHeight();
