@@ -115,8 +115,9 @@ public class MyScrollView extends ViewGroup {
                 childBottoms[i] = last_bottom;
                 childTops[i] = last_top;
             }
-            Log.d(TAG, "onLayout called.child " + i + ",after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop() + ",bottom=" + child.getBottom() + ",[" + childBottoms[i] + "]");
+            Log.d(TAG, "ccc.onLayout called.child " + i + ",after child's height=" + child.getHeight() + ",measureHeight=" + child.getMeasuredHeight() + ",top=" + child.getTop() + ",bottom=" + child.getBottom() + ",[" + childBottoms[i] + "]");
         }
+
         Log.d(TAG, "onLayout called.");
     }
 
