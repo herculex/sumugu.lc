@@ -203,9 +203,8 @@ public class Xdemo extends Activity {
                         myCustomItem.edit();
                         myCover.setVisibility(View.VISIBLE);
                         myCover.getLayoutParams().height= container02.getHeight();
-                        myCover.requestLayout();
 
-                        Toast.makeText(Xdemo.this, "myCover.height="+myCover.getLayoutParams().height, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(Xdemo.this, "myCover.height="+myCover.getLayoutParams().height, Toast.LENGTH_SHORT).show();
                     }
                 }
 
