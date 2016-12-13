@@ -486,7 +486,7 @@ public class MyCustomItem extends FrameLayout {
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
-                                                if (onFinishListener != null)
+                                                if (onDeleteListner != null)
                                                     onDeleteListner.end(getItemIndex());
                                             }
                                         });
