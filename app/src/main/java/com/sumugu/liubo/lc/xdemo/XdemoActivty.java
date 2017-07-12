@@ -66,6 +66,7 @@ public class XdemoActivty extends AppCompatActivity {
         customItem.setOnFinishListener(new MyCustomItem.OnFinishListener() {
             @Override
             public void end(int index) {
+                Log.d(TAG,"onfinishListner.called?");//// TODO: 2016/12/13 customItem这些的现实并不会发生在listview上的item，对于listview上的item，应该是实现MyCursorAdapter中的customitem的接口
                 Toast.makeText(XdemoActivty.this, "well,done!", Toast.LENGTH_SHORT).show();
 //                toast.setGravity(Gravity.TOP,0,0);
 //                toast.show();
