@@ -32,23 +32,31 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="XdemoActivity"
-                android:visibility="visible" />
+                android:visibility="gone" />
             <Button
                 android:id="@+id/btn_xdemoViewgroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Xdemo"/>
+                android:text="Xdemo"
+                android:visibility="gone" />
             <Button
                 android:id="@+id/btn_xdemo03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Xdemo03"/>
+                android:text="Xdemo03"
+                android:visibility="gone" />
             <Button
                 android:id="@+id/btn_unlock_screen"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="unlock"
                 android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_simpleway"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="simpleway" />
 
             <DigitalClock
                 android:id="@+id/dc_clock"

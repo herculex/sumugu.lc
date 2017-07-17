@@ -96,7 +96,10 @@
         <activity
             android:name=".xdemo.Xdemo03"
             android:label="@string/title_activity_xdemo03"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".simpleWay.ItemPackageActivity" />
+        <activity android:name=".simpleWay.ItemContentActivity" />
+        <activity android:name=".simpleWay.DatePickerActivity"></activity>
     </application>
 
 </manifest>

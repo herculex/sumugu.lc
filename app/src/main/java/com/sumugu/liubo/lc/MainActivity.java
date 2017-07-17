@@ -32,6 +32,7 @@ import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.lockscreen.LockScreenService;
 import com.sumugu.liubo.lc.lockscreen.LockScreenUtils;
+import com.sumugu.liubo.lc.simpleWay.ItemPackageActivity;
 import com.sumugu.liubo.lc.xdemo.Xdemo;
 import com.sumugu.liubo.lc.xdemo.Xdemo03;
 import com.sumugu.liubo.lc.xdemo.XdemoActivty;
@@ -344,6 +345,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
         findViewById(R.id.btn_xdemo).setOnClickListener(this);
         findViewById(R.id.btn_xdemoViewgroup).setOnClickListener(this);
         findViewById(R.id.btn_xdemo03).setOnClickListener(this);
+        findViewById(R.id.btn_simpleway).setOnClickListener(this);
 
         //
         makeFullScreen();
@@ -436,6 +438,9 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
                 return;
             case R.id.btn_xdemo03:
                 startActivity(new Intent(this, Xdemo03.class));
+                return;
+            case R.id.btn_simpleway:
+                startActivity(new Intent(this, ItemPackageActivity.class));
                 return;
             default:
                 return;
