@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.simpleWay;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,8 +39,37 @@ public class ItemPackageActivity extends Activity {
                 content += ",content:" + textView.getText().toString();
 
                 Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
+
+                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", Integer.toString(i));
+                bundle.putString("content", textView.getText().toString());
+                itemContent.putExtras(bundle);
+                startActivityForResult(itemContent, 1);
+            }
+        });
+
+        TextView textCreate = (TextView) findViewById(R.id.tv_create);
+        textCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", "000");
+                bundle.putString("content", "create new content");
+                itemContent.putExtras(bundle);
+                startActivityForResult(itemContent, 2);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            Toast.makeText(this, "it's ItemContent'detail come back.", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == 2) {
+            Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
