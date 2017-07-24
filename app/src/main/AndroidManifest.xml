@@ -99,7 +99,9 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".simpleWay.ItemPackageActivity" />
         <activity android:name=".simpleWay.ItemContentActivity" />
-        <activity android:name=".simpleWay.DatePickerActivity"></activity>
+        <activity
+            android:name=".simpleWay.DatePickerActivity"
+            android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth"></activity>
     </application>
 
 </manifest>

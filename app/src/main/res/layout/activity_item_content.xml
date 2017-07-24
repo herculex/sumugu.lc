@@ -58,6 +58,12 @@
             android:text="content is waiting..."
             android:textSize="10pt" />
 
+        <TextView
+            android:id="@+id/text_alarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="click to set alarm clock..."
+            android:textSize="8pt" />
     </LinearLayout>
 
 </LinearLayout>

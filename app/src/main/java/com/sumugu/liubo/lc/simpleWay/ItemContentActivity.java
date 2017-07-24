@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.simpleWay;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -8,8 +9,10 @@ import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 
-public class ItemContentActivity extends Activity {
+import java.util.Calendar;
 
+public class ItemContentActivity extends Activity {
+    TextView textAlarm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,5 +46,38 @@ public class ItemContentActivity extends Activity {
             }
         });
 
+        textAlarm = (TextView) findViewById(R.id.text_alarm);
+        textAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ItemContentActivity.this, DatePickerActivity.class);
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        Calendar calender = Calendar.getInstance();
+        textAlarm.setText(calender.get(Calendar.MONTH) + 1 + "," + calender.get(Calendar.DAY_OF_MONTH) + "," + calender.get(Calendar.HOUR_OF_DAY) + "," + calender.get(Calendar.MINUTE));
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+
+                Toast.makeText(this, data.getStringExtra("date").toString(), Toast.LENGTH_SHORT).show();
+                textAlarm.setText(data.getStringExtra("date").toString());
+
+            } else if (resultCode == RESULT_CANCELED) {
+
+                Toast.makeText(this, "没选好", Toast.LENGTH_SHORT).show();
+                textAlarm.setText("没选好");
+
+            } else {
+                Toast.makeText(this, "what the fuck happend?!", Toast.LENGTH_SHORT).show();
+                textAlarm.setText("what the fuck happend?!");
+            }
+        }
+    }
+
+
 }
