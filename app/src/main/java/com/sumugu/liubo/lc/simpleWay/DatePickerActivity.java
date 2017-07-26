@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.sumugu.liubo.lc.R;
 
+import java.util.Calendar;
+
 public class DatePickerActivity extends Activity {
 
     Spinner spinner_month, spinner_day, spinner_hour, spinner_minute;
@@ -98,6 +100,26 @@ public class DatePickerActivity extends Activity {
                 finish();
             }
         });
+
+        initialingPicker();
+
+    }
+
+    void initialingPicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int minute = calendar.get(Calendar.MINUTE);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        spinner_month.setSelection(month);
+        //根据month的单双数设置day
+        spinner_day.setSelection(day);
+
+        spinner_hour.setSelection(hour);
+        //超过55分钟要hour+1，分钟设置00
+        spinner_minute.setSelection((minute + 5) / 5);
 
     }
 

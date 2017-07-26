@@ -64,8 +64,8 @@ public class ItemContentActivity extends Activity {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
 
-                Toast.makeText(this, data.getStringExtra("date").toString(), Toast.LENGTH_SHORT).show();
-                textAlarm.setText(data.getStringExtra("date").toString());
+                Toast.makeText(this, data.getStringExtra("date"), Toast.LENGTH_SHORT).show();
+                textAlarm.setText(data.getStringExtra("date"));
 
             } else if (resultCode == RESULT_CANCELED) {
 
