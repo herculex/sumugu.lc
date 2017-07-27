@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 
@@ -55,25 +57,9 @@ public class DatePickerActivity extends Activity {
         setContentView(R.layout.activity_date_picker);
 
         spinner_month = (Spinner) findViewById(R.id.spinner_month);
-        ArrayAdapter adapter_month = new ArrayAdapter(this, android.R.layout.simple_spinner_item, months);
-        adapter_month.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_month.setAdapter(adapter_month);
-
         spinner_day = (Spinner) findViewById(R.id.spinner_day);
         spinner_hour = (Spinner) findViewById(R.id.spinner_hour);
         spinner_minute = (Spinner) findViewById(R.id.spinner_minute);
-
-        ArrayAdapter adapter_day = new ArrayAdapter(this, android.R.layout.simple_spinner_item, days_big);
-        ArrayAdapter adapter_hour = new ArrayAdapter(this, android.R.layout.simple_spinner_item, hours);
-        ArrayAdapter adapter_minute = new ArrayAdapter(this, android.R.layout.simple_spinner_item, minutes_5s);
-
-        adapter_day.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter_hour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter_minute.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner_day.setAdapter(adapter_day);
-        spinner_hour.setAdapter(adapter_hour);
-        spinner_minute.setAdapter(adapter_minute);
 
         //
         textDateCancel = (TextView) findViewById(R.id.text_date_cancel);
@@ -101,26 +87,100 @@ public class DatePickerActivity extends Activity {
             }
         });
 
-        initialingPicker();
+        initialingPicker(Calendar.getInstance());
+
+        spinner_month.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                initialingDayOfMonth(2017, i + 1, spinner_day.getSelectedItemPosition() + 1);
+
+                Toast.makeText(DatePickerActivity.this, "select month ok.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //
+            }
+        });
 
     }
 
-    void initialingPicker() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int minute = calendar.get(Calendar.MINUTE);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+    void initialingDayOfMonth(int year, int month, int day) {
 
-        spinner_month.setSelection(month);
+        ArrayAdapter adapter_days;
+
+        //初始化日期
         //根据month的单双数设置day
+        String[] daysSource = days_big;
+        switch (month) {
+            case 2:
+                boolean isLeap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+                if (isLeap) {
+                    daysSource = days_leap;
+                } else {
+                    daysSource = days_noleap;
+                }
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                daysSource = days_small;
+                break;
+
+        }
+
+        adapter_days = new ArrayAdapter(DatePickerActivity.this, android.R.layout.simple_spinner_item, daysSource);
+        adapter_days.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_day.setAdapter(adapter_days);
+
+        day = day - 1;
+        if (day > daysSource.length - 1) {
+            day = daysSource.length - 1;
+        }
+
         spinner_day.setSelection(day);
 
-        spinner_hour.setSelection(hour);
-        //超过55分钟要hour+1，分钟设置00
-        spinner_minute.setSelection((minute + 5) / 5);
+    }
 
+    void initialingPicker(Calendar calendar) {
+
+        if (calendar.get(Calendar.MINUTE) >= 55) {
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.add(Calendar.HOUR, 1);
+        } else {
+            calendar.add(Calendar.MINUTE, 5);
+        }
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int minute = calendar.get(Calendar.MINUTE);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        ArrayAdapter adapter_month = new ArrayAdapter(this, android.R.layout.simple_spinner_item, months);
+        ArrayAdapter adapter_hour = new ArrayAdapter(this, android.R.layout.simple_spinner_item, hours);
+        ArrayAdapter adapter_minute = new ArrayAdapter(this, android.R.layout.simple_spinner_item, minutes_5s);
+
+        adapter_hour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter_minute.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter_month.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner_month.setAdapter(adapter_month);
+        spinner_hour.setAdapter(adapter_hour);
+        spinner_minute.setAdapter(adapter_minute);
+
+        //初始化Day of Month
+        initialingDayOfMonth(year, month + 1, day);
+
+        //
+        spinner_month.setSelection(month);
+        spinner_minute.setSelection(minute / 5);
+        spinner_hour.setSelection(hour);
+
+
+        TextView textViewYear = (TextView) findViewById(R.id.tv_year);
+        textViewYear.setText(year + "年");
     }
 
 }
