@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.R;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class DatePickerActivity extends Activity {
 
@@ -46,6 +47,7 @@ public class DatePickerActivity extends Activity {
 
     String[] minutes_5s = {"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
 
+    Integer year_default = 2017;
 //    Integer[] monthss = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12};
 
 
@@ -55,6 +57,8 @@ public class DatePickerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date_picker);
+
+//        DatePickerActivity.this.setFinishOnTouchOutside(false);
 
         spinner_month = (Spinner) findViewById(R.id.spinner_month);
         spinner_day = (Spinner) findViewById(R.id.spinner_day);
@@ -69,6 +73,7 @@ public class DatePickerActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
+                intent.putExtra("setting", false);
                 intent.putExtra("date", "cancel date！ ");
 
                 setResult(RESULT_OK, intent);
@@ -79,11 +84,14 @@ public class DatePickerActivity extends Activity {
         textDateConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent();
-                intent.putExtra("date", "hello,world ,date is date for testing ");
+                intent.putExtra("setting", true);
+                intent.putExtra("date", String.valueOf(checkAlarmSetting()));
 
                 setResult(RESULT_OK, intent);
                 finish();
+
             }
         });
 
@@ -93,7 +101,7 @@ public class DatePickerActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                initialingDayOfMonth(2017, i + 1, spinner_day.getSelectedItemPosition() + 1);
+                initialingDayOfMonth(year_default, i + 1, spinner_day.getSelectedItemPosition() + 1);
 
                 Toast.makeText(DatePickerActivity.this, "select month ok.", Toast.LENGTH_SHORT).show();
             }
@@ -104,6 +112,19 @@ public class DatePickerActivity extends Activity {
             }
         });
 
+    }
+
+    long checkAlarmSetting() {
+        long current = new Date().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year_default,
+                spinner_month.getSelectedItemPosition() + 1,
+                spinner_day.getSelectedItemPosition() + 1,
+                spinner_hour.getSelectedItemPosition(),
+                Integer.parseInt(minutes_5s[spinner_minute.getSelectedItemPosition()]));
+        calendar.getTimeInMillis();
+
+        return calendar.getTimeInMillis() > current ? calendar.getTimeInMillis() : 0;
     }
 
     void initialingDayOfMonth(int year, int month, int day) {
