@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.R;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class DatePickerActivity extends Activity {
 
@@ -74,7 +73,7 @@ public class DatePickerActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.putExtra("setting", false);
-                intent.putExtra("date", "cancel date！ ");
+                intent.putExtra("alarmclock", "cancel alarmclock！ ");
 
                 setResult(RESULT_OK, intent);
                 finish();
@@ -87,7 +86,7 @@ public class DatePickerActivity extends Activity {
 
                 Intent intent = new Intent();
                 intent.putExtra("setting", true);
-                intent.putExtra("date", String.valueOf(checkAlarmSetting()));
+                intent.putExtra("alarmclock", getAlarmSetting());
 
                 setResult(RESULT_OK, intent);
                 finish();
@@ -114,17 +113,17 @@ public class DatePickerActivity extends Activity {
 
     }
 
-    long checkAlarmSetting() {
-        long current = new Date().getTime();
+    long getAlarmSetting() {
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(year_default,
-                spinner_month.getSelectedItemPosition() + 1,
+                spinner_month.getSelectedItemPosition(),
                 spinner_day.getSelectedItemPosition() + 1,
                 spinner_hour.getSelectedItemPosition(),
-                Integer.parseInt(minutes_5s[spinner_minute.getSelectedItemPosition()]));
-        calendar.getTimeInMillis();
+                Integer.parseInt(minutes_5s[spinner_minute.getSelectedItemPosition()]),
+                0);
 
-        return calendar.getTimeInMillis() > current ? calendar.getTimeInMillis() : 0;
+        return calendar.getTimeInMillis();
     }
 
     void initialingDayOfMonth(int year, int month, int day) {

@@ -3,6 +3,7 @@ package com.sumugu.liubo.lc.simpleWay;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,8 +65,7 @@ public class ItemContentActivity extends Activity {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
 
-                Toast.makeText(this, data.getStringExtra("date"), Toast.LENGTH_SHORT).show();
-                textAlarm.setText(data.getStringExtra("date"));
+                textAlarm.setText(DateFormat.format("yyyy-MM-dd hh:mm:ss", data.getLongExtra("alarmclock", 0)));
 
             } else if (resultCode == RESULT_CANCELED) {
 
