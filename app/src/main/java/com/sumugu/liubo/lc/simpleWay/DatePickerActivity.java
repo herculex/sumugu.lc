@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 
@@ -101,8 +100,7 @@ public class DatePickerActivity extends Activity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 initialingDayOfMonth(year_default, i + 1, spinner_day.getSelectedItemPosition() + 1);
-
-                Toast.makeText(DatePickerActivity.this, "select month ok.", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(DatePickerActivity.this, "select month ok.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
