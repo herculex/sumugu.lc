@@ -56,7 +56,6 @@ public class ItemContentActivity extends Activity {
                 finish();
             }
         });
-
         textSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,6 +64,34 @@ public class ItemContentActivity extends Activity {
                 } else {
                     Toast.makeText(ItemContentActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
                 }
+
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        textDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (deletingItem(mId) > 0)
+                    Toast.makeText(ItemContentActivity.this, "deleted was ok.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(ItemContentActivity.this, "deleted nothing.", Toast.LENGTH_SHORT).show();
+
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        textFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (finishItem(mId) > 0)
+                    Toast.makeText(ItemContentActivity.this, "finish ok. ", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(ItemContentActivity.this, "finish not ok ,again.", Toast.LENGTH_SHORT).show();
+
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -77,25 +104,6 @@ public class ItemContentActivity extends Activity {
                 startActivityForResult(intent, 0);
             }
         });
-        textDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (deletingItem(mId) > 0)
-                    Toast.makeText(ItemContentActivity.this, "deleted was ok.", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(ItemContentActivity.this, "deleted nothing.", Toast.LENGTH_SHORT).show();
-
-                finish();
-            }
-        });
-
-        textFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(ItemContentActivity.this, "finish not ok. stay", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         Calendar calender = Calendar.getInstance();
         textAlarm.setText(calender.get(Calendar.MONTH) + 1 + "," + calender.get(Calendar.DAY_OF_MONTH) + "," + calender.get(Calendar.HOUR_OF_DAY) + "," + calender.get(Calendar.MINUTE));
     }
@@ -153,6 +161,17 @@ public class ItemContentActivity extends Activity {
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
         int count = getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
+        return count;
+    }
+
+    int finishItem(long id) {
+        String where = ItemContract.Column.ITEM_ID + "=?";
+        String[] args = new String[]{String.valueOf(id)};
+        ContentValues values = new ContentValues();
+        values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
+
+        int count = getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
         return count;
     }
 
