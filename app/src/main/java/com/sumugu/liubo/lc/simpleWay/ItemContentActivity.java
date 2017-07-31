@@ -80,7 +80,12 @@ public class ItemContentActivity extends Activity {
         textDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ItemContentActivity.this, "delete", Toast.LENGTH_SHORT).show();
+                if (deletingItem(mId) > 0)
+                    Toast.makeText(ItemContentActivity.this, "deleted was ok.", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(ItemContentActivity.this, "deleted nothing.", Toast.LENGTH_SHORT).show();
+
+                finish();
             }
         });
 
@@ -142,6 +147,13 @@ public class ItemContentActivity extends Activity {
 
         }
         return result;
+    }
+
+    int deletingItem(long id) {
+        String where = ItemContract.Column.ITEM_ID + "=?";
+        String[] args = new String[]{String.valueOf(id)};
+        int count = getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
+        return count;
     }
 
     @Override
