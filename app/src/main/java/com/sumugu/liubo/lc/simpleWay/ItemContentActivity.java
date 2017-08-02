@@ -9,30 +9,34 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class ItemContentActivity extends Activity {
     TextView textAlarm, textViewContent, textViewId;
     TextView textDelete, textFinish;
     EditText editContent;
+    LinearLayout lineActionZone;
+    long mAlarmClock = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_content);
 
+        lineActionZone = (LinearLayout) findViewById(R.id.line_action_zone);
         editContent = (EditText) findViewById(R.id.edit_content);
         textViewId = (TextView) findViewById(R.id.text_id);
         textViewContent = (TextView) findViewById(R.id.text_content);
         textDelete = (TextView) findViewById(R.id.text_delete);
         textFinish = (TextView) findViewById(R.id.text_finish);
+        textAlarm = (TextView) findViewById(R.id.text_alarm);
 
 
         Bundle bundle = getIntent().getExtras();
@@ -41,8 +45,11 @@ public class ItemContentActivity extends Activity {
 
         if (mId > 0)
             initalingItemDetail(mId);
-        else
+        else {
             textViewContent.setText("打开键盘写入内容...");
+            lineActionZone.setVisibility(View.GONE);
+        }
+
 
         textViewId.setText(String.valueOf(mId));
 //        textViewContent.setText(content);
@@ -96,7 +103,6 @@ public class ItemContentActivity extends Activity {
             }
         });
 
-        textAlarm = (TextView) findViewById(R.id.text_alarm);
         textAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +110,6 @@ public class ItemContentActivity extends Activity {
                 startActivityForResult(intent, 0);
             }
         });
-        Calendar calender = Calendar.getInstance();
-        textAlarm.setText(calender.get(Calendar.MONTH) + 1 + "," + calender.get(Calendar.DAY_OF_MONTH) + "," + calender.get(Calendar.HOUR_OF_DAY) + "," + calender.get(Calendar.MINUTE));
     }
 
     void initalingItemDetail(long id) {
@@ -117,6 +121,10 @@ public class ItemContentActivity extends Activity {
         }
 
         String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+        mAlarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+
+        if (mAlarmClock > 0)
+            textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", mAlarmClock));
 
         editContent.setText(content);
         editContent.setSelection(content.length());
@@ -129,7 +137,10 @@ public class ItemContentActivity extends Activity {
         ContentValues values = new ContentValues();
 
         if (id > 0) {
+            //update
             values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
+
             Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id));
             String where = ItemContract.Column.ITEM_ID + "=?";
             String[] paras = new String[]{String.valueOf(id)};
@@ -137,12 +148,13 @@ public class ItemContentActivity extends Activity {
             result = getContentResolver().update(uri, values, where, paras);
         } else {
 
+            //create (insert)
             values.put(ItemContract.Column.ITEM_TITLE, "a5");
             values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
             values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
             values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
             values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
 
             values.put(ItemContract.Column.ITEM_LIST_ID, 0);//default is 0
 
@@ -160,8 +172,7 @@ public class ItemContentActivity extends Activity {
     int deletingItem(long id) {
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
-        int count = getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
-        return count;
+        return getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
     }
 
     int finishItem(long id) {
@@ -171,8 +182,7 @@ public class ItemContentActivity extends Activity {
         values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
         values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
 
-        int count = getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
-        return count;
+        return getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
     }
 
     @Override
@@ -183,14 +193,16 @@ public class ItemContentActivity extends Activity {
                 long alarm = data.getLongExtra("alarmclock", 0);
                 if (alarm == 0) {
                     Toast.makeText(this, "cancel alarm done.", Toast.LENGTH_SHORT).show();
+                    mAlarmClock = alarm;
                     textAlarm.setText("无提醒");
                 } else {
-                    textAlarm.setText(DateFormat.format("yyyy-MM-dd hh:mm:ss", alarm));
+                    mAlarmClock = alarm;
+                    textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm));
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
 
-                Toast.makeText(this, "没选好", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "没想好？", Toast.LENGTH_SHORT).show();
 
             } else {
                 Toast.makeText(this, "what the fuck happend?!", Toast.LENGTH_SHORT).show();

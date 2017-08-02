@@ -7,6 +7,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -45,7 +46,7 @@ public class ItemPackageActivity extends Activity {
 //                    if (alarm == 0) {
 //                        view.setVisibility(View.GONE);
 //                    } else {
-                    String alarmString = DateFormat.format("yyyy-MM-dd hh:mm 提醒", alarm).toString();
+                    String alarmString = DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm).toString();
                     ((TextView) view).setText(alarmString);
 //                    }
                     return true;
@@ -54,18 +55,27 @@ public class ItemPackageActivity extends Activity {
 //                    if (created == 0) {
 //                        view.setVisibility(View.GONE);
 //                    } else {
-                    String createdString = DateFormat.format("yyyy-MM-dd hh:mm 创建", created).toString();
+                    String createdString = DateFormat.format("yyyy-MM-dd HH:mm 创建", created).toString();
                     ((TextView) view).setText(createdString);
 //                    }
                     return true;
                 case R.id.text_finish:
                     TextView textView = (TextView) view.findViewById(R.id.text_finish);
+
                     boolean finish = cursor.getInt(columnIndex) == 1;
                     if (finish) {
                         textView.setText("完成");
+
                     } else {
                         textView.setText("未完成");
                     }
+                    return true;
+                case R.id.text_content:
+                    TextView textContent = (TextView) view.findViewById(R.id.text_content);
+                    textContent.setText(cursor.getString(columnIndex));
+
+                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1)
+                        textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     return true;
                 default:
                     return false;

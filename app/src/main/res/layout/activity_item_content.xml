@@ -80,18 +80,31 @@
         android:paddingTop="15dp">
 
         <TextView
+            android:id="@+id/text_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="click HERE to set alarm clock..."
+            android:textSize="8pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/line_action_zone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="15dp">
+
+        <TextView
             android:id="@+id/text_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="20dp"
             android:text="删除" />
 
-        <TextView
-            android:id="@+id/text_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="click to set alarm clock..."
-            android:textSize="8pt" />
 
         <TextView
             android:id="@+id/text_finish"
