@@ -12,6 +12,24 @@
         android:id="@+id/text_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="my sky"
+        android:text="my content.."
         android:textSize="10pt" />
+
+    <TextView
+        android:id="@+id/text_finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="my finish.." />
+
+    <TextView
+        android:id="@+id/text_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="my alarm.." />
+
+    <TextView
+        android:id="@+id/text_created_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="my created at.." />
 </LinearLayout>
