@@ -62,8 +62,7 @@ public class ItemPackageActivity extends Activity {
                 case R.id.text_finish:
                     TextView textView = (TextView) view.findViewById(R.id.text_finish);
 
-                    boolean finish = cursor.getInt(columnIndex) == 1;
-                    if (finish) {
+                    if (cursor.getInt(columnIndex) == 1) {
                         textView.setText("完成");
 
                     } else {
@@ -71,11 +70,16 @@ public class ItemPackageActivity extends Activity {
                     }
                     return true;
                 case R.id.text_content:
+
                     TextView textContent = (TextView) view.findViewById(R.id.text_content);
                     textContent.setText(cursor.getString(columnIndex));
 
-                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1)
+                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
+                        //增加删除线
                         textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else
+                        //取消Flag;
+                        textContent.setPaintFlags(0);
                     return true;
                 default:
                     return false;
