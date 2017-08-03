@@ -109,7 +109,7 @@ public class ItemPackageActivity extends Activity {
         }
     };
 
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
+    static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             // pre-condition
@@ -152,7 +152,7 @@ public class ItemPackageActivity extends Activity {
 //        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,R.layout.itempackage_listview_item,null,new String[]{ItemContract.Column.ITEM_CREATED_AT_DAY},
 //                new int[] {R.id.text_created_at_day},0);
 //        mListView.setAdapter(adapter);
-//        getLoaderManager().initLoader(0,null,new ItemsGroupByLoader(this,adapter));
+//        getLoaderManager().initLoader(1,null,new ItemsGroupLoader(this,adapter));
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -231,11 +231,11 @@ public class ItemPackageActivity extends Activity {
         }
     }
 
-    class ItemsGroupByLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+    class ItemsGroupLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         SimpleCursorAdapter mSimpleCursorAdapter;
         Context mContext;
 
-        public ItemsGroupByLoader(Context context, SimpleCursorAdapter adapter) {
+        public ItemsGroupLoader(Context context, SimpleCursorAdapter adapter) {
             mSimpleCursorAdapter = adapter;
             mContext = context;
         }
