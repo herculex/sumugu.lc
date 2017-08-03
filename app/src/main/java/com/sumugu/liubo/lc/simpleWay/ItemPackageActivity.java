@@ -10,10 +10,9 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -97,12 +96,28 @@ public class ItemPackageActivity extends Activity {
                         textContent.setPaintFlags(0);
                     return true;
 
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private SimpleCursorAdapter.ViewBinder VIEW_BINDER_LISTVIEW = new SimpleCursorAdapter.ViewBinder() {
+        @Override
+        public boolean setViewValue(View view, Cursor cursor, int i) {
+            switch (view.getId()) {
                 case R.id.list_view:
-                    ListView listView = (ListView) view;
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(ItemPackageActivity.this, R.layout.simpleway_listview_item, R.id.text_content, arrayString);
-                    listView.setAdapter(arrayAdapter);
-                    setListViewHeightBasedOnChildren(listView);
+                    Log.d("Loaderrrrr", "see list_view:" + cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_ID)));
+                    ListView childListview = (ListView) view;
+                    SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(ItemPackageActivity.this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
+                    simpleCursorAdapter.setViewBinder(VIEW_BINDER);
+                    childListview.setAdapter(simpleCursorAdapter);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ItemContract.Column.ITEM_CREATED_AT_DAY, cursor.getString(i));
+                    getLoaderManager().initLoader(cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_ID)), bundle, new ItemsLoader(ItemPackageActivity.this, simpleCursorAdapter));
+                    setListViewHeightBasedOnChildren(childListview);//todo 这个listview需要重写onMeasure
                     return true;
+
                 default:
                     return false;
             }
@@ -141,37 +156,39 @@ public class ItemPackageActivity extends Activity {
 //        mListView.setAdapter(adapter);
 
         //
-        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
-        simpleCursorAdapter.setViewBinder(VIEW_BINDER);
-        mListView.setAdapter(simpleCursorAdapter);
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemContract.Column.ITEM_CREATED_AT_DAY, "2017-08-01");
-        getLoaderManager().initLoader(0, bundle, new ItemsLoader(this, simpleCursorAdapter));
+//        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
+//        simpleCursorAdapter.setViewBinder(VIEW_BINDER);
+//        mListView.setAdapter(simpleCursorAdapter);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(ItemContract.Column.ITEM_CREATED_AT_DAY, "2017-08-01");
+//        getLoaderManager().initLoader(1, bundle, new ItemsLoader(this, simpleCursorAdapter));
 
         //Group by Item_Created_at_day
-//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,R.layout.itempackage_listview_item,null,new String[]{ItemContract.Column.ITEM_CREATED_AT_DAY},
-//                new int[] {R.id.text_created_at_day},0);
-//        mListView.setAdapter(adapter);
-//        getLoaderManager().initLoader(1,null,new ItemsGroupLoader(this,adapter));
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.simpleway_listview_item, null,
+                new String[]{ItemContract.Column.ITEM_CREATED_AT_DAY, ItemContract.Column.ITEM_CREATED_AT_DAY},
+                new int[]{R.id.text_content, R.id.list_view}, 0);
+        adapter.setViewBinder(VIEW_BINDER_LISTVIEW);
+        mListView.setAdapter(adapter);
+        getLoaderManager().initLoader(0, null, new ItemsGroupLoader(this, adapter));
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView textView = (TextView) view.findViewById(R.id.text_content);
-                String content = "position:" + i;
-                content += ",id:" + l;
-                content += ",content:" + textView.getText().toString();
-
-                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
-
-                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putLong("id", l);    //get id of item inside of list
-                bundle.putString("content", textView.getText().toString()); //get content
-                itemContent.putExtras(bundle);
-                startActivityForResult(itemContent, 1);
-            }
-        });
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                TextView textView = (TextView) view.findViewById(R.id.text_content);
+//                String content = "position:" + i;
+//                content += ",id:" + l;
+//                content += ",content:" + textView.getText().toString();
+//
+//                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
+//
+//                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putLong("id", l);    //get id of item inside of list
+//                bundle.putString("content", textView.getText().toString()); //get content
+//                itemContent.putExtras(bundle);
+//                startActivityForResult(itemContent, 1);
+//            }
+//        });
 
         TextView textCreate = (TextView) findViewById(R.id.tv_create);
         textCreate.setOnClickListener(new View.OnClickListener() {
@@ -211,6 +228,7 @@ public class ItemPackageActivity extends Activity {
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             String where = ItemContract.Column.ITEM_IS_FINISHED + "=0";
 
+            Log.d("Loaderrrrr", bundle.getString(ItemContract.Column.ITEM_CREATED_AT_DAY));
             String selection = ItemContract.Column.ITEM_CREATED_AT_DAY + "=?";
             String[] args = new String[]{bundle.getString(ItemContract.Column.ITEM_CREATED_AT_DAY)};
 
