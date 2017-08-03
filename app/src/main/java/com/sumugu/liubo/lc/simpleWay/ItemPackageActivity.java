@@ -11,7 +11,10 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -20,24 +23,26 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.util.ArrayList;
+
 public class ItemPackageActivity extends Activity {
 
+    ArrayList<Long> mItemIDList = new ArrayList<>();
     private ListView mListView;
-
     private String[] arrayString = new String[]{"hello", "simpleway", "protein", "the way we found.", "do samething for",
             "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
-
     private String[] FROM = new String[]{ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
-            ItemContract.Column.ITEM_IS_FINISHED};
-
+            ItemContract.Column.ITEM_IS_FINISHED
+    };
     private int[] TO = new int[]{R.id.text_content,
             R.id.text_alarm,
             R.id.text_created_at,
-            R.id.text_finish};
-
+            R.id.text_finish
+    };
     private SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
+
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
             switch (view.getId()) {
@@ -72,7 +77,15 @@ public class ItemPackageActivity extends Activity {
                 case R.id.text_content:
 
                     TextView textContent = (TextView) view.findViewById(R.id.text_content);
-                    textContent.setText(cursor.getString(columnIndex));
+                    String text = cursor.getString(columnIndex);
+                    long item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+
+                    if (mItemIDList.isEmpty() || !mItemIDList.contains(item_id)) {
+                        mItemIDList.add(item_id);
+                    }
+
+                    text = "A" + String.valueOf(mItemIDList.indexOf(item_id)) + " " + text;
+                    textContent.setText(text);
 
                     if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
                         //增加删除线
@@ -81,11 +94,37 @@ public class ItemPackageActivity extends Activity {
                         //取消Flag;
                         textContent.setPaintFlags(0);
                     return true;
+
+                case R.id.list_view:
+                    ListView listView = (ListView) view;
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(ItemPackageActivity.this, R.layout.simpleway_listview_item, R.id.text_content, arrayString);
+                    listView.setAdapter(arrayAdapter);
+                    setListViewHeightBasedOnChildren(listView);
+                    return true;
                 default:
                     return false;
             }
         }
     };
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +134,7 @@ public class ItemPackageActivity extends Activity {
 
         mListView = (ListView) findViewById(R.id.listView);
 
-//        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.itempackage_listview_item, R.id.text_content, arrayString);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.itempackage_listview_item, R.id.text_content, arrayString);
 //        mListView.setAdapter(adapter);
 
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
