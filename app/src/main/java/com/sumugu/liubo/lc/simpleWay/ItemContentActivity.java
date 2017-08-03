@@ -152,6 +152,7 @@ public class ItemContentActivity extends Activity {
             values.put(ItemContract.Column.ITEM_TITLE, "a5");
             values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
             values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
+            values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());
             values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
             values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
             values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);

@@ -5,7 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.sumugu.liubo.lc.contract.*;
+import com.sumugu.liubo.lc.contract.DbContract;
+import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.contract.ListContract;
 
 /**
  * Created by liubo on 15/9/1.
@@ -21,12 +23,12 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql_create_table_list = String.format("create table %s (" +
-                "%s integer primary key autoincrement," +
-                "%s text," +
-                "%s text," +
-                "%s int," +
-                "%s int" +
-                ")",
+                        "%s integer primary key autoincrement," +
+                        "%s text," +
+                        "%s text," +
+                        "%s int," +
+                        "%s int" +
+                        ")",
                 ListContract.TABLE,
                 ListContract.Column.LIST_ID,
                 ListContract.Column.LIST_TITLE,
@@ -38,26 +40,28 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_table_list);
 
         String sql_create_table_item = String.format("create table %s (" +
-                "%s integer primary key autoincrement," +
-                "%s text," +
-                "%s text," +
-                "%s int," +
-                "%s int," +
-                "%s int," +
-                "%s int," +
-                "%s int" +
-                ")",
+                        "%s integer primary key autoincrement," +
+                        "%s text," +
+                        "%s text," +
+                        "%s text," +
+                        "%s int," +
+                        "%s int," +
+                        "%s int," +
+                        "%s int," +
+                        "%s int" +
+                        ")",
                 ItemContract.TABLE,
                 ItemContract.Column.ITEM_ID,
                 ItemContract.Column.ITEM_TITLE,
                 ItemContract.Column.ITEM_CONTENT,
                 ItemContract.Column.ITEM_CREATED_AT,
+                ItemContract.Column.ITEM_CREATED_AT_DAY,
                 ItemContract.Column.ITEM_IS_FINISHED,
                 ItemContract.Column.ITEM_HAS_CLOCK,
                 ItemContract.Column.ITEM_ALARM_CLOCK,
                 ItemContract.Column.ITEM_LIST_ID
         );
-        Log.d(TAG,"sumugu,onCreate with SQL:"+sql_create_table_item);
+        Log.d(TAG, "sumugu,onCreate with SQL:" + sql_create_table_item);
         db.execSQL(sql_create_table_item);
 
     }
@@ -66,7 +70,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         //Hold on, do ALTER TABLE
-        db.execSQL("drop table if exists "+DbContract.DB_NAME);
+        db.execSQL("drop table if exists " + DbContract.DB_NAME);
         onCreate(db);
     }
 }

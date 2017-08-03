@@ -34,6 +34,11 @@
         android:layout_height="wrap_content"
         android:text="my created at.." />
 
+    <TextView
+        android:id="@+id/text_created_at_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="my created at day.." />
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"

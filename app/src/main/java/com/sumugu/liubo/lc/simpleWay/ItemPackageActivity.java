@@ -34,12 +34,14 @@ public class ItemPackageActivity extends Activity {
     private String[] FROM = new String[]{ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
-            ItemContract.Column.ITEM_IS_FINISHED
+            ItemContract.Column.ITEM_IS_FINISHED,
+            ItemContract.Column.ITEM_CREATED_AT_DAY
     };
     private int[] TO = new int[]{R.id.text_content,
             R.id.text_alarm,
             R.id.text_created_at,
-            R.id.text_finish
+            R.id.text_finish,
+            R.id.text_created_at_day
     };
     private SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
 
@@ -134,13 +136,23 @@ public class ItemPackageActivity extends Activity {
 
         mListView = (ListView) findViewById(R.id.listView);
 
+        //for test listview
 //        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.itempackage_listview_item, R.id.text_content, arrayString);
 //        mListView.setAdapter(adapter);
 
+        //
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
         simpleCursorAdapter.setViewBinder(VIEW_BINDER);
         mListView.setAdapter(simpleCursorAdapter);
-        getLoaderManager().initLoader(0, null, new ItemsLoader(this, simpleCursorAdapter));
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemContract.Column.ITEM_CREATED_AT_DAY, "2017-08-01");
+        getLoaderManager().initLoader(0, bundle, new ItemsLoader(this, simpleCursorAdapter));
+
+        //Group by Item_Created_at_day
+//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,R.layout.itempackage_listview_item,null,new String[]{ItemContract.Column.ITEM_CREATED_AT_DAY},
+//                new int[] {R.id.text_created_at_day},0);
+//        mListView.setAdapter(adapter);
+//        getLoaderManager().initLoader(0,null,new ItemsGroupByLoader(this,adapter));
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -198,7 +210,44 @@ public class ItemPackageActivity extends Activity {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             String where = ItemContract.Column.ITEM_IS_FINISHED + "=0";
-            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, null, null, ItemContract.DEFAULT_SORT);
+
+            String selection = ItemContract.Column.ITEM_CREATED_AT_DAY + "=?";
+            String[] args = new String[]{bundle.getString(ItemContract.Column.ITEM_CREATED_AT_DAY)};
+
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, args, ItemContract.DEFAULT_SORT);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            mItemIDList.clear();
+            mSimpleCursorAdapter.swapCursor(cursor);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mItemIDList.clear();
+            mSimpleCursorAdapter.swapCursor(null);
+
+        }
+    }
+
+    class ItemsGroupByLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+        SimpleCursorAdapter mSimpleCursorAdapter;
+        Context mContext;
+
+        public ItemsGroupByLoader(Context context, SimpleCursorAdapter adapter) {
+            mSimpleCursorAdapter = adapter;
+            mContext = context;
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+            //1.projection必须包含_ID列；2.gourp by 采用SQL注入的技巧；
+            String[] projection = new String[]{ItemContract.Column.ITEM_ID, ItemContract.Column.ITEM_CREATED_AT_DAY};
+            String selection = "0=0) group by (" + ItemContract.Column.ITEM_CREATED_AT_DAY;
+
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, projection, selection, null, ItemContract.DEFAULT_SORT);
         }
 
         @Override
@@ -209,7 +258,6 @@ public class ItemPackageActivity extends Activity {
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
             mSimpleCursorAdapter.swapCursor(null);
-
         }
     }
 }

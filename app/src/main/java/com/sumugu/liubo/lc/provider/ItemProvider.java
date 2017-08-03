@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.sumugu.liubo.lc.contract.*;
+import com.sumugu.liubo.lc.contract.ItemContract;
 
 /**
  * Created by liubo on 15/9/1.
@@ -19,15 +19,16 @@ import com.sumugu.liubo.lc.contract.*;
 public class ItemProvider extends ContentProvider {
 
     private static final String TAG=ItemProvider.class.getSimpleName();
-    private DbHelper mDbHelper;
-
     //URI 匹配器
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     static
     {
         sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE,ItemContract.ITEM_DIR);    //多个结果
         sUriMatcher.addURI(ItemContract.AUTHORITY,ItemContract.TABLE+"/#",ItemContract.ITEM_ITEM); //一个结果
     }
+
+    private DbHelper mDbHelper;
 
     @Override
     public boolean onCreate() {
@@ -67,6 +68,7 @@ public class ItemProvider extends ContentProvider {
         Log.d(TAG,"sumugu,queried records:"+cursor.getCount());
         return cursor;
     }
+
 
     @Override
     public String getType(Uri uri) {
