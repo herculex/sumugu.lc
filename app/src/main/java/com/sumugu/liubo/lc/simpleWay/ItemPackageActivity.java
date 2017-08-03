@@ -13,6 +13,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -116,6 +117,24 @@ public class ItemPackageActivity extends Activity {
                     bundle.putString(ItemContract.Column.ITEM_CREATED_AT_DAY, cursor.getString(i));
                     getLoaderManager().initLoader(cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_ID)), bundle, new ItemsLoader(ItemPackageActivity.this, simpleCursorAdapter));
                     setListViewHeightBasedOnChildren(childListview);//todo 这个listview需要重写onMeasure
+                    childListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            TextView textView = (TextView) view.findViewById(R.id.text_content);
+                            String content = "position:" + i;
+                            content += ",id:" + l;
+                            content += ",content:" + textView.getText().toString();
+
+                            Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
+
+                            Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putLong("id", l);    //get id of item inside of list
+                            bundle.putString("content", textView.getText().toString()); //get content
+                            itemContent.putExtras(bundle);
+                            startActivityForResult(itemContent, 1);
+                        }
+                    });
                     return true;
 
                 default:
