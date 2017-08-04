@@ -23,13 +23,18 @@ import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ItemPackageActivity extends Activity {
 
     ArrayList<Long> mItemIDList = new ArrayList<>();
+    //    ArrayList<String> mCreatedAtDayList = new ArrayList<>();
+    HashMap<String, Long> mCreatedAtDayHash = new HashMap<>();
+
     private ListView mListView;
     private String[] arrayString = new String[]{"hello", "simpleway", "protein", "the way we found.", "do samething for",
             "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
+
     private String[] FROM = new String[]{ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
@@ -42,6 +47,7 @@ public class ItemPackageActivity extends Activity {
             R.id.text_finish,
             R.id.text_created_at_day
     };
+
     private SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
 
         @Override
@@ -96,6 +102,25 @@ public class ItemPackageActivity extends Activity {
                         textContent.setPaintFlags(0);
                     return true;
 
+                case R.id.text_created_at_day:
+                    TextView textCreatedAtDay = (TextView) view;
+                    long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    String day = cursor.getString(columnIndex);
+                    textCreatedAtDay.setText(day);
+
+                    if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(day)) {
+                        mCreatedAtDayHash.put(day, itemId);
+                        textCreatedAtDay.setVisibility(View.VISIBLE);
+
+                    } else {
+                        if (mCreatedAtDayHash.containsValue(itemId)) {
+                            textCreatedAtDay.setVisibility(View.VISIBLE);
+                        } else
+                            textCreatedAtDay.setVisibility(View.GONE);
+
+                    }
+
+                    return true;
                 default:
                     return false;
             }
@@ -200,12 +225,14 @@ public class ItemPackageActivity extends Activity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            mCreatedAtDayHash.clear();
             mItemIDList.clear();
             mSimpleCursorAdapter.swapCursor(cursor);
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
+            mCreatedAtDayHash.clear();
             mItemIDList.clear();
             mSimpleCursorAdapter.swapCursor(null);
 

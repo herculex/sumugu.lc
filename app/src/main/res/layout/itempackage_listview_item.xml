@@ -2,12 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_light"
     android:orientation="vertical"
     android:paddingBottom="15dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="15dp">
+    <TextView
+        android:id="@+id/text_created_at_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_bright"
+        android:text="my created at day.."
+        android:textSize="8pt" />
 
     <TextView
         android:id="@+id/text_content"
@@ -33,11 +39,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="my created at.." />
-
-    <TextView
-        android:id="@+id/text_created_at_day"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="my created at day.." />
 
 </LinearLayout>
