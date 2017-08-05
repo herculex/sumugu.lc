@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ItemPackageActivity extends Activity {
 
-    ArrayList<Long> mItemIDList = new ArrayList<>();
-    //    ArrayList<String> mCreatedAtDayList = new ArrayList<>();
     HashMap<String, Long> mCreatedAtDayHash = new HashMap<>();
     HashMap<String, List<Long>> mIdIndexHash = new HashMap<>();
 
@@ -54,6 +52,8 @@ public class ItemPackageActivity extends Activity {
 
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+            String at_day;
+            long item_id;
             switch (view.getId()) {
                 case R.id.text_alarm:
                     long alarm = cursor.getLong(columnIndex);
@@ -87,28 +87,24 @@ public class ItemPackageActivity extends Activity {
 
                     TextView textContent = (TextView) view.findViewById(R.id.text_content);
                     String text = cursor.getString(columnIndex);
-                    long item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
-                    String at_day = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT_DAY));
+                    item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    at_day = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT_DAY));
+                    ArrayList<Long> idList;
 
                     if (mIdIndexHash.isEmpty() || !mIdIndexHash.containsKey(at_day)) {
-                        ArrayList<Long> ids = new ArrayList<>();
-                        mIdIndexHash.put(at_day, ids);
+                        mIdIndexHash.put(at_day, new ArrayList<Long>());
                     }
 
                     if (mIdIndexHash.containsKey(at_day)) {
-                        ArrayList<Long> l = (ArrayList<Long>) mIdIndexHash.get(at_day);
-                        if (l.isEmpty() || !l.contains(item_id)) {
-                            l.add(item_id);
+                        idList = (ArrayList<Long>) mIdIndexHash.get(at_day);
+                        if (idList.isEmpty() || !idList.contains(item_id)) {
+                            idList.add(item_id);
                         }
                     }
 
-//                    if (mItemIDList.isEmpty() || !mItemIDList.contains(item_id)) {
-//                        mItemIDList.add(item_id);
-//                    }
+                    idList = (ArrayList<Long>) mIdIndexHash.get(at_day);
 
-                    ArrayList<Long> al = (ArrayList<Long>) mIdIndexHash.get(at_day);
-
-                    text = "A" + String.valueOf(al.indexOf(item_id)) + " " + text;
+                    text = "A" + String.valueOf(idList.indexOf(item_id)) + " " + text;
                     textContent.setText(text);
 
                     if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
@@ -121,15 +117,15 @@ public class ItemPackageActivity extends Activity {
 
                 case R.id.text_created_at_day:
                     TextView textCreatedAtDay = (TextView) view;
-                    long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
-                    String day = cursor.getString(columnIndex);
-                    textCreatedAtDay.setText(day);
+                    item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    at_day = cursor.getString(columnIndex);
+                    textCreatedAtDay.setText(at_day);
 
-                    if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(day)) {
-                        mCreatedAtDayHash.put(day, itemId);
+                    if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(at_day)) {
+                        mCreatedAtDayHash.put(at_day, item_id);
                     }
 
-                    if (mCreatedAtDayHash.containsValue(itemId)) {
+                    if (mCreatedAtDayHash.containsValue(item_id)) {
                         textCreatedAtDay.setVisibility(View.VISIBLE);
                     } else
                         textCreatedAtDay.setVisibility(View.GONE);
@@ -234,7 +230,7 @@ public class ItemPackageActivity extends Activity {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             String selection = ItemContract.Column.ITEM_IS_FINISHED + "=0";
-            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.DEFAULT_SORT);
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, null, null, ItemContract.DEFAULT_SORT);
         }
 
         @Override
