@@ -24,12 +24,14 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ItemPackageActivity extends Activity {
 
     ArrayList<Long> mItemIDList = new ArrayList<>();
     //    ArrayList<String> mCreatedAtDayList = new ArrayList<>();
     HashMap<String, Long> mCreatedAtDayHash = new HashMap<>();
+    HashMap<String, List<Long>> mIdIndexHash = new HashMap<>();
 
     private ListView mListView;
     private String[] arrayString = new String[]{"hello", "simpleway", "protein", "the way we found.", "do samething for",
@@ -86,12 +88,27 @@ public class ItemPackageActivity extends Activity {
                     TextView textContent = (TextView) view.findViewById(R.id.text_content);
                     String text = cursor.getString(columnIndex);
                     long item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    String at_day = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT_DAY));
 
-                    if (mItemIDList.isEmpty() || !mItemIDList.contains(item_id)) {
-                        mItemIDList.add(item_id);
+                    if (mIdIndexHash.isEmpty() || !mIdIndexHash.containsKey(at_day)) {
+                        ArrayList<Long> ids = new ArrayList<>();
+                        mIdIndexHash.put(at_day, ids);
                     }
 
-                    text = "A" + String.valueOf(mItemIDList.indexOf(item_id)) + " " + text;
+                    if (mIdIndexHash.containsKey(at_day)) {
+                        ArrayList<Long> l = (ArrayList<Long>) mIdIndexHash.get(at_day);
+                        if (l.isEmpty() || !l.contains(item_id)) {
+                            l.add(item_id);
+                        }
+                    }
+
+//                    if (mItemIDList.isEmpty() || !mItemIDList.contains(item_id)) {
+//                        mItemIDList.add(item_id);
+//                    }
+
+                    ArrayList<Long> al = (ArrayList<Long>) mIdIndexHash.get(at_day);
+
+                    text = "A" + String.valueOf(al.indexOf(item_id)) + " " + text;
                     textContent.setText(text);
 
                     if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
@@ -110,15 +127,12 @@ public class ItemPackageActivity extends Activity {
 
                     if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(day)) {
                         mCreatedAtDayHash.put(day, itemId);
-                        textCreatedAtDay.setVisibility(View.VISIBLE);
-
-                    } else {
-                        if (mCreatedAtDayHash.containsValue(itemId)) {
-                            textCreatedAtDay.setVisibility(View.VISIBLE);
-                        } else
-                            textCreatedAtDay.setVisibility(View.GONE);
-
                     }
+
+                    if (mCreatedAtDayHash.containsValue(itemId)) {
+                        textCreatedAtDay.setVisibility(View.VISIBLE);
+                    } else
+                        textCreatedAtDay.setVisibility(View.GONE);
 
                     return true;
                 default:
@@ -226,14 +240,14 @@ public class ItemPackageActivity extends Activity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
             mCreatedAtDayHash.clear();
-            mItemIDList.clear();
+            mIdIndexHash.clear();
             mSimpleCursorAdapter.swapCursor(cursor);
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
             mCreatedAtDayHash.clear();
-            mItemIDList.clear();
+            mIdIndexHash.clear();
             mSimpleCursorAdapter.swapCursor(null);
 
         }
