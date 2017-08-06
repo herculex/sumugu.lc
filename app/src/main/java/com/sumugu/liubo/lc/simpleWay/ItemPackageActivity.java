@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,16 +36,20 @@ public class ItemPackageActivity extends Activity {
     private String[] arrayString = new String[]{"hello", "simpleway", "protein", "the way we found.", "do samething for",
             "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
 
-    private String[] FROM = new String[]{ItemContract.Column.ITEM_CONTENT,
+    private String[] FROM = new String[]{
+            ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
-            ItemContract.Column.ITEM_IS_FINISHED,
+            ItemContract.Column.ITEM_ID,
+            ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_CREATED_AT_DAY
     };
-    private int[] TO = new int[]{R.id.text_content,
+    private int[] TO = new int[]{
+            R.id.text_content,
             R.id.text_alarm,
             R.id.text_created_at,
-            R.id.text_finish,
+            R.id.text_flag,
+            R.id.text_content,
             R.id.text_created_at_day
     };
 
@@ -70,24 +75,25 @@ public class ItemPackageActivity extends Activity {
 //                        view.setVisibility(View.GONE);
 //                    } else {
                     String createdString = DateFormat.format("yyyy-MM-dd HH:mm 创建", created).toString();
+                    createdString = DateUtils.getRelativeTimeSpanString(created).toString();
                     ((TextView) view).setText(createdString);
 //                    }
                     return true;
-                case R.id.text_finish:
-                    TextView textView = (TextView) view.findViewById(R.id.text_finish);
-
-                    if (cursor.getInt(columnIndex) == 1) {
-                        textView.setText("完成");
-
-                    } else {
-                        textView.setText("未完成");
-                    }
-                    return true;
                 case R.id.text_content:
+                    TextView textContent = (TextView) view;
+                    textContent.setText(cursor.getString(columnIndex));
 
-                    TextView textContent = (TextView) view.findViewById(R.id.text_content);
-                    String text = cursor.getString(columnIndex);
-                    item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
+                        //增加删除线
+                        textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else
+                        //取消Flag;
+                        textContent.setPaintFlags(0);
+                    return true;
+                case R.id.text_flag:
+
+                    TextView textFlag = (TextView) view;
+                    item_id = cursor.getLong(columnIndex);
                     at_day = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT_DAY));
                     ArrayList<Long> idList;
 
@@ -104,15 +110,9 @@ public class ItemPackageActivity extends Activity {
 
                     idList = (ArrayList<Long>) mIdIndexHash.get(at_day);
 
-                    text = "A" + String.valueOf(idList.indexOf(item_id)) + " " + text;
-                    textContent.setText(text);
+                    String text = "A" + String.valueOf(idList.indexOf(item_id) + 1);
+                    textFlag.setText(text);
 
-                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
-                        //增加删除线
-                        textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                    } else
-                        //取消Flag;
-                        textContent.setPaintFlags(0);
                     return true;
 
                 case R.id.text_created_at_day:

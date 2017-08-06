@@ -12,19 +12,34 @@
         android:id="@+id/text_created_at_day"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:text="my created at day.."
-        android:textSize="12pt" />
+        android:paddingBottom="6dp"
+        android:paddingRight="8dp"
+        android:textSize="@dimen/abc_text_size_title_material" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/corners_top_round_bg">
+        android:background="@drawable/corners_top_round_bg"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp">
+
+        <TextView
+            android:id="@+id/text_flag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="A flag"/>
 
         <TextView
             android:id="@+id/text_alarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="my alarm.." />
     </RelativeLayout>
 
@@ -32,20 +47,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/corners_bottom_round_bg"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/text_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="my content.."
-            android:textSize="10pt" />
-
-        <TextView
-            android:id="@+id/text_finish"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="my finish.." />
+            android:paddingBottom="10dp"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:id="@+id/text_created_at"
