@@ -24,6 +24,8 @@ import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,12 +64,13 @@ public class ItemPackageActivity extends Activity {
             switch (view.getId()) {
                 case R.id.text_alarm:
                     long alarm = cursor.getLong(columnIndex);
-//                    if (alarm == 0) {
-//                        view.setVisibility(View.GONE);
-//                    } else {
-                    String alarmString = DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm).toString();
-                    ((TextView) view).setText(alarmString);
-//                    }
+                    if (alarm == 0) {
+                        view.setVisibility(View.GONE);
+                    } else {
+                        String alarmString = DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm).toString();
+                        ((TextView) view).setText(alarmString);
+                        view.setVisibility(View.VISIBLE);
+                    }
                     return true;
                 case R.id.text_created_at:
                     long created = cursor.getLong(columnIndex);
@@ -86,9 +89,10 @@ public class ItemPackageActivity extends Activity {
                     if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
                         //增加删除线
                         textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                    } else
+                    } else {
                         //取消Flag;
                         textContent.setPaintFlags(0);
+                    }
                     return true;
                 case R.id.text_flag:
 
@@ -119,7 +123,16 @@ public class ItemPackageActivity extends Activity {
                     TextView textCreatedAtDay = (TextView) view;
                     item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
                     at_day = cursor.getString(columnIndex);
-                    textCreatedAtDay.setText(at_day);
+
+                    Calendar calendar = Calendar.getInstance();
+                    String dayStrings[] = at_day.split("-");
+
+                    calendar.set(Integer.valueOf(dayStrings[0]),
+                            Integer.valueOf(dayStrings[1]) - 1,
+                            Integer.valueOf(dayStrings[2]), 0, 0, 0);
+
+                    String week = DateUtils.formatDateTime(ItemPackageActivity.this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_WEEKDAY);
+                    textCreatedAtDay.setText(dayStrings[1] + "-" + dayStrings[2] + " " + week);
 
                     if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(at_day)) {
                         mCreatedAtDayHash.put(at_day, item_id);

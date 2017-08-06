@@ -64,8 +64,14 @@
             android:id="@+id/edit_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:elevation="2dp"
             android:hint="马上输入..."
-            android:textSize="25sp" />
+            android:gravity="top"
+            android:minLines="2"
+            android:textSize="@dimen/abc_text_size_title_material"
+            android:background="@drawable/corners_all_round_bg"/>
 
     </LinearLayout>
 
@@ -102,9 +108,9 @@
             android:id="@+id/text_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="20dp"
-            android:text="删除" />
-
+            android:padding="10dp"
+            android:text="删除"
+            android:background="@drawable/corners_all_round_bg"/>
 
         <TextView
             android:id="@+id/text_finish"
@@ -112,7 +118,9 @@
             android:layout_height="wrap_content"
             android:text="完成"
             android:gravity="center"
-            android:background="@drawable/special_circle_bg"/>
+            android:background="@drawable/special_circle_bg"
+            android:elevation="5dp"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 </LinearLayout>
 
