@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -23,7 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Toast.makeText(context, "Alarm启动", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Alarm启动", Toast.LENGTH_SHORT).show();
 
             Uri uri = ItemContract.CONTENT_URI;
             String selection = ItemContract.Column.ITEM_ALARM_CLOCK + ">?";
@@ -38,11 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 calendar.setTimeInMillis(alarmClock);
                 AlarmUntils alarmUntils = new AlarmUntils();
                 alarmUntils.setAlarmClock(context, calendar, true, 60 * 1000, itemId);
-
-                Log.d("Alarmddd", cursor.getCount() + "-" + cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT)));
-
             }
-
             cursor.close();
 
         } else {
