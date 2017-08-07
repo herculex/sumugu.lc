@@ -3,10 +3,15 @@ package com.sumugu.liubo.lc.alarmclock;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.notification.NotifyService;
+
+import java.util.Date;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public AlarmReceiver() {
@@ -16,12 +21,29 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
-        //Toast.makeText(context, "闹钟时间到:" + intent.getAction(), Toast.LENGTH_LONG).show();
-        //
-        Log.d("sumugu.AlarmRec", "onReceive called.action=" + intent.getAction());
-        Intent notifyService = new Intent(context, NotifyService.class);
-        //传送ItemID到通知的服务实例
-        notifyService.putExtra(ItemContract.Column.ITEM_ID, intent.getLongExtra(ItemContract.Column.ITEM_ID, -1));
-        context.startService(notifyService);
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Toast.makeText(context, "Alarm启动", Toast.LENGTH_SHORT).show();
+
+            Uri uri = ItemContract.CONTENT_URI;
+            String selection = ItemContract.Column.ITEM_ALARM_CLOCK + ">?";
+            String[] args = new String[]{String.valueOf(new Date().getTime())};
+
+            Cursor cursor = context.getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
+            if (!cursor.moveToFirst())
+                return;
+            while (cursor.moveToNext()) {
+                Log.d("Alarmddd", cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
+            }
+            cursor.close();
+
+        } else {
+            Toast.makeText(context, "闹钟时间到:" + intent.getAction(), Toast.LENGTH_LONG).show();
+            //
+            Intent notifyService = new Intent(context, NotifyService.class);
+            //传送ItemID到通知的服务实例
+            notifyService.putExtra(ItemContract.Column.ITEM_ID, intent.getLongExtra(ItemContract.Column.ITEM_ID, -1));
+            context.startService(notifyService);
+        }
+
     }
 }
