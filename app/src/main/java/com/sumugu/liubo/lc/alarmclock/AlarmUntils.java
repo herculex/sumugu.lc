@@ -3,6 +3,7 @@ package com.sumugu.liubo.lc.alarmclock;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -14,14 +15,14 @@ import java.util.Calendar;
  */
 public class AlarmUntils {
 
-    public String setAlarmClock(Activity activity, Calendar newCalendar, Calendar oldCalendar, boolean repeat, long interval, long actionId) {
+    public String setAlarmClock(Context activity, Calendar newCalendar, Calendar oldCalendar, boolean repeat, long interval, long actionId) {
         if (oldCalendar != null) {
             cancelAlarmClock(activity, oldCalendar, actionId);
         }
         return setAlarmClock(activity, newCalendar, repeat, interval, actionId);
     }
 
-    public String setAlarmClock(Activity activity, Calendar calendar, boolean repeat, long interval, long actionId) {
+    public String setAlarmClock(Context activity, Calendar calendar, boolean repeat, long interval, long actionId) {
         if (calendar == null)
             return "Setting Alarm is NULL.";
 
@@ -60,7 +61,7 @@ public class AlarmUntils {
                 + "日" + hour + "时" + minute + "分" + second + "秒.");
     }
 
-    public String cancelAlarmClock(Activity activity, Calendar calendar, long actionId) {
+    public String cancelAlarmClock(Context activity, Calendar calendar, long actionId) {
         if (calendar == null)
             return "Cancel Alarm is NULL.";
 

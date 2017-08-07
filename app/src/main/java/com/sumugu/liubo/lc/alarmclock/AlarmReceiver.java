@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.notification.NotifyService;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -29,11 +30,19 @@ public class AlarmReceiver extends BroadcastReceiver {
             String[] args = new String[]{String.valueOf(new Date().getTime())};
 
             Cursor cursor = context.getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
-            if (!cursor.moveToFirst())
-                return;
-            while (cursor.moveToNext()) {
-                Log.d("Alarmddd", cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT)));
+
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(alarmClock);
+                AlarmUntils alarmUntils = new AlarmUntils();
+                alarmUntils.setAlarmClock(context, calendar, true, 60 * 1000, itemId);
+
+                Log.d("Alarmddd", cursor.getCount() + "-" + cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT)));
+
             }
+
             cursor.close();
 
         } else {

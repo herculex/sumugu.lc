@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,7 +25,6 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -175,25 +172,6 @@ public class ItemPackageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_package);
-
-        ////Testing Code for booted alarms set up
-        Uri uri = ItemContract.CONTENT_URI;
-        String selection = ItemContract.Column.ITEM_ALARM_CLOCK + ">?";
-        String[] args = new String[]{String.valueOf(new Date().getTime())};
-
-        Cursor cursor = this.getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
-
-        if (cursor.moveToFirst()) {
-            Log.d("Alarmddd_first", cursor.getCount() + "-" + cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT)));
-            while (cursor.moveToNext()) {
-                Log.d("Alarmddd", cursor.getCount() + "-" + cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT)));
-            }
-        } else {
-            Toast.makeText(this, "cursor noo........", Toast.LENGTH_SHORT).show();
-        }
-
-        cursor.close();
-        ////
 
         mListView = (ListView) findViewById(R.id.listView);
 
