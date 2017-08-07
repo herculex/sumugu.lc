@@ -14,8 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
+import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class ItemContentActivity extends Activity {
@@ -23,7 +25,12 @@ public class ItemContentActivity extends Activity {
     TextView textDelete, textFinish;
     EditText editContent;
     LinearLayout lineActionZone;
-    long mAlarmClock = 0;
+
+    long mId;
+    long mOldAlarmClock = 0;
+    long mNewAlarmClock = 0;
+    boolean mIsFinished = false;
+    AlarmUntils alarmUntils = new AlarmUntils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +47,7 @@ public class ItemContentActivity extends Activity {
 
 
         Bundle bundle = getIntent().getExtras();
-        final long mId = bundle.getLong("id");
+        mId = bundle.getLong("id");
         String content = bundle.getString("content");
 
         if (mId > 0)
@@ -68,6 +75,9 @@ public class ItemContentActivity extends Activity {
             public void onClick(View view) {
                 if (savingItem(mId) > 0) {
                     Toast.makeText(ItemContentActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
+                    //set alarm clock here when saved was OK.
+                    setUpAlarmClock();
+
                 } else {
                     Toast.makeText(ItemContentActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
                 }
@@ -80,9 +90,11 @@ public class ItemContentActivity extends Activity {
         textDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (deletingItem(mId) > 0)
+                if (deletingItem(mId) > 0) {
                     Toast.makeText(ItemContentActivity.this, "deleted was ok.", Toast.LENGTH_SHORT).show();
-                else
+                    //cancel alarm clock here when deleted was OK.
+                    cancelAlarmClock();
+                } else
                     Toast.makeText(ItemContentActivity.this, "deleted nothing.", Toast.LENGTH_SHORT).show();
 
                 setResult(RESULT_OK);
@@ -93,9 +105,11 @@ public class ItemContentActivity extends Activity {
         textFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (finishItem(mId) > 0)
+                if (finishItem(mId) > 0) {
                     Toast.makeText(ItemContentActivity.this, "finish ok. ", Toast.LENGTH_SHORT).show();
-                else
+                    //cancel alarm clock here when finished was OK.
+                    cancelAlarmClock();
+                } else
                     Toast.makeText(ItemContentActivity.this, "finish not ok ,again.", Toast.LENGTH_SHORT).show();
 
                 setResult(RESULT_OK);
@@ -112,6 +126,35 @@ public class ItemContentActivity extends Activity {
         });
     }
 
+    void setUpAlarmClock() {
+        if (mIsFinished)
+            return;
+
+        Calendar old = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        if (mOldAlarmClock > 0)
+            old.setTimeInMillis(mOldAlarmClock);
+        else
+            old = null;
+
+        if (mNewAlarmClock > 0)
+            now.setTimeInMillis(mNewAlarmClock);
+        else
+            now = null;
+
+        alarmUntils.setAlarmClock(ItemContentActivity.this, now, old, true, 60 * 1000, mId);
+    }
+
+    void cancelAlarmClock() {
+        if (mOldAlarmClock > 0) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(mOldAlarmClock);
+
+            alarmUntils.cancelAlarmClock(ItemContentActivity.this, calendar, mId);
+        }
+    }
+
     void initalingItemDetail(long id) {
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id));
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -121,10 +164,12 @@ public class ItemContentActivity extends Activity {
         }
 
         String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
-        mAlarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+        mIsFinished = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1;
+        mOldAlarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+        mNewAlarmClock = mOldAlarmClock;
 
-        if (mAlarmClock > 0)
-            textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", mAlarmClock));
+        if (mOldAlarmClock > 0)
+            textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", mOldAlarmClock));
 
         editContent.setText(content);
         editContent.setSelection(content.length());
@@ -139,7 +184,7 @@ public class ItemContentActivity extends Activity {
         if (id > 0) {
             //update
             values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mNewAlarmClock);
 
             Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id));
             String where = ItemContract.Column.ITEM_ID + "=?";
@@ -155,11 +200,12 @@ public class ItemContentActivity extends Activity {
             values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());
             values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
             values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
-            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
+            values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mNewAlarmClock);
 
             values.put(ItemContract.Column.ITEM_LIST_ID, 0);//default is 0
 
             Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
+            mId = Integer.valueOf(uri.getLastPathSegment());
 
             if (uri != null) {
                 result = 1;
@@ -194,10 +240,10 @@ public class ItemContentActivity extends Activity {
                 long alarm = data.getLongExtra("alarmclock", 0);
                 if (alarm == 0) {
                     Toast.makeText(this, "cancel alarm done.", Toast.LENGTH_SHORT).show();
-                    mAlarmClock = alarm;
-                    textAlarm.setText("无提醒");
+                    mNewAlarmClock = alarm;
+                    textAlarm.setText("点击 '这里' 设置提醒闹钟");
                 } else {
-                    mAlarmClock = alarm;
+                    mNewAlarmClock = alarm;
                     textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm));
                 }
 
