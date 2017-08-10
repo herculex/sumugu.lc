@@ -20,11 +20,6 @@
         <activity
             android:name=".MainActivity"
             android:excludeFromRecents="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <provider
@@ -101,11 +96,18 @@
             android:name=".xdemo.Xdemo03"
             android:label="@string/title_activity_xdemo03"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".simpleWay.ItemPackageActivity" />
+        <activity android:name=".simpleWay.ItemPackageActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".simpleWay.ItemContentActivity" />
         <activity
             android:name=".simpleWay.DatePickerActivity"
-            android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth"></activity>
+            android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth" />
     </application>
 
 </manifest>
