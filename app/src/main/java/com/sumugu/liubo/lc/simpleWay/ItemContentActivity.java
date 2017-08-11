@@ -198,7 +198,8 @@ public class ItemContentActivity extends Activity {
             values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
             values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
             values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());
-            values.put(ItemContract.Column.ITEM_IS_FINISHED, 0);
+            values.put(ItemContract.Column.ITEM_IS_FINISHED, false);
+            values.put(ItemContract.Column.ITEM_FINISHED_AT, 0);
             values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
             values.put(ItemContract.Column.ITEM_ALARM_CLOCK, mNewAlarmClock);
 
@@ -207,7 +208,7 @@ public class ItemContentActivity extends Activity {
             Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
             mId = Integer.valueOf(uri.getLastPathSegment());
 
-            if (uri != null) {
+            if (mId > 0) {
                 result = 1;
                 Toast.makeText(this, "created ok." + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
             }
@@ -228,6 +229,7 @@ public class ItemContentActivity extends Activity {
         ContentValues values = new ContentValues();
         values.put(ItemContract.Column.ITEM_CONTENT, editContent.getText().toString());
         values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
+        values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
 
         return getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
     }

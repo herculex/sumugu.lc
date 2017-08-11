@@ -48,6 +48,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s int," +
                         "%s int," +
                         "%s int," +
+                        "%s int," +
                         "%s int" +
                         ")",
                 ItemContract.TABLE,
@@ -57,6 +58,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 ItemContract.Column.ITEM_CREATED_AT,
                 ItemContract.Column.ITEM_CREATED_AT_DAY,
                 ItemContract.Column.ITEM_IS_FINISHED,
+                ItemContract.Column.ITEM_FINISHED_AT,
                 ItemContract.Column.ITEM_HAS_CLOCK,
                 ItemContract.Column.ITEM_ALARM_CLOCK,
                 ItemContract.Column.ITEM_LIST_ID

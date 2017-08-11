@@ -31,6 +31,7 @@ public class ItemContract extends DbContract {
         public static final String ITEM_CREATED_AT = "item_created_at";
         public static final String ITEM_CREATED_AT_DAY = "item_created_at_day";
         public static final String ITEM_IS_FINISHED = "item_is_finished";
+        public static final String ITEM_FINISHED_AT = "item_finished_at";
         public static final String ITEM_HAS_CLOCK = "item_has_clock";
         public static final String ITEM_ALARM_CLOCK = "item_alarm_clock";
         public static final String ITEM_LIST_ID = "item_list_id";
