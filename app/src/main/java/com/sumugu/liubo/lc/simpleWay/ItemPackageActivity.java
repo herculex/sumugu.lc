@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -25,6 +26,7 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -209,14 +211,31 @@ public class ItemPackageActivity extends Activity {
         textCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (checkUnFinishedLimit()) {
+                    Toast.makeText(ItemPackageActivity.this, "我的妈呀，今天你安排有点多啦！先搞定几个再来，祝你顺利！", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("id", "000");
+                bundle.putString("id", "0");
                 bundle.putString("content", "create new content");
                 itemContent.putExtras(bundle);
                 startActivityForResult(itemContent, 2);
             }
         });
+    }
+
+    boolean checkUnFinishedLimit() {
+        boolean limit = false;
+        Uri uri = ItemContract.CONTENT_URI;
+        String selection = ItemContract.Column.ITEM_CREATED_AT_DAY + "=? and " + ItemContract.Column.ITEM_IS_FINISHED + "=0";
+        String[] args = new String[]{DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString()};
+        Cursor cursor = getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
+        if (cursor.getCount() >= 5) {
+            limit = true;
+        }
+        cursor.close();
+        return limit;
     }
 
     @Override
