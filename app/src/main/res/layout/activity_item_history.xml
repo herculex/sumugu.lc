@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.sumugu.liubo.lc.simpleWay.ItemPackageActivity">
+    tools:context="com.sumugu.liubo.lc.simpleWay.ItemHistoryActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@android:color/holo_blue_light">
+        android:background="@android:color/holo_blue_light"
+        android:elevation="4dp">
 
         <TextView
-            android:id="@+id/tv_history"
+            android:id="@+id/tv_clear"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="history" />
+            android:text="clear" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,19 +28,18 @@
             android:textColor="@android:color/white" />
 
         <TextView
-            android:id="@+id/tv_create"
+            android:id="@+id/tv_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:gravity="center"
-            android:text="create" />
+            android:text="back" />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null">
-
-    </ListView>
-</LinearLayout>
+        android:layout_marginTop="40dp"
+        android:divider="@null"/>
+</RelativeLayout>

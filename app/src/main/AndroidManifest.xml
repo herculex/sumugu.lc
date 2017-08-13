@@ -17,8 +17,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".MainActivity"
-            android:excludeFromRecents="true">
-        </activity>
+            android:excludeFromRecents="true"></activity>
 
         <provider
             android:name=".provider.ListProvider"
@@ -95,7 +94,6 @@
             android:label="@string/title_activity_xdemo03"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".simpleWay.ItemPackageActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -106,6 +104,7 @@
         <activity
             android:name=".simpleWay.DatePickerActivity"
             android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth" />
+        <activity android:name=".simpleWay.ItemHistoryActivity"></activity>
     </application>
 
 </manifest>

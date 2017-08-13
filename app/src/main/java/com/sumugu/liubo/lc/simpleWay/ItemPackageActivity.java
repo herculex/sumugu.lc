@@ -40,7 +40,6 @@ public class ItemPackageActivity extends Activity {
             "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
 
     private String[] FROM = new String[]{
-            ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
             ItemContract.Column.ITEM_ID,
@@ -48,7 +47,6 @@ public class ItemPackageActivity extends Activity {
             ItemContract.Column.ITEM_CREATED_AT_DAY
     };
     private int[] TO = new int[]{
-            R.id.text_content,
             R.id.text_alarm,
             R.id.text_created_at,
             R.id.text_flag,
@@ -223,6 +221,14 @@ public class ItemPackageActivity extends Activity {
                 startActivityForResult(itemContent, 2);
             }
         });
+        TextView textHistory = (TextView)findViewById(R.id.tv_history);
+        textHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent itemHistory = new Intent(ItemPackageActivity.this,ItemHistoryActivity.class);
+                startActivityForResult(itemHistory,3);
+            }
+        });
     }
 
     boolean checkUnFinishedLimit() {
@@ -261,7 +267,7 @@ public class ItemPackageActivity extends Activity {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             String selection = ItemContract.Column.ITEM_IS_FINISHED + "=0";
-            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, null, null, ItemContract.DEFAULT_SORT);
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.DEFAULT_SORT);
         }
 
         @Override
