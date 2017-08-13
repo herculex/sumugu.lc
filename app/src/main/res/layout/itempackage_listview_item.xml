@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="10dp"
                 android:text="my content.."
-                android:textSize="@dimen/abc_text_size_headline_material" />
+                android:textSize="@dimen/abc_text_size_large_material" />
 
             <TextView
                 android:id="@+id/text_created_at"

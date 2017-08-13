@@ -202,6 +202,7 @@ public class ItemPackageActivity extends Activity {
                 bundle.putString("content", textView.getText().toString()); //get content
                 itemContent.putExtras(bundle);
                 startActivityForResult(itemContent, 1);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
 
@@ -219,6 +220,7 @@ public class ItemPackageActivity extends Activity {
                 bundle.putString("content", "create new content");
                 itemContent.putExtras(bundle);
                 startActivityForResult(itemContent, 2);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
         TextView textHistory = (TextView) findViewById(R.id.tv_history);
@@ -227,6 +229,7 @@ public class ItemPackageActivity extends Activity {
             public void onClick(View view) {
                 Intent itemHistory = new Intent(ItemPackageActivity.this, ItemHistoryActivity.class);
                 startActivityForResult(itemHistory, 3);
+                overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
             }
         });
     }

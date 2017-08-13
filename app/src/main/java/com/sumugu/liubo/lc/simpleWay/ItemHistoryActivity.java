@@ -127,6 +127,7 @@ public class ItemHistoryActivity extends Activity {
             public void onClick(View view) {
                 setResult(RESULT_CANCELED);
                 finish();
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
 

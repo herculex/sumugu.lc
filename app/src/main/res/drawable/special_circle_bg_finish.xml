@@ -5,7 +5,7 @@
         <shape android:shape="oval" >
             <corners android:radius="90dp"/>
             <solid android:color="@android:color/white" />
-            <size android:width="170dp" android:height="170dp"/>
+            <size android:width="96dp" android:height="96dp"/>
         </shape>
     </item>
 
@@ -14,16 +14,16 @@
             <item android:state_pressed="true">
                 <shape android:shape="oval" >
                     <corners android:radius="90dp"/>
-                    <solid android:color="#e66b4f" />
-                    <size android:width="162dp" android:height="162dp"/>
+                    <solid android:color="@android:color/holo_green_light" />
+                    <size android:width="88dp" android:height="88dp"/>
                 </shape>
             </item>
 
             <item>
                 <shape android:shape="oval" >
                     <corners android:radius="90dp"/>
-                    <solid android:color="#f3876f" />
-                    <size android:width="162dp" android:height="162dp"/>
+                    <solid android:color="@android:color/white" />
+                    <size android:width="88dp" android:height="88dp"/>
                 </shape>
             </item>
 

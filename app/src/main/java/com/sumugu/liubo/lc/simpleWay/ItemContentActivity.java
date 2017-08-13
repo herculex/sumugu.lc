@@ -68,6 +68,8 @@ public class ItemContentActivity extends Activity {
             @Override
             public void onClick(View view) {
                 finish();
+                setResult(RESULT_CANCELED);
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
         textSave.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +86,7 @@ public class ItemContentActivity extends Activity {
 
                 setResult(RESULT_OK);
                 finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
 
@@ -99,6 +102,7 @@ public class ItemContentActivity extends Activity {
 
                 setResult(RESULT_OK);
                 finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
 
@@ -114,6 +118,7 @@ public class ItemContentActivity extends Activity {
 
                 setResult(RESULT_OK);
                 finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
 
