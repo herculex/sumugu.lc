@@ -5,18 +5,18 @@
         android:duration="200"
         android:fromXDelta="0%p"
         android:toXDelta="-100%p" />
-    <scale
-        android:duration="200"
-        android:fromXScale="1"
-        android:fromYScale="1"
-        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
-        android:pivotX="50%"
-        android:pivotY="50%"
-        android:toXScale="0.7"
-        android:toYScale="0.7" />
+    <!--<scale-->
+        <!--android:duration="200"-->
+        <!--android:fromXScale="1"-->
+        <!--android:fromYScale="1"-->
+        <!--android:interpolator="@android:anim/accelerate_decelerate_interpolator"-->
+        <!--android:pivotX="50%"-->
+        <!--android:pivotY="50%"-->
+        <!--android:toXScale="0.7"-->
+        <!--android:toYScale="0.7" />-->
 
     <!--<alpha-->
-        <!--android:duration="2000"-->
+        <!--android:duration="200"-->
         <!--android:fromAlpha="1"-->
         <!--android:toAlpha="0" />-->
 
