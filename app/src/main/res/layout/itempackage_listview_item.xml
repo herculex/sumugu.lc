@@ -32,14 +32,14 @@
             android:id="@+id/text_flag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:text="A flag" />
 
         <TextView
             android:id="@+id/text_alarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="end"
             android:text="my alarm.." />
     </RelativeLayout>
 

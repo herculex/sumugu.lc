@@ -221,12 +221,12 @@ public class ItemPackageActivity extends Activity {
                 startActivityForResult(itemContent, 2);
             }
         });
-        TextView textHistory = (TextView)findViewById(R.id.tv_history);
+        TextView textHistory = (TextView) findViewById(R.id.tv_history);
         textHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent itemHistory = new Intent(ItemPackageActivity.this,ItemHistoryActivity.class);
-                startActivityForResult(itemHistory,3);
+                Intent itemHistory = new Intent(ItemPackageActivity.this, ItemHistoryActivity.class);
+                startActivityForResult(itemHistory, 3);
             }
         });
     }
@@ -251,6 +251,9 @@ public class ItemPackageActivity extends Activity {
         }
         if (requestCode == 2) {
             Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == 3) {
+            Toast.makeText(this, "it's ItemHistory come back", Toast.LENGTH_SHORT).show();
         }
     }
 
