@@ -14,7 +14,7 @@ import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -40,6 +40,7 @@ public class ItemPackageActivity extends Activity {
             "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
 
     private String[] FROM = new String[]{
+            ItemContract.Column.ITEM_ID,
             ItemContract.Column.ITEM_ALARM_CLOCK,
             ItemContract.Column.ITEM_CREATED_AT,
             ItemContract.Column.ITEM_ID,
@@ -47,6 +48,7 @@ public class ItemPackageActivity extends Activity {
             ItemContract.Column.ITEM_CREATED_AT_DAY
     };
     private int[] TO = new int[]{
+            R.id.linear_content,
             R.id.text_alarm,
             R.id.text_created_at,
             R.id.text_flag,
@@ -59,8 +61,22 @@ public class ItemPackageActivity extends Activity {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
             String at_day;
-            long item_id;
+            final long item_id;
             switch (view.getId()) {
+                case R.id.linear_content:
+                    item_id = cursor.getLong(columnIndex);
+                    ((LinearLayout) view).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putLong("id", item_id);    //get id of item inside of list
+                            itemContent.putExtras(bundle);
+                            startActivityForResult(itemContent, 1);
+                            overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                        }
+                    });
+                    return true;
                 case R.id.text_alarm:
                     long alarm = cursor.getLong(columnIndex);
                     if (alarm == 0) {
@@ -174,7 +190,6 @@ public class ItemPackageActivity extends Activity {
         setContentView(R.layout.activity_item_package);
 
         mListView = (ListView) findViewById(R.id.listView);
-
         //for test listview
 //        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.itempackage_listview_item, R.id.text_content, arrayString);
 //        mListView.setAdapter(adapter);
@@ -186,25 +201,25 @@ public class ItemPackageActivity extends Activity {
         getLoaderManager().initLoader(1, null, new ItemsLoader(this, simpleCursorAdapter));
 
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView textView = (TextView) view.findViewById(R.id.text_content);
-                String content = "position:" + i;
-                content += ",id:" + l;
-                content += ",content:" + textView.getText().toString();
-
-                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
-
-                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putLong("id", l);    //get id of item inside of list
-                bundle.putString("content", textView.getText().toString()); //get content
-                itemContent.putExtras(bundle);
-                startActivityForResult(itemContent, 1);
-                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-            }
-        });
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                TextView textView = (TextView) view.findViewById(R.id.text_content);
+//                String content = "position:" + i;
+//                content += ",id:" + l;
+//                content += ",content:" + textView.getText().toString();
+//
+//                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
+//
+//                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putLong("id", l);    //get id of item inside of list
+//                bundle.putString("content", textView.getText().toString()); //get content
+//                itemContent.putExtras(bundle);
+//                startActivityForResult(itemContent, 1);
+//                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//            }
+//        });
 
         TextView textCreate = (TextView) findViewById(R.id.tv_create);
         textCreate.setOnClickListener(new View.OnClickListener() {

@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -127,6 +129,17 @@ public class ItemContentActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent(ItemContentActivity.this, DatePickerActivity.class);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+//        editContent.setInputType(InputType.TYPE_NULL);
+        editContent.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Toast.makeText(ItemContentActivity.this, "you just press ", Toast.LENGTH_SHORT).show();
+                }
+                return false;
             }
         });
     }
@@ -265,5 +278,9 @@ public class ItemContentActivity extends Activity {
         }
     }
 
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+    }
 
 }
