@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -112,19 +111,6 @@ public class ItemHistoryActivity extends Activity {
         mTextClear = (TextView) findViewById(R.id.tv_clear);
         //
         mListView = (ListView) findViewById(R.id.listView);
-
-        //add header
-        View header = getLayoutInflater().inflate(R.layout.itempackage_listview_header, null);
-        TextView textClear = (TextView) header.findViewById(R.id.text_clear);
-        textClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(ItemHistoryActivity.this, "holy high,this header", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mListView.addHeaderView(header);
-        View footer = LayoutInflater.from(this).inflate(R.layout.itempackage_listview_header, null);
-        mListView.addFooterView(footer);
 
         //set adapter
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
