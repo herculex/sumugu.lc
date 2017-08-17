@@ -26,4 +26,5 @@
     <string name="title_activity_item_line_frame">ItemLineFrameActivity</string>
     <string name="title_activity_xdemo03">Xdemo03</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_simple">simpleActivity</string>
 </resources>

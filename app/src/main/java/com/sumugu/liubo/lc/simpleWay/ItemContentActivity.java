@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
@@ -37,7 +38,7 @@ public class ItemContentActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_content);
+        setContentView(R.layout.activity_item_content_md);
 
         lineActionZone = (LinearLayout) findViewById(R.id.line_action_zone);
         editContent = (EditText) findViewById(R.id.edit_content);
@@ -47,6 +48,11 @@ public class ItemContentActivity extends Activity {
         textFinish = (TextView) findViewById(R.id.text_finish);
         textAlarm = (TextView) findViewById(R.id.text_alarm);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            Toast.makeText(this, "call me", Toast.LENGTH_SHORT).show();
+            setActionBar(toolbar);
+        }
 
         Bundle bundle = getIntent().getExtras();
         mId = bundle.getLong("id");
