@@ -51,7 +51,6 @@ public class ItemContentActivity extends Activity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             Toast.makeText(this, "call me", Toast.LENGTH_SHORT).show();
-            setActionBar(toolbar);
         }
 
         Bundle bundle = getIntent().getExtras();

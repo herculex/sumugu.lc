@@ -105,10 +105,6 @@
             android:name=".simpleWay.DatePickerActivity"
             android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth" />
         <activity android:name=".simpleWay.ItemHistoryActivity" />
-        <activity
-            android:name=".simpleWay.simpleActivity"
-            android:label="@string/title_activity_simple"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>
