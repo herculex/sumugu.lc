@@ -30,15 +30,17 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             Cursor cursor = context.getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
 
-            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
-                long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(alarmClock);
-                AlarmUntils alarmUntils = new AlarmUntils();
-                alarmUntils.setAlarmClock(context, calendar, true, 60 * 1000, itemId);
+            if (cursor != null && cursor.getCount() > 0) {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(alarmClock);
+                    AlarmUntils alarmUntils = new AlarmUntils();
+                    alarmUntils.setAlarmClock(context, calendar, true, 60 * 1000, itemId);
+                }
+                cursor.close();
             }
-            cursor.close();
 
         } else {
             Toast.makeText(context, "闹钟时间到:" + intent.getAction(), Toast.LENGTH_LONG).show();
