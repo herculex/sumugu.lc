@@ -49,11 +49,10 @@ public class ItemContentActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.app_bar_search:
                 Toast.makeText(ItemContentActivity.this, "I'm searching.toolbar instead of actionbar", Toast.LENGTH_SHORT).show();
-                break;
+                return true;
             default:
-                break;
+                return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
     @Override
