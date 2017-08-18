@@ -1,6 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="com.sumugu.liubo.lc.ItemActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="搜索"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_notification"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="注意"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_item1"
+        android:title="item_01"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_item2"
+        android:title="item_02"
+        app:showAsAction="never" />
 </menu>

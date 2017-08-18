@@ -1,20 +1,23 @@
 package com.sumugu.liubo.lc.simpleWay;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
@@ -23,7 +26,7 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ItemContentActivity extends Activity {
+public class ItemContentActivity extends AppCompatActivity {
     TextView textAlarm, textViewContent, textViewId;
     TextView textDelete, textFinish;
     EditText editContent;
@@ -36,10 +39,60 @@ public class ItemContentActivity extends Activity {
     AlarmUntils alarmUntils = new AlarmUntils();
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item_content, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.app_bar_search:
+                Toast.makeText(ItemContentActivity.this, "I'm searching.toolbar instead of actionbar", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_content_md);
+        setContentView(R.layout.activity_item_content);
+//
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+//
+//        toolbar.inflateMenu(R.menu.menu_item_content); //can't be infected ,because toolbar instead of actionbar
+//        toolbar.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.app_bar_search:
+//                        Toast.makeText(ItemContentActivity.this, "I'm searching", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ItemContentActivity.this, "hello,here's toolbar's click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        Toast.makeText(this, toolbar.isShown() ? "shown" : "hide", Toast.LENGTH_SHORT).show();
+        ActionBar actionBar = getSupportActionBar();
+        Toast.makeText(this, actionBar != null ? (actionBar.isShowing() ? "shown" : "hide") : "no bar here", Toast.LENGTH_SHORT).show();
+
+        //
+        //
         lineActionZone = (LinearLayout) findViewById(R.id.line_action_zone);
         editContent = (EditText) findViewById(R.id.edit_content);
         textViewId = (TextView) findViewById(R.id.text_id);
@@ -48,10 +101,6 @@ public class ItemContentActivity extends Activity {
         textFinish = (TextView) findViewById(R.id.text_finish);
         textAlarm = (TextView) findViewById(R.id.text_alarm);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            Toast.makeText(this, "call me", Toast.LENGTH_SHORT).show();
-        }
 
         Bundle bundle = getIntent().getExtras();
         mId = bundle.getLong("id");

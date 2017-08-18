@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.sumugu.liubo.lc.simpleWay.ItemContentActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"
+        app:popupTheme="@style/AppBarOverlay"
+        app:subtitle="here's toolbar"
+        app:subtitleTextAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:title="@string/app_name">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="custom text" />
+    </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -131,5 +151,5 @@
         </LinearLayout>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
 
