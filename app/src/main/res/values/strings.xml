@@ -27,23 +27,14 @@
     <string name="title_activity_xdemo03">Xdemo03</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_simple">simpleActivity</string>
-    <string name="long_content_testing">coordinatorlayout toolbar
+    <string name="long_content_testing">
+This is Header ,start here.
+        coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-    coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-    coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
@@ -59,20 +50,11 @@ coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
-    coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
 coordinatorlayout toolbar
-coordinatorlayout toolbar
-    coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar </string>
+    This is Footer,End.</string>
 </resources>
