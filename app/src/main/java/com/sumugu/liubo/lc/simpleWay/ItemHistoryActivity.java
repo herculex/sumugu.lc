@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -104,7 +105,10 @@ public class ItemHistoryActivity extends Activity {
             }
         }
     };
-
+public void onClick(View v)
+{
+    Snackbar.make(v,"这是一个snackBar",Snackbar.LENGTH_LONG).show();
+}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,8 +122,8 @@ public class ItemHistoryActivity extends Activity {
         //
         */
         mListView = (ListView) findViewById(R.id.listView);
-        if (SDK_INT >= 21)
-            mListView.setNestedScrollingEnabled(true);
+//        if (SDK_INT >= 21)
+//            mListView.setNestedScrollingEnabled(true);
         //set adapter
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
         simpleCursorAdapter.setViewBinder(VIEW_BINDER);

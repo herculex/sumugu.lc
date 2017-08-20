@@ -59,14 +59,30 @@
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nestedScrollingEnabled="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"></ListView>
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fab behavior"
+        android:layout_gravity="end"
+        android:onClick="onClick"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:fabSize="mini"
+        android:src="@mipmap/ic_launcher"
+        app:fabSize="normal"
         app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|end" />
+        app:layout_anchorGravity="bottom|end"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@mipmap/ic_launcher"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|start"
+        app:layout_behavior="com.sumugu.liubo.lc.simpleWay.RotateBehavior"/>
 </android.support.design.widget.CoordinatorLayout>
