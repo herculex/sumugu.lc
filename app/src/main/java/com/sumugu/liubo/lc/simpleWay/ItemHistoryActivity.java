@@ -4,27 +4,20 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
-
-import static android.os.Build.VERSION.SDK;
-import static android.os.Build.VERSION.SDK_INT;
 
 public class ItemHistoryActivity extends Activity {
 
@@ -114,22 +107,20 @@ public void onClick(View v)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_history_md);
 
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        toolbarLayout.setTitle("这个是CollapsingToolbar");
  /*       //
         mTextBack = (TextView) findViewById(R.id.tv_back);
         mTextClear = (TextView) findViewById(R.id.tv_clear);
         //
-        */
+
         mListView = (ListView) findViewById(R.id.listView);
-//        if (SDK_INT >= 21)
-//            mListView.setNestedScrollingEnabled(true);
+        if (SDK_INT >= 21)
+            mListView.setNestedScrollingEnabled(true);
         //set adapter
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
         simpleCursorAdapter.setViewBinder(VIEW_BINDER);
         mListView.setAdapter(simpleCursorAdapter);
         getLoaderManager().initLoader(0, null, new HistoryLoader(this, simpleCursorAdapter));
-
+        */
         //
 /*
         mTextBack.setOnClickListener(new View.OnClickListener() {
