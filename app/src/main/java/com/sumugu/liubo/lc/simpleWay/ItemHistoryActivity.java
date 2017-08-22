@@ -2,6 +2,7 @@ package com.sumugu.liubo.lc.simpleWay;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -24,6 +25,7 @@ import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ItemHistoryActivity extends Activity {
 
@@ -169,15 +171,36 @@ public class ItemHistoryActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
+/*                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
                 if (cursor.moveToFirst()) {
                     long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+                    String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
+
+                    ContentValues values = new ContentValues();
+                    values.put(ItemContract.Column.ITEM_CONTENT,"updated."+content);
 
                     Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId));
-                    int result = getContentResolver().delete(uri, null, null);
-                    Snackbar snackbar = Snackbar.make(view, "delete:" + result, Snackbar.LENGTH_SHORT);
+                    int result = getContentResolver().update(uri, values,null, null);
+
+                    Snackbar snackbar = Snackbar.make(view, "updated:" + result, Snackbar.LENGTH_SHORT);
                     snackbar.show();
-                }
+                }*/
+
+                ContentValues values = new ContentValues();
+                values.put(ItemContract.Column.ITEM_TITLE, "a5");
+                values.put(ItemContract.Column.ITEM_CONTENT, "This created by the program in time." + new Date().toString());
+                values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
+                values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());
+                values.put(ItemContract.Column.ITEM_IS_FINISHED, false);
+                values.put(ItemContract.Column.ITEM_FINISHED_AT, 0);
+                values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
+                values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
+
+                values.put(ItemContract.Column.ITEM_LIST_ID, 0);//default is 0
+
+                Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
+                int mId = Integer.valueOf(uri.getLastPathSegment());
+                Snackbar.make(view, "insert:" + mId, Snackbar.LENGTH_SHORT).show();
             }
         });
         //
