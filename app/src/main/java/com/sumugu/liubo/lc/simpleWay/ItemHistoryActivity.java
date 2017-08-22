@@ -7,11 +7,11 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -128,7 +128,7 @@ public class ItemHistoryActivity extends Activity {
 //        for(int i=0;i<datas.length;i++){
 //            mArrayList.add(datas[i]);
 //        }
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+/*        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final HistoryRecyclerViewAdapter historyRecyclerViewAdapter = new HistoryRecyclerViewAdapter(this, mArrayList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
@@ -150,7 +150,33 @@ public class ItemHistoryActivity extends Activity {
                 recyclerView.scrollToPosition(0);
             }
         });
+*/
 
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.scrollToPosition(0);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(simpleCursorRecyclerAdapter);
+        getLoaderManager().initLoader(0, null, new HistoryLoader(this, simpleCursorRecyclerAdapter));
+
+        Button butt = (Button) findViewById(R.id.btn_add);
+        butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
+                if (cursor.moveToFirst()) {
+                    long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+
+                    Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId));
+                    int result = getContentResolver().delete(uri, null, null);
+                    Snackbar snackbar = Snackbar.make(view, "delete:" + result, Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+            }
+        });
  /*       //
         mTextBack = (TextView) findViewById(R.id.tv_back);
         mTextClear = (TextView) findViewById(R.id.tv_clear);
@@ -219,9 +245,9 @@ public class ItemHistoryActivity extends Activity {
     class HistoryLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         Context mContext;
-        SimpleCursorAdapter mSimpleCursorAdapter;
+        CursorRecyclerAdapter mSimpleCursorAdapter;
 
-        public HistoryLoader(Context c, SimpleCursorAdapter adapter) {
+        public HistoryLoader(Context c, CursorRecyclerAdapter adapter) {
             mContext = c;
             mSimpleCursorAdapter = adapter;
         }
