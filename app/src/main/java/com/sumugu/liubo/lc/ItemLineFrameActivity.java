@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.LoaderManager;
 import android.app.TimePickerDialog;
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -18,7 +17,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -876,8 +874,8 @@ public class ItemLineFrameActivity extends Activity {
             holder.textView = (TextView) view.findViewById(R.id.text_content);
             holder.textReminder = (TextView) view.findViewById(R.id.text_reminder);
 
-//            holder.textView.setOnTouchListener(mTouchListener);
-//            holder.textView.setOnClickListener(new View.OnClickListener() {
+//            holder.contentView.setOnTouchListener(mTouchListener);
+//            holder.contentView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
 //                    Log.d(TAG,"ppppppppppp---------");

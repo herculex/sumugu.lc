@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.TextView;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -32,7 +31,7 @@ public class MyCursorAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         ViewHolder holder = new ViewHolder();
         View view = View.inflate(context, R.layout.xdemo_list_item, null);
-//        holder.textView = (TextView) view.findViewById(R.id.textView);
+//        holder.contentView = (TextView) view.findViewById(R.id.contentView);
         holder.customItem = (MyCustomItem)view.findViewById(R.id.textView);
 
         view.setTag(holder);
@@ -48,7 +47,7 @@ public class MyCursorAdapter extends CursorAdapter {
         long reminder = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
         int finish = cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED));
 
-//        holder.textView.setText(content);
+//        holder.contentView.setText(content);
         holder.customItem.setText(content);
 
         //ok finished.
@@ -64,7 +63,7 @@ public class MyCursorAdapter extends CursorAdapter {
     }
 
     private class ViewHolder {
-//        public TextView textView;
+        //        public TextView contentView;
         public MyCustomItem customItem;
     }
 }

@@ -204,17 +204,17 @@ public class ItemPackageActivity extends Activity {
 //        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                TextView textView = (TextView) view.findViewById(R.id.text_content);
+//                TextView contentView = (TextView) view.findViewById(R.id.text_content);
 //                String content = "position:" + i;
 //                content += ",id:" + l;
-//                content += ",content:" + textView.getText().toString();
+//                content += ",content:" + contentView.getText().toString();
 //
 //                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
 //
 //                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
 //                Bundle bundle = new Bundle();
 //                bundle.putLong("id", l);    //get id of item inside of list
-//                bundle.putString("content", textView.getText().toString()); //get content
+//                bundle.putString("content", contentView.getText().toString()); //get content
 //                itemContent.putExtras(bundle);
 //                startActivityForResult(itemContent, 1);
 //                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);

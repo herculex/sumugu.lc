@@ -9,9 +9,13 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -19,11 +23,13 @@ import android.widget.TextView;
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
+import java.util.ArrayList;
+
 public class ItemHistoryActivity extends Activity {
 
     ListView mListView;
     TextView mTextClear, mTextBack;
-
+    ArrayList<String> mArrayList = new ArrayList<>();
     private String[] FROM = new String[]{
             ItemContract.Column.ITEM_CONTENT,
             ItemContract.Column.ITEM_ALARM_CLOCK,
@@ -40,7 +46,6 @@ public class ItemHistoryActivity extends Activity {
             R.id.text_content,
             R.id.text_created_at_day
     };
-
     private SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
 
         @Override
@@ -98,14 +103,53 @@ public class ItemHistoryActivity extends Activity {
             }
         }
     };
-public void onClick(View v)
-{
-    Snackbar.make(v,"这是一个snackBar",Snackbar.LENGTH_LONG).show();
-}
+
+    public void onClick(View v) {
+        Snackbar.make(v, "这是一个snackBar", Snackbar.LENGTH_LONG).show();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_history_md);
+
+        //start testing recyclerview for array string
+        String[] datas = new String[]{
+                "Item001", "Item002", "ItemBlackSheep003", "Item004", "Item005", "Item006",
+                "ItemGoHomeForSleeping011", "Item012", "Item013", "Item014", "Item015", "Item016",
+                "Item021", "Item022", "ItemContent023", "Item024", "Item025", "Item026",
+                "ItemHelloWorld031", "Item032", "Item033", "Item034", "Item035", "Item036",
+                "Item041", "ItemActivity042", "Item043", "Item044", "ItemContent045", "Item046"};
+        for (String string : datas
+                ) {
+            mArrayList.add(string);
+        }
+//        for(int i=0;i<datas.length;i++){
+//            mArrayList.add(datas[i]);
+//        }
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        final HistoryRecyclerViewAdapter historyRecyclerViewAdapter = new HistoryRecyclerViewAdapter(this, mArrayList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.scrollToPosition(0);
+
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(5, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setAdapter(historyRecyclerViewAdapter);
+        //that's all ??
+
+
+        Button butt = (Button) findViewById(R.id.btn_add);
+        butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mArrayList.add(0, "this new add.");
+
+                historyRecyclerViewAdapter.notifyItemInserted(0);
+                recyclerView.scrollToPosition(0);
+            }
+        });
 
  /*       //
         mTextBack = (TextView) findViewById(R.id.tv_back);

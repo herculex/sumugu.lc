@@ -643,7 +643,7 @@ public class MainActivity extends Activity implements LockScreenUtils.OnLockStat
 
                     //
 
-//                    LinearLayout viewParent = (LinearLayout)holder.textView.getParent();
+//                    LinearLayout viewParent = (LinearLayout)holder.contentView.getParent();
 //                    Log.d(TAG,"holder.text's parent tranX="+String.valueOf(viewParent.getTranslationX()));
 //                    viewParent.animate().translationX(0).setDuration(100);
                 }
