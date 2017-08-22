@@ -152,6 +152,9 @@ public class ItemHistoryActivity extends Activity {
         });
 */
 
+        //
+        // Do testing SimpleCursorAdapter ,and delete item through provider,What happend to Recyclerview in
+
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
 
@@ -177,6 +180,7 @@ public class ItemHistoryActivity extends Activity {
                 }
             }
         });
+        //
  /*       //
         mTextBack = (TextView) findViewById(R.id.tv_back);
         mTextClear = (TextView) findViewById(R.id.tv_clear);
