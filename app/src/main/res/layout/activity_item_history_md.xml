@@ -15,8 +15,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="?attr/colorPrimary">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <ImageView
                 android:layout_width="match_parent"
