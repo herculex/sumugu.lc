@@ -1,23 +1,22 @@
 package com.sumugu.liubo.lc.simpleWay;
 
-import android.app.Activity;
 import android.app.LoaderManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -26,9 +25,8 @@ import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-public class ItemHistoryActivity extends Activity {
+public class ItemHistoryActivity extends AppCompatActivity {
 
     ListView mListView;
     TextView mTextClear, mTextBack;
@@ -158,21 +156,21 @@ public class ItemHistoryActivity extends Activity {
         //
         // Do testing SimpleCursorAdapter ,and delete item through provider,What happend to Recyclerview in
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+/*        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(simpleCursorRecyclerAdapter);
-        getLoaderManager().initLoader(0, null, new HistoryLoader(this, simpleCursorRecyclerAdapter));
+        getLoaderManager().initLoader(0, null, new HistoryLoader(this, simpleCursorRecyclerAdapter));*/
 
-        Button butt = (Button) findViewById(R.id.btn_add);
+        /*Button butt = (Button) findViewById(R.id.btn_add);
         butt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-/*                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
+*//*                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
                 if (cursor.moveToFirst()) {
                     long itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
                     String content = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
@@ -185,7 +183,7 @@ public class ItemHistoryActivity extends Activity {
 
                     Snackbar snackbar = Snackbar.make(view, "updated:" + result, Snackbar.LENGTH_SHORT);
                     snackbar.show();
-                }*/
+                }*//*
 
                 ContentValues values = new ContentValues();
                 values.put(ItemContract.Column.ITEM_TITLE, "a5");
@@ -204,16 +202,16 @@ public class ItemHistoryActivity extends Activity {
                 Snackbar.make(view, "insert:" + mId, Snackbar.LENGTH_SHORT).show();
 
 
-/*                Bundle args = new Bundle();
+*//*                Bundle args = new Bundle();
                 args.putString("order","");
-                getLoaderManager().restartLoader(0,args,new HistoryLoader(ItemHistoryActivity.this,simpleCursorRecyclerAdapter));*/
+                getLoaderManager().restartLoader(0,args,new HistoryLoader(ItemHistoryActivity.this,simpleCursorRecyclerAdapter));*//*
 
 
 
             }
-        });
+        });*/
 
-        Button buttDel = (Button) findViewById(R.id.btn_delete);
+/*        Button buttDel = (Button) findViewById(R.id.btn_delete);
         buttDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,7 +233,7 @@ public class ItemHistoryActivity extends Activity {
                     });
                 }
             }
-        });
+        });*/
         //
  /*       //
         mTextBack = (TextView) findViewById(R.id.tv_back);
@@ -285,6 +283,29 @@ public class ItemHistoryActivity extends Activity {
                 builder.show();
             }
         });*/
+
+
+        ItemHistoryFragment frag1 = new ItemHistoryFragment();
+        frag1.setTitle("frag1");
+        ItemHistoryFragment frag2 = new ItemHistoryFragment();
+        frag2.setTitle("frag2");
+        ItemHistoryFragment frag3 = new ItemHistoryFragment();
+        frag3.setTitle("frag3");
+
+        ArrayList<Fragment> list = new ArrayList<>();
+        list.add(frag1);
+        list.add(frag2);
+        list.add(frag3);
+
+
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), list);
+        ViewPager viewpager = (ViewPager) findViewById(R.id.viewpager);
+        viewpager.setAdapter(adapter);
+
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewpager);
+
+
     }
 
     int doClearHistory() {
@@ -300,6 +321,31 @@ public class ItemHistoryActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+    }
+
+    public class PagerAdapter extends FragmentPagerAdapter {
+
+        ArrayList<Fragment> mFragments;
+
+        public PagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
+            super(fm);
+            mFragments = fragments;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return ((ItemHistoryFragment) mFragments.get(position)).getTitle();
+        }
     }
 
     class HistoryLoader implements LoaderManager.LoaderCallbacks<Cursor> {
