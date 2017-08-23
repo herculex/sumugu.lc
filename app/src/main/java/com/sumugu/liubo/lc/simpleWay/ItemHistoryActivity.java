@@ -286,11 +286,11 @@ public class ItemHistoryActivity extends AppCompatActivity {
 
 
         ItemHistoryFragment frag1 = new ItemHistoryFragment();
-        frag1.setTitle("frag1");
+        frag1.setTitle("history");
         ItemHistoryFragment frag2 = new ItemHistoryFragment();
-        frag2.setTitle("frag2");
+        frag2.setTitle("plans");
         ItemHistoryFragment frag3 = new ItemHistoryFragment();
-        frag3.setTitle("frag3");
+        frag3.setTitle("reminds");
 
         ArrayList<Fragment> list = new ArrayList<>();
         list.add(frag1);
@@ -304,6 +304,7 @@ public class ItemHistoryActivity extends AppCompatActivity {
 
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewpager);
+        viewpager.setCurrentItem(1);
 
 
     }
