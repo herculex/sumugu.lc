@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -191,8 +192,8 @@ public class ItemHistoryActivity extends Activity {
                 values.put(ItemContract.Column.ITEM_CONTENT, "This created by the program in time." + new Date().toString());
                 values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
                 values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());
-                values.put(ItemContract.Column.ITEM_IS_FINISHED, false);
-                values.put(ItemContract.Column.ITEM_FINISHED_AT, 0);
+                values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
+                values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
                 values.put(ItemContract.Column.ITEM_HAS_CLOCK, 0);
                 values.put(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
 
@@ -201,6 +202,38 @@ public class ItemHistoryActivity extends Activity {
                 Uri uri = getContentResolver().insert(ItemContract.CONTENT_URI, values);
                 int mId = Integer.valueOf(uri.getLastPathSegment());
                 Snackbar.make(view, "insert:" + mId, Snackbar.LENGTH_SHORT).show();
+
+
+/*                Bundle args = new Bundle();
+                args.putString("order","");
+                getLoaderManager().restartLoader(0,args,new HistoryLoader(ItemHistoryActivity.this,simpleCursorRecyclerAdapter));*/
+
+
+
+            }
+        });
+
+        Button buttDel = (Button) findViewById(R.id.btn_delete);
+        buttDel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Cursor cursor = simpleCursorRecyclerAdapter.getCursor();
+                final long itemId;
+                if (cursor.moveToPosition(1)) {
+                    itemId = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
+
+                    final CardView cardView = (CardView) recyclerView.getChildAt(1);
+
+
+                    cardView.animate().translationX(cardView.getWidth() * 0.5f).setDuration(2000).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            int result = getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(itemId)), null, null);
+                            recyclerView.removeViewInLayout(cardView);
+
+                        }
+                    });
+                }
             }
         });
         //
@@ -281,8 +314,12 @@ public class ItemHistoryActivity extends Activity {
 
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            String order = " DESC";
+            if (bundle != null) {
+                order = bundle.getString("order");
+            }
             String selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
-            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.Column.ITEM_FINISHED_AT + " DESC");
+            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.Column.ITEM_FINISHED_AT + order);
         }
 
         @Override
