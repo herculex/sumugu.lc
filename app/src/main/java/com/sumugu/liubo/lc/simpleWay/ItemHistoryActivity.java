@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -313,9 +314,27 @@ public class ItemHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_main, null);
-                BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
+                final BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
                 sheetDialog.setContentView(sheet);
                 sheetDialog.show();
+
+                sheet.findViewById(R.id.text_item1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ItemHistoryActivity.this, "item 1 ok.", Toast.LENGTH_SHORT).show();
+                        sheetDialog.dismiss();
+                    }
+                });
+                sheet.findViewById(R.id.text_item2).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ItemHistoryActivity.this, "item 2 ok.", Toast.LENGTH_SHORT).show();
+                        sheetDialog.dismiss();
+                    }
+                });
+
+
+
 
             }
         });
