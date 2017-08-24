@@ -7,7 +7,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -308,13 +308,15 @@ public class ItemHistoryActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(1);
 
-        BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(findViewById(R.id.nsv_bottom_sheet));
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_main, null);
+                BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
+                sheetDialog.setContentView(sheet);
+                sheetDialog.show();
+
             }
         });
 
