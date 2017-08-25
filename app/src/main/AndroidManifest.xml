@@ -103,7 +103,7 @@
         <activity android:name=".simpleWay.ItemContentActivity" />
         <activity
             android:name=".simpleWay.DatePickerActivity"
-            android:theme="@style/Base.Theme.AppCompat.Dialog.MinWidth" />
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog.MinWidth" />
         <activity android:name=".simpleWay.ItemHistoryActivity" />
     </application>
 

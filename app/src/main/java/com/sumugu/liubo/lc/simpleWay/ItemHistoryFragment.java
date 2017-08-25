@@ -27,6 +27,11 @@ import com.sumugu.liubo.lc.simpleWay.recycleradapter.SimpleCursorRecyclerAdapter
 public class ItemHistoryFragment extends Fragment {
 
 
+    public static final int TYPE_HISTORY = 1;
+    public static final int TYPE_PLAN = 2;
+    public static final int TYPE_REMINDER = 3;
+    public static final String WHAT_TYPE = "WHAT_TYPE";
+    public static final String TITLE = "TITLE";
     public SimpleCursorRecyclerAdapter.ViewBinder BINDER = new SimpleCursorRecyclerAdapter.ViewBinder() {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -39,19 +44,20 @@ public class ItemHistoryFragment extends Fragment {
             }
         }
     };
-    String mTitle;
-
     public ItemHistoryFragment() {
         // Required empty public constructor
     }
 
     public String getTitle() {
-        return mTitle;
+        Bundle args = getArguments();
+
+        if (args == null || args.getString(TITLE) == null || args.getString(TITLE).isEmpty()) {
+            return "NO_TITLE";
+        } else {
+            return args.getString(TITLE);
+        }
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -62,13 +68,13 @@ public class ItemHistoryFragment extends Fragment {
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
 
-        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
-
+//        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
+//
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(simpleCursorRecyclerAdapter);
-        getLoaderManager().initLoader(0, null, new HistoryLoader(getActivity(), simpleCursorRecyclerAdapter));
+        getLoaderManager().initLoader(0, getArguments(), new HistoryLoader(getActivity(), simpleCursorRecyclerAdapter));
 
         simpleCursorRecyclerAdapter.setOnItemClickListner(new SimpleCursorRecyclerAdapter.onItemClickListner() {
             @Override
@@ -114,10 +120,23 @@ public class ItemHistoryFragment extends Fragment {
         @Override
         public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             String order = " DESC";
+            String selection = ItemContract.Column.ITEM_IS_FINISHED + "=0"; //default
             if (bundle != null) {
-                order = bundle.getString("order");
+
+                int type = bundle.getInt(WHAT_TYPE);
+                switch (type) {
+                    case TYPE_HISTORY:
+                        selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
+                        break;
+                    case TYPE_PLAN:
+                        selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + "=0";
+                        break;
+                    case TYPE_REMINDER:
+                        selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + ">0";
+                        break;
+                }
             }
-            String selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
+
             return new android.support.v4.content.CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.Column.ITEM_FINISHED_AT + order);
         }
 

@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -22,7 +21,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -290,11 +288,22 @@ public class ItemHistoryActivity extends AppCompatActivity {
 
 
         ItemHistoryFragment frag1 = new ItemHistoryFragment();
-        frag1.setTitle("history");
+        Bundle bundle1 = new Bundle();
+        bundle1.putString(ItemHistoryFragment.TITLE, "history");
+        bundle1.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_HISTORY);
+        frag1.setArguments(bundle1);
+
         ItemHistoryFragment frag2 = new ItemHistoryFragment();
-        frag2.setTitle("plans");
+        Bundle bundle2 = new Bundle();
+        bundle2.putString(ItemHistoryFragment.TITLE, "plan");
+        bundle2.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_PLAN);
+        frag2.setArguments(bundle2);
+
         ItemHistoryFragment frag3 = new ItemHistoryFragment();
-        frag3.setTitle("reminds");
+        Bundle bundle3 = new Bundle();
+        bundle3.putString(ItemHistoryFragment.TITLE, "reminder");
+        bundle3.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_REMINDER);
+        frag3.setArguments(bundle3);
 
         ArrayList<Fragment> list = new ArrayList<>();
         list.add(frag1);
@@ -314,27 +323,27 @@ public class ItemHistoryActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_main, null);
-                final BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
-                sheetDialog.setContentView(sheet);
-                sheetDialog.show();
+//                View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_main, null);
+//                final BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
+//                sheetDialog.setContentView(sheet);
+//                sheetDialog.show();
+//
+//                sheet.findViewById(R.id.text_item1).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(ItemHistoryActivity.this, "item 1 ok.", Toast.LENGTH_SHORT).show();
+//                        sheetDialog.dismiss();
+//                    }
+//                });
+//                sheet.findViewById(R.id.text_item2).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(ItemHistoryActivity.this, "item 2 ok.", Toast.LENGTH_SHORT).show();
+//                        sheetDialog.dismiss();
+//                    }
+//                });
 
-                sheet.findViewById(R.id.text_item1).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(ItemHistoryActivity.this, "item 1 ok.", Toast.LENGTH_SHORT).show();
-                        sheetDialog.dismiss();
-                    }
-                });
-                sheet.findViewById(R.id.text_item2).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(ItemHistoryActivity.this, "item 2 ok.", Toast.LENGTH_SHORT).show();
-                        sheetDialog.dismiss();
-                    }
-                });
-
-
+                Snackbar.make(view, "here's snackbar", Snackbar.LENGTH_SHORT).show();
 
 
             }
