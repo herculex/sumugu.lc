@@ -3,7 +3,9 @@ package com.sumugu.liubo.lc.simpleWay;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,7 +54,7 @@ public class ItemHistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_item_history, container, false);
@@ -70,8 +72,30 @@ public class ItemHistoryFragment extends Fragment {
 
         simpleCursorRecyclerAdapter.setOnItemClickListner(new SimpleCursorRecyclerAdapter.onItemClickListner() {
             @Override
-            public void onClick(View view, long id) {
-                Toast.makeText(getActivity(), "click at:" + String.valueOf(id), Toast.LENGTH_SHORT).show();
+            public void onClick(View view, final long id) {
+//                Toast.makeText(getActivity(), "click at:" + String.valueOf(id), Toast.LENGTH_SHORT).show();
+
+                View sheet = inflater.inflate(R.layout.bottom_sheet_main, null);
+                final BottomSheetDialog sheetDialog = new BottomSheetDialog(getActivity());
+                sheetDialog.setContentView(sheet);
+                sheetDialog.show();
+
+                sheet.findViewById(R.id.text_item1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        int result = getContext().getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null);
+                        Toast.makeText(getActivity(), result > 0 ? "deleted ok at:" + id : "no one can be deleted at all.", Toast.LENGTH_SHORT).show();
+                        sheetDialog.dismiss();
+                    }
+                });
+                sheet.findViewById(R.id.text_item2).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getActivity(), "close ok at:" + id, Toast.LENGTH_SHORT).show();
+                        sheetDialog.dismiss();
+                    }
+                });
             }
         });
         return view;
