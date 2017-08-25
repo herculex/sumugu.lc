@@ -1,4 +1,4 @@
-package com.sumugu.liubo.lc.simpleWay;
+package com.sumugu.liubo.lc.simpleWay.recycleradapter;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;

@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.simpleWay.recycleradapter.CursorRecyclerAdapter;
 
 import java.util.ArrayList;
 

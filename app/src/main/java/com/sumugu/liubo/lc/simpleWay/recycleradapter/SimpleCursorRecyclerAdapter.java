@@ -1,4 +1,4 @@
-package com.sumugu.liubo.lc.simpleWay;
+package com.sumugu.liubo.lc.simpleWay.recycleradapter;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 public class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleCursorRecyclerAdapter.SimpleViewHolder> {
 
+    ViewBinder mViewBinder;
     private int mLayout;
     private int[] mFrom;
     private int[] mTo;
@@ -60,8 +61,17 @@ public class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleCur
         final int[] from = mFrom;
 
         for (int i = 0; i < count; i++) {
-            holder.views[i].setText(cursor.getString(from[i]));
+            if (mViewBinder == null || !mViewBinder.setViewValue(holder.views[i], cursor, from[i]))
+                holder.views[i].setText(cursor.getString(from[i]));
         }
+    }
+
+    public void setViewBinder(ViewBinder binder) {
+        mViewBinder = binder;
+    }
+
+    public interface ViewBinder {
+        public boolean setViewValue(View view, Cursor cursor, int columnIndex);
     }
 
     class SimpleViewHolder extends RecyclerView.ViewHolder {

@@ -11,9 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.simpleWay.recycleradapter.CursorRecyclerAdapter;
+import com.sumugu.liubo.lc.simpleWay.recycleradapter.SimpleCursorRecyclerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +24,18 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 public class ItemHistoryFragment extends Fragment {
 
 
+    public SimpleCursorRecyclerAdapter.ViewBinder BINDER = new SimpleCursorRecyclerAdapter.ViewBinder() {
+        @Override
+        public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+            switch (view.getId()) {
+                case R.id.text_content:
+                    ((TextView) view).setText("binder:" + cursor.getString(columnIndex));
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    };
     String mTitle;
 
     public ItemHistoryFragment() {
@@ -43,6 +58,8 @@ public class ItemHistoryFragment extends Fragment {
 
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
+
+//        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
