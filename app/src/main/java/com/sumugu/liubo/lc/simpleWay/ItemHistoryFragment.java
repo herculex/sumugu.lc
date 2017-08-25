@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -29,7 +30,7 @@ public class ItemHistoryFragment extends Fragment {
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
             switch (view.getId()) {
                 case R.id.text_content:
-                    ((TextView) view).setText("binder:" + cursor.getString(columnIndex));
+                    ((TextView) view).setText("mybinder:" + cursor.getString(columnIndex));
                     return true;
                 default:
                     return false;
@@ -59,7 +60,7 @@ public class ItemHistoryFragment extends Fragment {
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
 
-//        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
+        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
@@ -67,6 +68,12 @@ public class ItemHistoryFragment extends Fragment {
         recyclerView.setAdapter(simpleCursorRecyclerAdapter);
         getLoaderManager().initLoader(0, null, new HistoryLoader(getActivity(), simpleCursorRecyclerAdapter));
 
+        simpleCursorRecyclerAdapter.setOnItemClickListner(new SimpleCursorRecyclerAdapter.onItemClickListner() {
+            @Override
+            public void onClick(View view, long id) {
+                Toast.makeText(getActivity(), "click at:" + String.valueOf(id), Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 

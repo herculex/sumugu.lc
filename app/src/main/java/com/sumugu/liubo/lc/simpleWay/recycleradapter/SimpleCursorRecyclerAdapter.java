@@ -14,6 +14,7 @@ import android.widget.TextView;
 public class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleCursorRecyclerAdapter.SimpleViewHolder> {
 
     ViewBinder mViewBinder;
+    onItemClickListner mOnItemClickListenr;
     private int mLayout;
     private int[] mFrom;
     private int[] mTo;
@@ -50,15 +51,24 @@ public class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleCur
 
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(mLayout, parent, false);
-        return new SimpleViewHolder(v, mTo);
+        View view = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
+        return new SimpleViewHolder(view, mTo);
     }
 
     @Override
     public void onBindViewHolder(SimpleViewHolder holder, Cursor cursor) {
         final int count = mTo.length;
         final int[] from = mFrom;
+
+        final long _id = cursor.getInt(mRowIDColumn);
+
+        if (mOnItemClickListenr != null)
+            holder.rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListenr.onClick(view, _id);
+                }
+            });
 
         for (int i = 0; i < count; i++) {
             if (mViewBinder == null || !mViewBinder.setViewValue(holder.views[i], cursor, from[i]))
@@ -70,15 +80,26 @@ public class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleCur
         mViewBinder = binder;
     }
 
+    public void setOnItemClickListner(onItemClickListner listner) {
+        mOnItemClickListenr = listner;
+    }
+
     public interface ViewBinder {
-        public boolean setViewValue(View view, Cursor cursor, int columnIndex);
+        boolean setViewValue(View view, Cursor cursor, int columnIndex);
+    }
+
+    public interface onItemClickListner {
+        void onClick(View view, long id);
     }
 
     class SimpleViewHolder extends RecyclerView.ViewHolder {
+        public View rootView;
         public TextView[] views;
 
         public SimpleViewHolder(View itemView, int[] to) {
             super(itemView);
+
+            rootView = itemView;
             views = new TextView[to.length];
             for (int i = 0; i < to.length; i++) {
                 views[i] = (TextView) itemView.findViewById(to[i]);
