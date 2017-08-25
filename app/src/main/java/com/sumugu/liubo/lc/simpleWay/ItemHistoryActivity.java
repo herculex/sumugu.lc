@@ -319,7 +319,6 @@ public class ItemHistoryActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(1);
 
-        tabs.getTabAt(0).setCustomView(R.layout.tab_custom_view);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
         fab.setOnClickListener(new View.OnClickListener() {

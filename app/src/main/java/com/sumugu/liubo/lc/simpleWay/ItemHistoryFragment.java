@@ -26,7 +26,6 @@ import com.sumugu.liubo.lc.simpleWay.recycleradapter.SimpleCursorRecyclerAdapter
  */
 public class ItemHistoryFragment extends Fragment {
 
-
     public static final int TYPE_HISTORY = 1;
     public static final int TYPE_PLAN = 2;
     public static final int TYPE_REMINDER = 3;
