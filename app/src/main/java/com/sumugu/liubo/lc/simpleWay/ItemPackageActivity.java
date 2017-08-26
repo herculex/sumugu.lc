@@ -1,6 +1,5 @@
 package com.sumugu.liubo.lc.simpleWay;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -10,12 +9,20 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -27,241 +34,104 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-public class ItemPackageActivity extends Activity {
+public class ItemPackageActivity extends AppCompatActivity {
 
-    HashMap<String, Long> mCreatedAtDayHash = new HashMap<>();
-    HashMap<String, List<Long>> mIdIndexHash = new HashMap<>();
-
-    private ListView mListView;
-    private String[] arrayString = new String[]{"hello", "simpleway", "protein", "the way we found.", "do samething for",
-            "today I want to make a choice", "path for right direction", "what we selected was right on the way?", "keep going on."};
+    private RecyclerView mRecyclerView;
 
     private String[] FROM = new String[]{
-            ItemContract.Column.ITEM_ID,
-            ItemContract.Column.ITEM_ALARM_CLOCK,
-            ItemContract.Column.ITEM_CREATED_AT,
-            ItemContract.Column.ITEM_ID,
-            ItemContract.Column.ITEM_CONTENT,
-            ItemContract.Column.ITEM_CREATED_AT_DAY
+            ItemContract.Column.ITEM_CONTENT
     };
     private int[] TO = new int[]{
-            R.id.linear_content,
-            R.id.text_alarm,
-            R.id.text_created_at,
-            R.id.text_flag,
-            R.id.text_content,
-            R.id.text_created_at_day
+            R.id.text_content
     };
 
-    private SimpleCursorAdapter.ViewBinder VIEW_BINDER = new SimpleCursorAdapter.ViewBinder() {
-
-        @Override
-        public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            String at_day;
-            final long item_id;
-            switch (view.getId()) {
-                case R.id.linear_content:
-                    item_id = cursor.getLong(columnIndex);
-                    ((LinearLayout) view).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putLong("id", item_id);    //get id of item inside of list
-                            itemContent.putExtras(bundle);
-                            startActivityForResult(itemContent, 1);
-                            overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-                        }
-                    });
-                    return true;
-                case R.id.text_alarm:
-                    long alarm = cursor.getLong(columnIndex);
-                    if (alarm == 0) {
-                        view.setVisibility(View.GONE);
-                    } else {
-                        String alarmString = DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm).toString();
-                        ((TextView) view).setText(alarmString);
-                        view.setVisibility(View.VISIBLE);
-                    }
-                    return true;
-                case R.id.text_created_at:
-                    long created = cursor.getLong(columnIndex);
-//                    if (created == 0) {
-//                        view.setVisibility(View.GONE);
-//                    } else {
-                    String createdString = DateFormat.format("yyyy-MM-dd HH:mm 创建", created).toString();
-                    createdString = DateUtils.getRelativeTimeSpanString(created).toString();
-                    ((TextView) view).setText(createdString);
-//                    }
-                    return true;
-                case R.id.text_content:
-                    TextView textContent = (TextView) view;
-                    textContent.setText(cursor.getString(columnIndex));
-
-                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.Column.ITEM_IS_FINISHED)) == 1) {
-                        //增加删除线
-                        textContent.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                    } else {
-                        //取消Flag;
-                        textContent.setPaintFlags(0);
-                    }
-                    return true;
-                case R.id.text_flag:
-
-                    TextView textFlag = (TextView) view;
-                    item_id = cursor.getLong(columnIndex);
-                    at_day = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT_DAY));
-                    ArrayList<Long> idList;
-
-                    if (mIdIndexHash.isEmpty() || !mIdIndexHash.containsKey(at_day)) {
-                        mIdIndexHash.put(at_day, new ArrayList<Long>());
-                    }
-
-                    if (mIdIndexHash.containsKey(at_day)) {
-                        idList = (ArrayList<Long>) mIdIndexHash.get(at_day);
-                        if (idList.isEmpty() || !idList.contains(item_id)) {
-                            idList.add(item_id);
-                        }
-                    }
-
-                    idList = (ArrayList<Long>) mIdIndexHash.get(at_day);
-
-                    String text = "A" + String.valueOf(idList.indexOf(item_id) + 1);
-                    textFlag.setText(text);
-
-                    return true;
-
-                case R.id.text_created_at_day:
-                    TextView textCreatedAtDay = (TextView) view;
-                    item_id = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ID));
-                    at_day = cursor.getString(columnIndex);
-
-                    Calendar calendar = Calendar.getInstance();
-                    String dayStrings[] = at_day.split("-");
-
-                    calendar.set(Integer.valueOf(dayStrings[0]),
-                            Integer.valueOf(dayStrings[1]) - 1,
-                            Integer.valueOf(dayStrings[2]), 0, 0, 0);
-
-                    String week = DateUtils.formatDateTime(ItemPackageActivity.this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_WEEKDAY);
-                    textCreatedAtDay.setText(dayStrings[1] + "-" + dayStrings[2] + " " + week);
-
-                    if (mCreatedAtDayHash.isEmpty() || !mCreatedAtDayHash.containsKey(at_day)) {
-                        mCreatedAtDayHash.put(at_day, item_id);
-                    }
-
-                    if (mCreatedAtDayHash.containsValue(item_id)) {
-                        textCreatedAtDay.setVisibility(View.VISIBLE);
-                    } else
-                        textCreatedAtDay.setVisibility(View.GONE);
-
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    };
-
-    static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_package);
+        setContentView(R.layout.activity_item_package_md);
 
-        mListView = (ListView) findViewById(R.id.listView);
-        //for test listview
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.itempackage_listview_item, R.id.text_content, arrayString);
-//        mListView.setAdapter(adapter);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        //
-        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.itempackage_listview_item, null, FROM, TO, 0);
-        simpleCursorAdapter.setViewBinder(VIEW_BINDER);
-        mListView.setAdapter(simpleCursorAdapter);
-        getLoaderManager().initLoader(1, null, new ItemsLoader(this, simpleCursorAdapter));
+        ItemHistoryFragment frag1 = new ItemHistoryFragment();
+        Bundle bundle1 = new Bundle();
+        bundle1.putString(ItemHistoryFragment.TITLE, "history");
+        bundle1.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_HISTORY);
+        frag1.setArguments(bundle1);
+
+        ItemHistoryFragment frag2 = new ItemHistoryFragment();
+        Bundle bundle2 = new Bundle();
+        bundle2.putString(ItemHistoryFragment.TITLE, "plan");
+        bundle2.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_PLAN);
+        frag2.setArguments(bundle2);
+
+        ItemHistoryFragment frag3 = new ItemHistoryFragment();
+        Bundle bundle3 = new Bundle();
+        bundle3.putString(ItemHistoryFragment.TITLE, "reminder");
+        bundle3.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_REMINDER);
+        frag3.setArguments(bundle3);
+
+        ArrayList<Fragment> list = new ArrayList<>();
+        list.add(frag1);
+        list.add(frag2);
+        list.add(frag3);
+
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), list);
+        ViewPager viewpager = (ViewPager) findViewById(R.id.viewpager);
+        viewpager.setAdapter(adapter);
+
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewpager);
+        viewpager.setCurrentItem(1);
 
 
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                TextView contentView = (TextView) view.findViewById(R.id.text_content);
-//                String content = "position:" + i;
-//                content += ",id:" + l;
-//                content += ",content:" + contentView.getText().toString();
-//
-//                Toast.makeText(ItemPackageActivity.this, content, Toast.LENGTH_SHORT).show();
-//
-//                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putLong("id", l);    //get id of item inside of list
-//                bundle.putString("content", contentView.getText().toString()); //get content
-//                itemContent.putExtras(bundle);
-//                startActivityForResult(itemContent, 1);
-//                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-//            }
-//        });
-
-        TextView textCreate = (TextView) findViewById(R.id.tv_create);
-        textCreate.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkUnFinishedLimit()) {
-                    Toast.makeText(ItemPackageActivity.this, "我的妈呀，今天你安排有点多啦！先搞定几个再来，祝你顺利！", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("id", "0");
-                bundle.putString("content", "create new content");
-                itemContent.putExtras(bundle);
-                startActivityForResult(itemContent, 2);
-                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                openCreateContent();
             }
         });
-        TextView textHistory = (TextView) findViewById(R.id.tv_history);
-        textHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent itemHistory = new Intent(ItemPackageActivity.this, ItemHistoryActivity.class);
-                startActivityForResult(itemHistory, 3);
-                overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
-            }
-        });
+
     }
 
-    boolean checkUnFinishedLimit() {
-        boolean limit = false;
-        Uri uri = ItemContract.CONTENT_URI;
-        String selection = ItemContract.Column.ITEM_CREATED_AT_DAY + "=? and " + ItemContract.Column.ITEM_IS_FINISHED + "=0";
-        String[] args = new String[]{DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString()};
-        Cursor cursor = getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
-        if (cursor.getCount() >= 5) {
-            limit = true;
+    void openCreateContent()
+    {
+        Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("id", "0");
+        bundle.putString("content", "create new content");
+        itemContent.putExtras(bundle);
+        startActivityForResult(itemContent, 2);
+        overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+    }
+
+    public class PagerAdapter extends FragmentPagerAdapter {
+
+        ArrayList<Fragment> mFragments;
+
+        public PagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
+            super(fm);
+            mFragments = fragments;
         }
-        cursor.close();
-        return limit;
-    }
 
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return ((ItemHistoryFragment) mFragments.get(position)).getTitle();
+        }
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
@@ -275,35 +145,5 @@ public class ItemPackageActivity extends Activity {
         }
     }
 
-    class ItemsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        SimpleCursorAdapter mSimpleCursorAdapter;
-        Context mContext;
-
-        public ItemsLoader(Context context, SimpleCursorAdapter adapter) {
-            mSimpleCursorAdapter = adapter;
-            mContext = context;
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            String selection = ItemContract.Column.ITEM_IS_FINISHED + "=0";
-            return new CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.DEFAULT_SORT);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mCreatedAtDayHash.clear();
-            mIdIndexHash.clear();
-            mSimpleCursorAdapter.swapCursor(cursor);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mCreatedAtDayHash.clear();
-            mIdIndexHash.clear();
-            mSimpleCursorAdapter.swapCursor(null);
-
-        }
-    }
 }

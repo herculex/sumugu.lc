@@ -63,32 +63,14 @@ public class ItemContentActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//
-//        toolbar.inflateMenu(R.menu.menu_item_content); //can't be infected ,because toolbar instead of actionbar
-//        toolbar.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.app_bar_search:
-//                        Toast.makeText(ItemContentActivity.this, "I'm searching", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ItemContentActivity.this, "hello,here's toolbar's click", Toast.LENGTH_SHORT).show();
+                finish();
+                setResult(RESULT_CANCELED);
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
-
-//        Toast.makeText(this, toolbar.isShown() ? "shown" : "hide", Toast.LENGTH_SHORT).show();
-        ActionBar actionBar = getSupportActionBar();
-        Toast.makeText(this, actionBar != null ? (actionBar.isShowing() ? "shown" : "hide") : "no bar here", Toast.LENGTH_SHORT).show();
 
         //
         //
@@ -116,17 +98,8 @@ public class ItemContentActivity extends AppCompatActivity {
         textViewId.setText(String.valueOf(mId));
 //        textViewContent.setText(content);
 
-        TextView textBack = (TextView) findViewById(R.id.tv_back);
         TextView textSave = (TextView) findViewById(R.id.tv_save);
 
-        textBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                setResult(RESULT_CANCELED);
-                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
-            }
-        });
         textSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
