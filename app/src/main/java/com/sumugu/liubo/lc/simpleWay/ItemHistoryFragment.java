@@ -2,6 +2,7 @@ package com.sumugu.liubo.lc.simpleWay;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ public class ItemHistoryFragment extends Fragment {
             }
         }
     };
+
     public ItemHistoryFragment() {
         // Required empty public constructor
     }
@@ -80,24 +82,46 @@ public class ItemHistoryFragment extends Fragment {
             public void onClick(View view, final long id) {
 //                Toast.makeText(getActivity(), "click at:" + String.valueOf(id), Toast.LENGTH_SHORT).show();
 
-                View sheet = inflater.inflate(R.layout.bottom_sheet_main, null);
+                View sheet = inflater.inflate(R.layout.bottom_sheet_dialog, null);
                 final BottomSheetDialog sheetDialog = new BottomSheetDialog(getActivity());
                 sheetDialog.setContentView(sheet);
                 sheetDialog.show();
 
-                sheet.findViewById(R.id.text_item1).setOnClickListener(new View.OnClickListener() {
+                sheet.findViewById(R.id.text_delete).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         int result = getContext().getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null);
                         Toast.makeText(getActivity(), result > 0 ? "deleted ok at:" + id : "no one can be deleted at all.", Toast.LENGTH_SHORT).show();
+
                         sheetDialog.dismiss();
                     }
                 });
-                sheet.findViewById(R.id.text_item2).setOnClickListener(new View.OnClickListener() {
+                sheet.findViewById(R.id.text_edit).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent itemContent = new Intent(getActivity(), ItemContentActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong("id", id);    //get id of item inside of list
+                        itemContent.putExtras(bundle);
+                        startActivityForResult(itemContent, 1);
+                        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+
+                        sheetDialog.dismiss();
+                    }
+                });
+                sheet.findViewById(R.id.text_finish).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getActivity(), "finish not yet ok at:" + id, Toast.LENGTH_SHORT).show();
+
+                        sheetDialog.dismiss();
+                    }
+                });
+                sheet.findViewById(R.id.text_close).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(getActivity(), "close ok at:" + id, Toast.LENGTH_SHORT).show();
+
                         sheetDialog.dismiss();
                     }
                 });
@@ -118,7 +142,7 @@ public class ItemHistoryFragment extends Fragment {
 
         @Override
         public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            String order = " DESC";
+            String order = ItemContract.DEFAULT_SORT;
             String selection = ItemContract.Column.ITEM_IS_FINISHED + "=0"; //default
             if (bundle != null) {
 
@@ -126,17 +150,19 @@ public class ItemHistoryFragment extends Fragment {
                 switch (type) {
                     case TYPE_HISTORY:
                         selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
+                        order = ItemContract.Column.ITEM_FINISHED_AT + " DESC";
                         break;
                     case TYPE_PLAN:
                         selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + "=0";
                         break;
                     case TYPE_REMINDER:
                         selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + ">0";
+                        order = ItemContract.Column.ITEM_ALARM_CLOCK;
                         break;
                 }
             }
 
-            return new android.support.v4.content.CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, ItemContract.Column.ITEM_FINISHED_AT + order);
+            return new android.support.v4.content.CursorLoader(mContext, ItemContract.CONTENT_URI, null, selection, null, order);
         }
 
 

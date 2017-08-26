@@ -1,39 +1,21 @@
 package com.sumugu.liubo.lc.simpleWay;
 
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
-import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
-import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class ItemPackageActivity extends AppCompatActivity {
 
@@ -42,7 +24,7 @@ public class ItemPackageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_package_md);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ItemHistoryFragment frag1 = new ItemHistoryFragment();
@@ -87,15 +69,14 @@ public class ItemPackageActivity extends AppCompatActivity {
 
     }
 
-    void openCreateContent()
-    {
+    void openCreateContent() {
         Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("id", "0");
         bundle.putString("content", "create new content");
         itemContent.putExtras(bundle);
         startActivityForResult(itemContent, 2);
-        overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }
 
     public class PagerAdapter extends FragmentPagerAdapter {
@@ -122,6 +103,7 @@ public class ItemPackageActivity extends AppCompatActivity {
             return ((ItemHistoryFragment) mFragments.get(position)).getTitle();
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {

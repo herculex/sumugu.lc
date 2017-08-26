@@ -12,7 +12,23 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_item1"
+            android:id="@+id/text_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="edit"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_finish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="finish"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -20,7 +36,7 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/text_item2"
+            android:id="@+id/text_close"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"

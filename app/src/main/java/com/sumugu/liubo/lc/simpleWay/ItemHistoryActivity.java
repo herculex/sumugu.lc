@@ -324,7 +324,7 @@ public class ItemHistoryActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_main, null);
+//                View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog, null);
 //                final BottomSheetDialog sheetDialog = new BottomSheetDialog(ItemHistoryActivity.this);
 //                sheetDialog.setContentView(sheet);
 //                sheetDialog.show();
