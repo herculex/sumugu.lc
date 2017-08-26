@@ -37,16 +37,6 @@ import java.util.Date;
 
 public class ItemPackageActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
-
-    private String[] FROM = new String[]{
-            ItemContract.Column.ITEM_CONTENT
-    };
-    private int[] TO = new int[]{
-            R.id.text_content
-    };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
