@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,15 +78,19 @@ public class ItemPackageActivity extends AppCompatActivity {
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(ItemPackageActivity.this,DatePickerActivity.class);
+                        startActivity(intent);
                         Toast.makeText(ItemPackageActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
                 mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
                 mPopupWindow.setTouchable(true);
                 mPopupWindow.setOutsideTouchable(true);
 
-                mPopupWindow.showAsDropDown(toolbar);
+//                mPopupWindow.showAsDropDown(toolbar);
+                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP,0,0);
             }
         });
 
