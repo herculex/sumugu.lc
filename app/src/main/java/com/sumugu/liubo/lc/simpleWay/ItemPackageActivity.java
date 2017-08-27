@@ -1,8 +1,9 @@
 package com.sumugu.liubo.lc.simpleWay;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -88,6 +89,7 @@ public class ItemPackageActivity extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
                 mPopupWindow.setTouchable(true);
                 mPopupWindow.setOutsideTouchable(true);
+                mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));//API 23 以下必须有才能点击外部或"back"键消失
 
 //                mPopupWindow.showAsDropDown(toolbar);
                 mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP,0,0);
@@ -104,6 +106,19 @@ public class ItemPackageActivity extends AppCompatActivity {
         itemContent.putExtras(bundle);
         startActivityForResult(itemContent, 2);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            Toast.makeText(this, "it's ItemContent'detail come back.", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == 2) {
+            Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == 3) {
+            Toast.makeText(this, "it's ItemHistory come back", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public class PagerAdapter extends FragmentPagerAdapter {
@@ -128,19 +143,6 @@ public class ItemPackageActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return ((ItemHistoryFragment) mFragments.get(position)).getTitle();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            Toast.makeText(this, "it's ItemContent'detail come back.", Toast.LENGTH_SHORT).show();
-        }
-        if (requestCode == 2) {
-            Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
-        }
-        if (requestCode == 3) {
-            Toast.makeText(this, "it's ItemHistory come back", Toast.LENGTH_SHORT).show();
         }
     }
 
