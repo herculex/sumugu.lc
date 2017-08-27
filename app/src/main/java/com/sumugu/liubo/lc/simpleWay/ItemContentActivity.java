@@ -39,29 +39,35 @@ public class ItemContentActivity extends AppCompatActivity {
     AlarmUntils alarmUntils = new AlarmUntils();
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item_content, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.app_bar_search:
-                Toast.makeText(ItemContentActivity.this, "I'm searching.toolbar instead of actionbar", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_content);
 //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.menu_item_content);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.app_bar_save:
+                        if (savingItem(mId) > 0) {
+                            Toast.makeText(ItemContentActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
+                            //set alarm clock here when saved was OK.
+                            setUpAlarmClock();
+
+                        } else {
+                            Toast.makeText(ItemContentActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
+                        }
+
+                        setResult(RESULT_OK);
+                        finish();
+                        overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,26 +103,6 @@ public class ItemContentActivity extends AppCompatActivity {
 
         textViewId.setText(String.valueOf(mId));
 //        textViewContent.setText(content);
-
-        TextView textSave = (TextView) findViewById(R.id.tv_save);
-
-        textSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (savingItem(mId) > 0) {
-                    Toast.makeText(ItemContentActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
-                    //set alarm clock here when saved was OK.
-                    setUpAlarmClock();
-
-                } else {
-                    Toast.makeText(ItemContentActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
-                }
-
-                setResult(RESULT_OK);
-                finish();
-                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
-            }
-        });
 
         textDelete.setOnClickListener(new View.OnClickListener() {
             @Override

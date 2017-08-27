@@ -25,7 +25,7 @@ public class ItemPackageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_package_md);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.menu_item_package);
 
         ItemHistoryFragment frag1 = new ItemHistoryFragment();
         Bundle bundle1 = new Bundle();

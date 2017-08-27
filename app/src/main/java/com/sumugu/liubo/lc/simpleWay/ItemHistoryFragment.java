@@ -113,7 +113,6 @@ public class ItemHistoryFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(getActivity(), "finish not yet ok at:" + id, Toast.LENGTH_SHORT).show();
-
                         sheetDialog.dismiss();
                     }
                 });

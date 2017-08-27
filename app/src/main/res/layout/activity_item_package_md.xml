@@ -9,7 +9,6 @@
         android:id="@+id/appbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
-
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_height="?attr/actionBarSize"
@@ -21,22 +20,21 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:tabMode="scrollable">
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <android.support.design.widget.TabItem
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Tab1" />
 
             <android.support.design.widget.TabItem
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Tab2" />
 
             <android.support.design.widget.TabItem
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Tab3" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
@@ -53,10 +51,11 @@
         android:id="@+id/fab_lc"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        app:layout_anchor="@id/appbar"
+        app:layout_anchor="@id/viewpager"
         app:layout_anchorGravity="bottom|right|end"
         android:src="@android:drawable/ic_input_add"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:clickable="true"
         app:fabSize="mini" />
 </android.support.design.widget.CoordinatorLayout>
