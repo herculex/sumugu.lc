@@ -2,6 +2,8 @@ package com.sumugu.liubo.lc.simpleWay;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
@@ -24,7 +29,7 @@ public class ItemPackageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_package_md);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_item_package);
 
         ItemHistoryFragment frag1 = new ItemHistoryFragment();
@@ -63,7 +68,24 @@ public class ItemPackageActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openCreateContent();
+//                openCreateContent();
+//                new FullBottomSheetDialog().show(getSupportFragmentManager(),"dialog full");
+                PopupWindow mPopupWindow;
+                View popupView = getLayoutInflater().inflate(R.layout.bottom_sheet_full, null);
+                Button btn = (Button)popupView.findViewById(R.id.btn_press_save);
+                final EditText editText = (EditText)popupView.findViewById(R.id.edit_content);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ItemPackageActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
+                mPopupWindow.setTouchable(true);
+                mPopupWindow.setOutsideTouchable(true);
+
+                mPopupWindow.showAsDropDown(toolbar);
             }
         });
 
