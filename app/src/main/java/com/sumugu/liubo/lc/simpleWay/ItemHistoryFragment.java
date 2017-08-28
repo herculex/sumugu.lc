@@ -1,10 +1,9 @@
 package com.sumugu.liubo.lc.simpleWay;
 
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
@@ -44,9 +43,23 @@ public class ItemHistoryFragment extends Fragment {
             }
         }
     };
-
+    OnItemActionCallback onItemActionCallback;
     public ItemHistoryFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        if (activity instanceof OnItemActionCallback) {
+            onItemActionCallback = (OnItemActionCallback) activity;
+        } else {
+            throw new ClassCastException(activity.toString()
+                    + " must implement onItemActionCallback");
+        }
     }
 
     public String getTitle() {
@@ -58,7 +71,6 @@ public class ItemHistoryFragment extends Fragment {
             return args.getString(TITLE);
         }
     }
-
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -90,29 +102,21 @@ public class ItemHistoryFragment extends Fragment {
                 sheet.findViewById(R.id.text_delete).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        int result = getContext().getContentResolver().delete(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null);
-                        Toast.makeText(getActivity(), result > 0 ? "deleted ok at:" + id : "no one can be deleted at all.", Toast.LENGTH_SHORT).show();
-
+                        onItemActionCallback.delete(id);
                         sheetDialog.dismiss();
                     }
                 });
                 sheet.findViewById(R.id.text_edit).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent itemContent = new Intent(getActivity(), ItemContentActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("id", id);    //get id of item inside of list
-                        itemContent.putExtras(bundle);
-                        startActivityForResult(itemContent, 1);
-                        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-
+                        onItemActionCallback.edit(id);
                         sheetDialog.dismiss();
                     }
                 });
                 sheet.findViewById(R.id.text_finish).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(), "finish not yet ok at:" + id, Toast.LENGTH_SHORT).show();
+                        onItemActionCallback.finish(id);
                         sheetDialog.dismiss();
                     }
                 });
@@ -120,13 +124,21 @@ public class ItemHistoryFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(getActivity(), "close ok at:" + id, Toast.LENGTH_SHORT).show();
-
                         sheetDialog.dismiss();
                     }
                 });
             }
         });
         return view;
+    }
+
+
+    public interface OnItemActionCallback {
+        void edit(long id);
+
+        void finish(long id);
+
+        void delete(long id);
     }
 
     class HistoryLoader implements LoaderManager.LoaderCallbacks<Cursor> {
