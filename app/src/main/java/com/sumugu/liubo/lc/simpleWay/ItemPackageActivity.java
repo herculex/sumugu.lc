@@ -320,7 +320,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemHistor
         Cursor cursor = getContentResolver().query(Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id)), null, null, null, null);
         if (cursor == null)
             return 0;
-        else if (!cursor.moveToFirst()) {
+        else if (cursor.moveToFirst()) {
             long clock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
             cursor.close();
             return clock;
