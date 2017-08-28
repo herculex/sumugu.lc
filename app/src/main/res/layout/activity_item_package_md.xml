@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:id="@+id/main_body">
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
-            android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways">
         </android.support.v7.widget.Toolbar>
 
@@ -50,13 +50,13 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_lc"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        app:layout_anchor="@id/viewpager"
-        app:layout_anchorGravity="bottom|right|end"
-        android:src="@android:drawable/ic_input_add"
-        android:layout_marginRight="16dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:clickable="true"
-        app:fabSize="normal" />
+        android:src="@android:drawable/ic_input_add"
+        app:fabSize="mini"
+        app:layout_anchor="@id/viewpager"
+        app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>

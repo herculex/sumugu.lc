@@ -57,6 +57,18 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemHistor
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));//API 23 以下必须有才能点击外部或"back"键消失
         mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
+        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                //rest everything
+                mId = 0;
+                editText.setText("");
+                alarmText.setText("here set alarm ");
+                mOldAlarmClock = 0;
+                mNewAlarmClock = 0;
+                mIsFinished = false;
+            }
+        });
         //
         Button btnSave = (Button) popupView.findViewById(R.id.btn_press_save);
         editText = (EditText) popupView.findViewById(R.id.edit_content);
@@ -70,14 +82,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemHistor
                     Toast.makeText(ItemPackageActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
                     //set alarm clock here when saved was OK.
                     setUpAlarmClock();
-
-                    //rest everything
-                    mId = 0;
-                    editText.setText("");
-                    alarmText.setText("here set alarm ");
-                    mOldAlarmClock = 0;
-                    mNewAlarmClock = 0;
-                    mIsFinished = false;
 
                 } else {
                     Toast.makeText(ItemPackageActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
