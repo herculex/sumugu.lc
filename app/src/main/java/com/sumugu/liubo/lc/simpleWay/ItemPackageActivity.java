@@ -272,7 +272,12 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemHistor
 
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
-        getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
+        ContentValues values = new ContentValues();
+
+        values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
+        values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
+
+        getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
 
     }
 
@@ -282,13 +287,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemHistor
 
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
-        ContentValues values = new ContentValues();
-
-        values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
-        values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
-
-        getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
-
+        getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
     }
 
 
