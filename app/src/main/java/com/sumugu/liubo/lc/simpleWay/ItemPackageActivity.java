@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
@@ -72,27 +73,36 @@ public class ItemPackageActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                openCreateContent();
 //                new FullBottomSheetDialog().show(getSupportFragmentManager(),"dialog full");
-                PopupWindow mPopupWindow;
-                View popupView = getLayoutInflater().inflate(R.layout.bottom_sheet_full, null);
-                Button btn = (Button)popupView.findViewById(R.id.btn_press_save);
-                final EditText editText = (EditText)popupView.findViewById(R.id.edit_content);
+
+                final View popupView = getLayoutInflater().inflate(R.layout.popup_window_dialog, null);
+                final PopupWindow mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
+                Button btn = (Button) popupView.findViewById(R.id.btn_press_save);
+                final EditText editText = (EditText) popupView.findViewById(R.id.edit_content);
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(ItemPackageActivity.this,DatePickerActivity.class);
-                        startActivity(intent);
+
                         Toast.makeText(ItemPackageActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mPopupWindow.dismiss();
+                    }
+                });
+                final TextView alarmText = (TextView) popupView.findViewById(R.id.text_alarm);
+                alarmText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ItemPackageActivity.this, DatePickerActivity.class);
+                        startActivity(intent);
                     }
                 });
 
 
-                mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
                 mPopupWindow.setTouchable(true);
                 mPopupWindow.setOutsideTouchable(true);
                 mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));//API 23 以下必须有才能点击外部或"back"键消失
-
+                mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
 //                mPopupWindow.showAsDropDown(toolbar);
-                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP,0,0);
+                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
+
             }
         });
 
