@@ -110,7 +110,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_item_package);
 
         ItemLineFragment frag1 = new ItemLineFragment();
@@ -159,11 +159,20 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
+//                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
+                popupEditWindow();
 
             }
         });
 
+    }
+
+    void popupEditWindow() {
+        View vi = findViewById(R.id.main_body);
+        int[] location = new int[2];
+        vi.getLocationInWindow(location);
+        Toast.makeText(ItemPackageActivity.this, "x:" + location[0] + ",y:" + location[1], Toast.LENGTH_SHORT).show();
+        mPopupWindow.showAtLocation(vi, Gravity.TOP, 0, location[1]);
     }
 
     void updateCountOnTabs() {
@@ -318,7 +327,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         if (id > 0) {
             initalingItemDetail(id);
             mId = id;
-            mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
+            popupEditWindow();
         }
     }
 
