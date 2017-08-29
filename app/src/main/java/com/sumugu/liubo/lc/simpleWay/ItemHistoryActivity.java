@@ -29,6 +29,7 @@ import com.sumugu.liubo.lc.simpleWay.recycleradapter.CursorRecyclerAdapter;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class ItemHistoryActivity extends AppCompatActivity {
 
     ListView mListView;
