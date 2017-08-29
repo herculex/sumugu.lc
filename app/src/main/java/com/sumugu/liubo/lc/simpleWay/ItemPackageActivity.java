@@ -171,7 +171,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         View vi = findViewById(R.id.main_body);
         int[] location = new int[2];
         vi.getLocationInWindow(location);
-        Toast.makeText(ItemPackageActivity.this, "x:" + location[0] + ",y:" + location[1], Toast.LENGTH_SHORT).show();
+//        Toast.makeText(ItemPackageActivity.this, "x:" + location[0] + ",y:" + location[1], Toast.LENGTH_SHORT).show();
         mPopupWindow.showAtLocation(vi, Gravity.TOP, 0, location[1]);
     }
 
