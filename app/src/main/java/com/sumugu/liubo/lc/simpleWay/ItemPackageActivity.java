@@ -145,12 +145,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         viewpager.setCurrentItem(1);
 
         viewArrayList = new ArrayList<>();
-//        View tabView1 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
-//        View tabView2 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
-//        View tabView3 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
-//        viewArrayList.add(tabView1);
-//        viewArrayList.add(tabView2);
-//        viewArrayList.add(tabView3);
 //
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             View tabView = getLayoutInflater().inflate(R.layout.tab_custom_view, null);
