@@ -2,20 +2,17 @@ package com.sumugu.liubo.lc.simpleWay;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sumugu.liubo.lc.R;
 
 /**
  * Created by herculex on 2017/8/27.
  */
-
+@Deprecated
 public class FullBottomSheetDialog extends BottomSheetDialogFragment {
 
     private BottomSheetBehavior mBehavior;

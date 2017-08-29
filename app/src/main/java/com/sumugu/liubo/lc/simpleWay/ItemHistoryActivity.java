@@ -133,7 +133,7 @@ public class ItemHistoryActivity extends AppCompatActivity {
 //            mArrayList.add(datas[i]);
 //        }
 /*        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        final HistoryRecyclerViewAdapter historyRecyclerViewAdapter = new HistoryRecyclerViewAdapter(this, mArrayList);
+        final RecyclerViewAdapterDemo historyRecyclerViewAdapter = new RecyclerViewAdapterDemo(this, mArrayList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.scrollToPosition(0);
 

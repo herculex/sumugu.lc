@@ -15,18 +15,18 @@ import java.util.ArrayList;
  * Created by liubo on 2017/8/21.
  */
 
-public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapterDemo extends RecyclerView.Adapter<RecyclerViewAdapterDemo.ViewHolder> {
 
     Context mContext;
     ArrayList<String> mDatas;
 
-    public HistoryRecyclerViewAdapter(Context context, ArrayList<String> datas) {
+    public RecyclerViewAdapterDemo(Context context, ArrayList<String> datas) {
         mContext = context;
         mDatas = datas;
     }
 
     @Override
-    public HistoryRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerViewAdapterDemo.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         View itemView = inflater.inflate(R.layout.simpleway_listview_item, parent, false);
@@ -36,7 +36,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     }
 
     @Override
-    public void onBindViewHolder(HistoryRecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerViewAdapterDemo.ViewHolder holder, int position) {
 
         String string = mDatas.get(position);
         TextView textView = holder.contentView;

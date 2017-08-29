@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+@Deprecated
 public class ItemPackageActivity extends AppCompatActivity implements ItemLineFragment.OnItemActionCallback {
 
     final static int REQUEST_CODE_ALARM = 0;
