@@ -9,13 +9,14 @@
         android:id="@+id/text_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:text="90" />
 
     <TextView
         android:id="@+id/text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title" />
+        android:text="title"
+        android:textColor="?attr/colorAccent" />
 
 </LinearLayout>

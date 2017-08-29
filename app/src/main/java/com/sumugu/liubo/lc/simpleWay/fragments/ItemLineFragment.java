@@ -44,6 +44,8 @@ public class ItemLineFragment extends Fragment {
         }
     };
     OnItemActionCallback onItemActionCallback;
+    SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter;
+    RecyclerView recyclerView;
 
     public ItemLineFragment() {
         // Required empty public constructor
@@ -79,8 +81,8 @@ public class ItemLineFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_item_history, container, false);
 
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        final SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        simpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(R.layout.simpleway_listview_item, null, new String[]{ItemContract.Column.ITEM_CONTENT}, new int[]{R.id.text_content});
 
 //        simpleCursorRecyclerAdapter.setViewBinder(BINDER);
 //
@@ -132,7 +134,6 @@ public class ItemLineFragment extends Fragment {
         });
         return view;
     }
-
 
     public interface OnItemActionCallback {
         void edit(long id);

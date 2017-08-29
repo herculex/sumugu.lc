@@ -47,6 +47,11 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
     long mNewAlarmClock = 0;
     boolean mIsFinished = false;
     AlarmUntils alarmUntils = new AlarmUntils();
+    ArrayList<View> viewArrayList;
+    ArrayList<Fragment> fragmentArrayList;
+    String[] tabTitles = new String[]{"History", "Plan", "Reminder"};
+    int[] lingTypes = new int[]{ItemLineFragment.TYPE_HISTORY, ItemLineFragment.TYPE_PLAN, ItemLineFragment.TYPE_REMINDER};
+    TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +89,8 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                     Toast.makeText(ItemPackageActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
                     //set alarm clock here when saved was OK.
                     setUpAlarmClock();
+                    //update count of tabs
+                    updateCountOnTabs();
 
                 } else {
                     Toast.makeText(ItemPackageActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
@@ -108,45 +115,98 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
         ItemLineFragment frag1 = new ItemLineFragment();
         Bundle bundle1 = new Bundle();
-        bundle1.putString(ItemLineFragment.TITLE, "history");
+        bundle1.putString(ItemLineFragment.TITLE, "*history");
         bundle1.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_HISTORY);
         frag1.setArguments(bundle1);
 
         ItemLineFragment frag2 = new ItemLineFragment();
         Bundle bundle2 = new Bundle();
-        bundle2.putString(ItemLineFragment.TITLE, "plan");
+        bundle2.putString(ItemLineFragment.TITLE, "*plan");
         bundle2.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_PLAN);
         frag2.setArguments(bundle2);
 
         ItemLineFragment frag3 = new ItemLineFragment();
         Bundle bundle3 = new Bundle();
-        bundle3.putString(ItemLineFragment.TITLE, "reminder");
+        bundle3.putString(ItemLineFragment.TITLE, "*reminder");
         bundle3.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_REMINDER);
         frag3.setArguments(bundle3);
 
-        ArrayList<Fragment> list = new ArrayList<>();
-        list.add(frag1);
-        list.add(frag2);
-        list.add(frag3);
+        fragmentArrayList = new ArrayList<>();
+        fragmentArrayList.add(frag1);
+        fragmentArrayList.add(frag2);
+        fragmentArrayList.add(frag3);
 
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), list);
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), fragmentArrayList);
         ViewPager viewpager = (ViewPager) findViewById(R.id.viewpager);
         viewpager.setAdapter(adapter);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewpager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(1);
 
+        viewArrayList = new ArrayList<>();
+//        View tabView1 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
+//        View tabView2 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
+//        View tabView3 = getLayoutInflater().inflate(R.layout.tab_custom_view,null);
+//        viewArrayList.add(tabView1);
+//        viewArrayList.add(tabView2);
+//        viewArrayList.add(tabView3);
+//
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            View tabView = getLayoutInflater().inflate(R.layout.tab_custom_view, null);
+            tabLayout.getTabAt(i).setCustomView(tabView);
+            viewArrayList.add(tabView);
+        }
 
+        updateCountOnTabs();
+
+        //
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                openCreateContent();
                 mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
 
             }
         });
+
+    }
+
+    void updateCountOnTabs() {
+        for (int i = 0; i < viewArrayList.size(); i++) {
+            View customView = viewArrayList.get(i);
+            TextView countText = (TextView) customView.findViewById(R.id.text_count);
+            TextView titleText = (TextView) customView.findViewById(R.id.text_title);
+
+            countText.setText(String.valueOf(getCount(lingTypes[i])));
+            titleText.setText(tabTitles[i]);
+        }
+    }
+
+    long getCount(int type) {
+        String selection = "";
+        switch (type) {
+            case ItemLineFragment.TYPE_HISTORY:
+                selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
+                break;
+            case ItemLineFragment.TYPE_PLAN:
+                selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + "=0";
+                break;
+            case ItemLineFragment.TYPE_REMINDER:
+                selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + ">0";
+                break;
+            default:
+                return -1;
+
+        }
+        Uri uri = ItemContract.CONTENT_URI;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor == null)
+            return -99;
+
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
 
     }
 
@@ -210,7 +270,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         return result;
     }
 
-
+    @Deprecated
     void openCreateContent() {
         Intent itemContent = new Intent(ItemPackageActivity.this, ItemContentActivity.class);
         Bundle bundle = new Bundle();
@@ -279,7 +339,9 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         values.put(ItemContract.Column.ITEM_IS_FINISHED, true);
         values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
 
-        getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
+        int result = getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
+        if (result > 0)
+            updateCountOnTabs();
 
     }
 
@@ -289,7 +351,9 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
-        getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
+        int result = getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
+        if (result > 0)
+            updateCountOnTabs();
     }
 
 
