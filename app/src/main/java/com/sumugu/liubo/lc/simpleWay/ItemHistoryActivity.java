@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
+import com.sumugu.liubo.lc.simpleWay.fragments.ItemLineFragment;
 import com.sumugu.liubo.lc.simpleWay.recycleradapter.CursorRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -287,22 +288,22 @@ public class ItemHistoryActivity extends AppCompatActivity {
         });*/
 
 
-        ItemHistoryFragment frag1 = new ItemHistoryFragment();
+        ItemLineFragment frag1 = new ItemLineFragment();
         Bundle bundle1 = new Bundle();
-        bundle1.putString(ItemHistoryFragment.TITLE, "history");
-        bundle1.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_HISTORY);
+        bundle1.putString(ItemLineFragment.TITLE, "history");
+        bundle1.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_HISTORY);
         frag1.setArguments(bundle1);
 
-        ItemHistoryFragment frag2 = new ItemHistoryFragment();
+        ItemLineFragment frag2 = new ItemLineFragment();
         Bundle bundle2 = new Bundle();
-        bundle2.putString(ItemHistoryFragment.TITLE, "plan");
-        bundle2.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_PLAN);
+        bundle2.putString(ItemLineFragment.TITLE, "plan");
+        bundle2.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_PLAN);
         frag2.setArguments(bundle2);
 
-        ItemHistoryFragment frag3 = new ItemHistoryFragment();
+        ItemLineFragment frag3 = new ItemLineFragment();
         Bundle bundle3 = new Bundle();
-        bundle3.putString(ItemHistoryFragment.TITLE, "reminder");
-        bundle3.putInt(ItemHistoryFragment.WHAT_TYPE, ItemHistoryFragment.TYPE_REMINDER);
+        bundle3.putString(ItemLineFragment.TITLE, "reminder");
+        bundle3.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_REMINDER);
         frag3.setArguments(bundle3);
 
         ArrayList<Fragment> list = new ArrayList<>();
@@ -388,7 +389,7 @@ public class ItemHistoryActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return ((ItemHistoryFragment) mFragments.get(position)).getTitle();
+            return ((ItemLineFragment) mFragments.get(position)).getTitle();
         }
     }
 

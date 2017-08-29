@@ -1,4 +1,4 @@
-package com.sumugu.liubo.lc.simpleWay;
+package com.sumugu.liubo.lc.simpleWay.fragments;
 
 
 import android.app.Activity;
@@ -24,7 +24,7 @@ import com.sumugu.liubo.lc.simpleWay.recycleradapter.SimpleCursorRecyclerAdapter
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ItemHistoryFragment extends Fragment {
+public class ItemLineFragment extends Fragment {
 
     public static final int TYPE_HISTORY = 1;
     public static final int TYPE_PLAN = 2;
@@ -44,7 +44,8 @@ public class ItemHistoryFragment extends Fragment {
         }
     };
     OnItemActionCallback onItemActionCallback;
-    public ItemHistoryFragment() {
+
+    public ItemLineFragment() {
         // Required empty public constructor
     }
 
