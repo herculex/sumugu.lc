@@ -134,6 +134,7 @@ public class NotifyService extends IntentService {
         remoteViews.setTextViewText(R.id.text_title, mTitle);
         remoteViews.setTextViewText(R.id.text_content, mText);
 
+//insert here
         BroadcastReceiver onClickReceiver = new BroadcastReceiver() {
 
             IntentFilter filter = new IntentFilter();
@@ -152,6 +153,7 @@ public class NotifyService extends IntentService {
         mRemoteViews.setOnClickPendingIntent(R.id.music_status_bar_icon,pendButtonIntent);
             //R.id.trackname为你要监听按钮的id
         mRemoteViews.setOnClickPendingIntent(R.id.trackname,pendButtonIntent);
+            //end insert
 
             registerReceiver(onClickReceiver, filter);
 
