@@ -19,6 +19,7 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 
 import java.util.Random;
 
+
 public class NotifyService extends IntentService {
 
     /**
@@ -76,7 +77,6 @@ public class NotifyService extends IntentService {
         Random random = new Random();
         int mId = random.nextInt(900);
 
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.fragment_item_detail);
         //API 11 ,android 3.0
         Notification.Builder mBuilder =
                 new Notification.Builder(this)
@@ -114,11 +114,58 @@ public class NotifyService extends IntentService {
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setAutoCancel(true);
 
+
+//        Notification.InboxStyle InboxStyle = new Notification.InboxStyle();
+//        InboxStyle.setBigContentTitle("大视图Inbox内容：");
+//        String[] events = new String[] {"event 1 ,go to school","event 2: go to home.","event 3: go to music to learn","event 4: go to guanzhou"};
+//        for(String event :events)
+//            InboxStyle.addLine(event);
+//        mBuilder.setStyle(InboxStyle);
+
+//        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+//        bigTextStyle.setBigContentTitle("大视图BigText");
+//        bigTextStyle.bigText(mText);
+//        bigTextStyle.setSummaryText(mTitle);
+//
+//        mBuilder.setStyle(bigTextStyle);
+
+        //remoteview
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_simpleway);
+        remoteViews.setTextViewText(R.id.text_title, mTitle);
+        remoteViews.setTextViewText(R.id.text_content, mText);
+
+        BroadcastReceiver onClickReceiver = new BroadcastReceiver() {
+
+            IntentFilter filter = new IntentFilter();
+            ;
+            Intent buttonIntent = new Intent(STATUS_BAR_COVER_CLICK_ACTION);
+        filter.addAction(STATUS_BAR_COVER_CLICK_ACTION);
+            PendingIntent pendButtonIntent = PendingIntent.getBroadcast(this, 0, buttonIntent, 0);
+            //        if(Build.VERSION.SDK_INT>=20) {
+//            PendingIntent pend = PendingIntent.getActivity(getBaseContext(),0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+//             Notification.Action.Builder builder = new Notification.Action.Builder(R.mipmap.ic_launcher,"测试",pend);
+//            mBuilder.addAction(builder.build());
+//        }
+            Notification notification = mBuilder.build();
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mRemoteViews.setOnClickPendingIntent(R.id.music_status_bar_icon,pendButtonIntent);
+            //R.id.trackname为你要监听按钮的id
+        mRemoteViews.setOnClickPendingIntent(R.id.trackname,pendButtonIntent);
+
+            registerReceiver(onClickReceiver, filter);
+
+            notification.bigContentView=remoteViews;
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(STATUS_BAR_COVER_CLICK_ACTION)) {
+                    //在这里处理点击事件
+                }
+            }
 
         // mId allows you to update the notification later on.
-        mNotificationManager.notify((int) mItemId, mBuilder.build());
+        mNotificationManager.notify((int)mItemId,notification);
     }
 
 }
