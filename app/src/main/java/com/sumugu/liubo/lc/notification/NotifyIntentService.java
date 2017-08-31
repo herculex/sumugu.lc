@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
@@ -20,18 +21,19 @@ import com.sumugu.liubo.lc.contract.ItemContract;
 import java.util.Random;
 
 
-public class NotifyService extends IntentService {
+public class NotifyIntentService extends IntentService {
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    private static String TAG = NotifyService.class.getSimpleName();
+    private static String TAG = NotifyIntentService.class.getSimpleName();
     long mItemId;
     //标题，内容，提示
     private String mTitle, mText, mTicker;
-    public NotifyService() {
+
+    public NotifyIntentService() {
         super(TAG);
     }
 
@@ -56,7 +58,7 @@ public class NotifyService extends IntentService {
 
         mText = text;
         mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
-        mTicker = "GET UP!来自lc.alpha.5." + (android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", alarmClock));
+        mTicker = "GET UP!来自a5." + (android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", alarmClock));
 
         cursor.close();
 
@@ -80,7 +82,7 @@ public class NotifyService extends IntentService {
         //API 11 ,android 3.0
         Notification.Builder mBuilder =
                 new Notification.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_notification)                 //必要条件1/3，小图标 -android.R.drawable.ic_lock_idle_alarm
+                        .setSmallIcon(R.mipmap.ic_launcher)                 //必要条件1/3，小图标 -android.R.drawable.ic_lock_idle_alarm
                         .setContentTitle(mTitle)                                //必要条件2/3，标题 -"My notification"
                         .setContentText(mText)                                  //必要条件3/3，内容 -"Hello World!"
                         .setTicker(mTicker)
@@ -134,40 +136,21 @@ public class NotifyService extends IntentService {
         remoteViews.setTextViewText(R.id.text_title, mTitle);
         remoteViews.setTextViewText(R.id.text_content, mText);
 
-//insert here
-        BroadcastReceiver onClickReceiver = new BroadcastReceiver() {
 
-            IntentFilter filter = new IntentFilter();
-            ;
-            Intent buttonIntent = new Intent(STATUS_BAR_COVER_CLICK_ACTION);
-        filter.addAction(STATUS_BAR_COVER_CLICK_ACTION);
-            PendingIntent pendButtonIntent = PendingIntent.getBroadcast(this, 0, buttonIntent, 0);
-            //        if(Build.VERSION.SDK_INT>=20) {
-//            PendingIntent pend = PendingIntent.getActivity(getBaseContext(),0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-//             Notification.Action.Builder builder = new Notification.Action.Builder(R.mipmap.ic_launcher,"测试",pend);
-//            mBuilder.addAction(builder.build());
-//        }
-            Notification notification = mBuilder.build();
+        if (Build.VERSION.SDK_INT >= 20) {
+            PendingIntent pend = PendingIntent.getActivity(getBaseContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification.Action.Builder builder = new Notification.Action.Builder(R.mipmap.ic_launcher, "测试", pend);
+            mBuilder.addAction(builder.build());
+        }
+
+        Notification notification = mBuilder.build();
+        notification.bigContentView = remoteViews;
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mRemoteViews.setOnClickPendingIntent(R.id.music_status_bar_icon,pendButtonIntent);
-            //R.id.trackname为你要监听按钮的id
-        mRemoteViews.setOnClickPendingIntent(R.id.trackname,pendButtonIntent);
-            //end insert
-
-            registerReceiver(onClickReceiver, filter);
-
-            notification.bigContentView=remoteViews;
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(STATUS_BAR_COVER_CLICK_ACTION)) {
-                    //在这里处理点击事件
-                }
-            }
 
         // mId allows you to update the notification later on.
-        mNotificationManager.notify((int)mItemId,notification);
+        mNotificationManager.notify((int) mItemId, notification);
     }
 
 }

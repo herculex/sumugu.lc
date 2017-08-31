@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -182,12 +183,13 @@ public class ItemLineFragment extends Fragment {
         @Override
         public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
             mSimpleCursorAdapter.swapCursor(cursor);
-
+            Log.d("IL_FRag", getTitle() + ",onLoadFinished act");
         }
 
         @Override
         public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
             mSimpleCursorAdapter.swapCursor(null);
+            Log.d("IL_FRag", getTitle() + ",onLoaderReset act");
 
         }
     }
