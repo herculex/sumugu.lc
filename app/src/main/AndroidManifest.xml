@@ -53,7 +53,15 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
+        <receiver
+            android:name=".notification.NotifyBrocastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.sumugu.liubo.lc.notification.ACTION_FINISH" />
+                <action android:name="com.sumugu.liubo.lc.notification.ACTION_SNOOZE" />
+            </intent-filter>
+        </receiver>
         <service
             android:name=".lockscreen.LockScreenService"
             android:enabled="true"

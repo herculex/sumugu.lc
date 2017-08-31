@@ -28,10 +28,11 @@ public class NotifyIntentService extends IntentService {
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    private static String TAG = NotifyIntentService.class.getSimpleName();
+    final static String TAG = NotifyIntentService.class.getSimpleName();
     long mItemId;
+    long mAlarmClock;
     //标题，内容，提示
-    private String mTitle, mText, mTicker;
+    private String mTitle, mSubTitle, mText, mTicker;
 
     public NotifyIntentService() {
         super(TAG);
@@ -54,11 +55,12 @@ public class NotifyIntentService extends IntentService {
 
         String text = cursor.getString(cursor.getColumnIndex(ItemContract.Column.ITEM_CONTENT));
         long createdAt = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_CREATED_AT));
-        long alarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
+        mAlarmClock = cursor.getLong(cursor.getColumnIndex(ItemContract.Column.ITEM_ALARM_CLOCK));
 
         mText = text;
-        mTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
-        mTicker = "GET UP!来自a5." + (android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", alarmClock));
+        mSubTitle = DateUtils.getRelativeTimeSpanString(createdAt).toString();
+        mTicker = "GET UP!来自a5." + (android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", mAlarmClock));
+        mTitle = "Hi,Have you finish it?";
 
         cursor.close();
 
@@ -67,6 +69,10 @@ public class NotifyIntentService extends IntentService {
     }
 
     private void show() {
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         Intent intentItemDetail = new Intent(this, ItemDetailActivity.class);
         intentItemDetail.putExtra(ItemContract.Column.ITEM_ID, mItemId);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentItemDetail, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -86,6 +92,7 @@ public class NotifyIntentService extends IntentService {
                         .setContentTitle(mTitle)                                //必要条件2/3，标题 -"My notification"
                         .setContentText(mText)                                  //必要条件3/3，内容 -"Hello World!"
                         .setTicker(mTicker)
+//                        .setSubText(mSubTitle)
 //                      .setContent(remoteViews)                                //自定义通知样式
                         .setVibrate(new long[]{350, 0, 100, 350})                 //自定义震动的模式
                         .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);    //默认的铃声和震动模式
@@ -127,27 +134,41 @@ public class NotifyIntentService extends IntentService {
 //        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
 //        bigTextStyle.setBigContentTitle("大视图BigText");
 //        bigTextStyle.bigText(mText);
-//        bigTextStyle.setSummaryText(mTitle);
+//        bigTextStyle.setSummaryText(mSubTitle);
 //
 //        mBuilder.setStyle(bigTextStyle);
 
+        //action pendingIntents
+        Intent intentFinish = new Intent(NotifyBrocastReceiver.ACTION_FINISH);
+        intentFinish.putExtra(ItemContract.Column.ITEM_ID, mItemId);
+        PendingIntent pendingFinish = PendingIntent.getBroadcast(getBaseContext(), NotifyBrocastReceiver.REQUEST_CODE, intentFinish, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intentSnooze = new Intent(NotifyBrocastReceiver.ACTION_SNOOZE);
+        intentSnooze.putExtra(ItemContract.Column.ITEM_ID, mItemId);
+        intentSnooze.putExtra(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
+        PendingIntent pendingSnooze = PendingIntent.getBroadcast(getBaseContext(), NotifyBrocastReceiver.REQUEST_CODE, intentSnooze, PendingIntent.FLAG_UPDATE_CURRENT);
+
         //remoteview
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_simpleway);
-        remoteViews.setTextViewText(R.id.text_title, mTitle);
+        remoteViews.setTextViewText(R.id.text_title, mSubTitle);
         remoteViews.setTextViewText(R.id.text_content, mText);
-
-
-        if (Build.VERSION.SDK_INT >= 20) {
-            PendingIntent pend = PendingIntent.getActivity(getBaseContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification.Action.Builder builder = new Notification.Action.Builder(R.mipmap.ic_launcher, "测试", pend);
-            mBuilder.addAction(builder.build());
-        }
+        remoteViews.setOnClickPendingIntent(R.id.btn_finish, pendingFinish);
+        remoteViews.setOnClickPendingIntent(R.id.btn_snooz, pendingSnooze);
 
         Notification notification = mBuilder.build();
-        notification.bigContentView = remoteViews;
 
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= 20) {
+
+            Notification.Action.Builder builderSnooze = new Notification.Action.Builder(android.R.drawable.presence_away, "等待一小时", pendingSnooze);
+            mBuilder.addAction(builderSnooze.build());
+
+            Notification.Action.Builder builderFinish = new Notification.Action.Builder(android.R.drawable.presence_online, "完成", pendingFinish);
+            mBuilder.addAction(builderFinish.build());
+
+            notification = mBuilder.build();
+        } else
+            notification.bigContentView = remoteViews;
+
 
         // mId allows you to update the notification later on.
         mNotificationManager.notify((int) mItemId, notification);
