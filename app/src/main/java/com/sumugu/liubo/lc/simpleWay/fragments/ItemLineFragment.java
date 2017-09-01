@@ -10,12 +10,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.contract.ItemContract;
@@ -139,7 +137,7 @@ public class ItemLineFragment extends Fragment {
                 sheet.findViewById(R.id.text_close).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(), "close ok at:" + id, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), "close ok at:" + id, Toast.LENGTH_SHORT).show();
                         sheetDialog.dismiss();
                     }
                 });
@@ -203,10 +201,10 @@ public class ItemLineFragment extends Fragment {
         @Override
         public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
             mSimpleCursorAdapter.swapCursor(cursor);
-            Log.d("IL_FRag", getTitle() + ",onLoadFinished act");
+//            Log.d("IL_FRag", getTitle() + ",onLoadFinished act");
             if (mItemlfc != null) {
                 mItemlfc.action(cursor.getCount(), getLineType(), getTitle());
-                Log.d("IL_FRag", getTitle() + ",onItemLoaderFinishedCallback called.");
+//                Log.d("IL_FRag", getTitle() + ",onItemLoaderFinishedCallback called.");
             }
 
         }
@@ -214,7 +212,7 @@ public class ItemLineFragment extends Fragment {
         @Override
         public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
             mSimpleCursorAdapter.swapCursor(null);
-            Log.d("IL_FRag", getTitle() + ",onLoaderReset act");
+//            Log.d("IL_FRag", getTitle() + ",onLoaderReset act");
 
         }
     }

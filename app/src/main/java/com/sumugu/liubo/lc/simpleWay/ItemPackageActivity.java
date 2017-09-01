@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -50,8 +51,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
     AlarmUntils alarmUntils = new AlarmUntils();
     ArrayList<View> viewArrayList;
     ArrayList<Fragment> fragmentArrayList;
-    String[] tabTitles = new String[]{"History", "Plan", "Reminder"};
-    int[] lingTypes = new int[]{ItemLineFragment.TYPE_HISTORY, ItemLineFragment.TYPE_PLAN, ItemLineFragment.TYPE_REMINDER};
     TabLayout tabLayout;
 
     @Override
@@ -59,8 +58,10 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_package_md);
 
+        //PopupWindow setup
         popupView = getLayoutInflater().inflate(R.layout.popup_window_dialog, null);
         mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
+        mPopupWindow.setFocusable(true);
         mPopupWindow.setTouchable(true);
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));//API 23 以下必须有才能点击外部或"back"键消失
@@ -75,6 +76,10 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                 mOldAlarmClock = 0;
                 mNewAlarmClock = 0;
                 mIsFinished = false;
+                //rest window alpha to 1f
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.alpha = 1f;
+                getWindow().setAttributes(lp);
             }
         });
         //
@@ -87,7 +92,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
             public void onClick(View view) {
 
                 if (savingItem(mId, editText.getText().toString()) > 0) {
-                    Toast.makeText(ItemPackageActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ItemPackageActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
                     //set alarm clock here when saved was OK.
                     setUpAlarmClock();
 
@@ -108,25 +113,35 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
             }
         });
 
+        ////PopupWindow setup end.
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu_item_package);
+        toolbar.inflateMenu(R.menu.menu_item);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.action_additem) {
+                    popupEditWindow();
+                }
+                return true;
+            }
+        });
 
         ItemLineFragment frag1 = new ItemLineFragment();
         Bundle bundle1 = new Bundle();
-        bundle1.putString(ItemLineFragment.TITLE, "*history");
+        bundle1.putString(ItemLineFragment.TITLE, "hiStory");
         bundle1.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_HISTORY);
         frag1.setArguments(bundle1);
 
         ItemLineFragment frag2 = new ItemLineFragment();
         Bundle bundle2 = new Bundle();
-        bundle2.putString(ItemLineFragment.TITLE, "*plan");
+        bundle2.putString(ItemLineFragment.TITLE, "plAn");
         bundle2.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_PLAN);
         frag2.setArguments(bundle2);
 
         ItemLineFragment frag3 = new ItemLineFragment();
         Bundle bundle3 = new Bundle();
-        bundle3.putString(ItemLineFragment.TITLE, "*reminder");
+        bundle3.putString(ItemLineFragment.TITLE, "reMinder");
         bundle3.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_REMINDER);
         frag3.setArguments(bundle3);
 
@@ -179,23 +194,12 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
                         break;
                 }
-                Toast.makeText(ItemPackageActivity.this, "here is echo from type:" + lineType + "=" + count, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ItemPackageActivity.this, "here is echo from type:" + lineType + "=" + count, Toast.LENGTH_SHORT).show();
             }
         };
         frag1.setOnItemLoaderFinishedCallback(listener);
         frag2.setOnItemLoaderFinishedCallback(listener);
         frag3.setOnItemLoaderFinishedCallback(listener);
-
-        //
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                mPopupWindow.showAtLocation(findViewById(R.id.main_body), Gravity.TOP, 0, 0);
-                popupEditWindow();
-
-            }
-        });
 
     }
 
@@ -203,8 +207,12 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         View vi = findViewById(R.id.main_body);
         int[] location = new int[2];
         vi.getLocationInWindow(location);
-//        Toast.makeText(ItemPackageActivity.this, "x:" + location[0] + ",y:" + location[1], Toast.LENGTH_SHORT).show();
         mPopupWindow.showAtLocation(vi, Gravity.TOP, 0, location[1]);
+
+        //
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.5f;
+        getWindow().setAttributes(lp);
     }
 
     void setUpAlarmClock() {
@@ -260,7 +268,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
             if (mId > 0) {
                 result = 1;
-                Toast.makeText(this, "created ok." + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "created ok." + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
                 //
                 //test notification // TODO: 2017/8/31 删除测试
                 Intent noti = new Intent(ItemPackageActivity.this, NotifyIntentService.class);
@@ -287,23 +295,23 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
-            Toast.makeText(this, "it's ItemContent'detail come back.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "it's ItemContent'detail come back.", Toast.LENGTH_SHORT).show();
         }
         if (requestCode == 2) {
-            Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "it's ItemContent'create come back", Toast.LENGTH_SHORT).show();
         }
         if (requestCode == REQUEST_CODE_ALARM) {
             TextView textAlarm = (TextView) popupView.findViewById(R.id.text_alarm);
 
             if (null == textAlarm) {
-                Toast.makeText(this, data.getLongExtra("alarmclock", 0) + "no more text_alarm", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, data.getLongExtra("alarmclock", 0) + "no more text_alarm", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (resultCode == RESULT_OK) {
                 long alarm = data.getLongExtra("alarmclock", 0);
                 if (alarm == 0) {
-                    Toast.makeText(this, "cancel alarm done.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "cancel alarm done.", Toast.LENGTH_SHORT).show();
                     mNewAlarmClock = alarm;
                     textAlarm.setText("点击 '这里' 设置提醒闹钟");
                 } else {
@@ -313,11 +321,11 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
             } else if (resultCode == RESULT_CANCELED) {
 
-                Toast.makeText(this, "没想好？", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "没想好？", Toast.LENGTH_SHORT).show();
 
             } else {
-                Toast.makeText(this, "what the fuck happend?!", Toast.LENGTH_SHORT).show();
-                textAlarm.setText("what the fuck happend?!");
+//                Toast.makeText(this, "what the fuck happend?!", Toast.LENGTH_SHORT).show();
+                textAlarm.setText("what's * happend?!");
             }
         }
     }
