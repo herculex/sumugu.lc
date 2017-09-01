@@ -27,6 +27,7 @@ import com.sumugu.liubo.lc.simpleWay.recycleradapter.SimpleCursorRecyclerAdapter
  */
 public class ItemLineFragment extends Fragment {
 
+    public static final int TYPE_NOKNOW = 0;
     public static final int TYPE_HISTORY = 1;
     public static final int TYPE_PLAN = 2;
     public static final int TYPE_REMINDER = 3;
@@ -47,6 +48,7 @@ public class ItemLineFragment extends Fragment {
     OnItemActionCallback onItemActionCallback;
     SimpleCursorRecyclerAdapter simpleCursorRecyclerAdapter;
     RecyclerView recyclerView;
+    OnItemLoaderFinishedCallback mItemlfc;
 
     public ItemLineFragment() {
         // Required empty public constructor
@@ -63,6 +65,16 @@ public class ItemLineFragment extends Fragment {
         } else {
             throw new ClassCastException(activity.toString()
                     + " must implement onItemActionCallback");
+        }
+    }
+
+    public int getLineType() {
+        Bundle args = getArguments();
+
+        if (args == null) {
+            return TYPE_NOKNOW;
+        } else {
+            return args.getInt(WHAT_TYPE, 0);
         }
     }
 
@@ -136,6 +148,10 @@ public class ItemLineFragment extends Fragment {
         return view;
     }
 
+    public void setOnItemLoaderFinishedCallback(OnItemLoaderFinishedCallback callback) {
+        mItemlfc = callback;
+    }
+
     public interface OnItemActionCallback {
         void edit(long id);
 
@@ -145,8 +161,9 @@ public class ItemLineFragment extends Fragment {
     }
 
     public interface OnItemLoaderFinishedCallback {
-
+        void action(int count, int lineType, String title);
     }
+
     class HistoryLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         Context mContext;
@@ -187,6 +204,11 @@ public class ItemLineFragment extends Fragment {
         public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
             mSimpleCursorAdapter.swapCursor(cursor);
             Log.d("IL_FRag", getTitle() + ",onLoadFinished act");
+            if (mItemlfc != null) {
+                mItemlfc.action(cursor.getCount(), getLineType(), getTitle());
+                Log.d("IL_FRag", getTitle() + ",onItemLoaderFinishedCallback called.");
+            }
+
         }
 
         @Override

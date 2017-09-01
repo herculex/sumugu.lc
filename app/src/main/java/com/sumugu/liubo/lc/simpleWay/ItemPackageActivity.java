@@ -90,9 +90,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                     Toast.makeText(ItemPackageActivity.this, "saved ok.", Toast.LENGTH_SHORT).show();
                     //set alarm clock here when saved was OK.
                     setUpAlarmClock();
-                    //update count of tabs
-                    updateCountOnTabs();
-
 
                 } else {
                     Toast.makeText(ItemPackageActivity.this, "saved not ok", Toast.LENGTH_SHORT).show();
@@ -133,6 +130,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         bundle3.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_REMINDER);
         frag3.setArguments(bundle3);
 
+
         fragmentArrayList = new ArrayList<>();
         fragmentArrayList.add(frag1);
         fragmentArrayList.add(frag2);
@@ -154,7 +152,39 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
             viewArrayList.add(tabView);
         }
 
-        updateCountOnTabs();
+        ItemLineFragment.OnItemLoaderFinishedCallback listener = new ItemLineFragment.OnItemLoaderFinishedCallback() {
+            @Override
+            public void action(int count, int lineType, String title) {
+                switch (lineType) {
+                    case ItemLineFragment.TYPE_REMINDER:
+                        View customView = viewArrayList.get(2);
+                        TextView countText = (TextView) customView.findViewById(R.id.text_count);
+                        TextView titleText = (TextView) customView.findViewById(R.id.text_title);
+                        countText.setText(String.valueOf(count));
+                        titleText.setText(title);
+                        break;
+                    case ItemLineFragment.TYPE_PLAN:
+                        customView = viewArrayList.get(1);
+                        countText = (TextView) customView.findViewById(R.id.text_count);
+                        countText.setText(String.valueOf(count));
+                        titleText = (TextView) customView.findViewById(R.id.text_title);
+                        titleText.setText(title);
+                        break;
+                    case ItemLineFragment.TYPE_HISTORY:
+                        customView = viewArrayList.get(0);
+                        countText = (TextView) customView.findViewById(R.id.text_count);
+                        countText.setText(String.valueOf(count));
+                        titleText = (TextView) customView.findViewById(R.id.text_title);
+                        titleText.setText(title);
+
+                        break;
+                }
+                Toast.makeText(ItemPackageActivity.this, "here is echo from type:" + lineType + "=" + count, Toast.LENGTH_SHORT).show();
+            }
+        };
+        frag1.setOnItemLoaderFinishedCallback(listener);
+        frag2.setOnItemLoaderFinishedCallback(listener);
+        frag3.setOnItemLoaderFinishedCallback(listener);
 
         //
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_lc);
@@ -175,44 +205,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         vi.getLocationInWindow(location);
 //        Toast.makeText(ItemPackageActivity.this, "x:" + location[0] + ",y:" + location[1], Toast.LENGTH_SHORT).show();
         mPopupWindow.showAtLocation(vi, Gravity.TOP, 0, location[1]);
-    }
-
-    void updateCountOnTabs() {
-        for (int i = 0; i < viewArrayList.size(); i++) {
-            View customView = viewArrayList.get(i);
-            TextView countText = (TextView) customView.findViewById(R.id.text_count);
-            TextView titleText = (TextView) customView.findViewById(R.id.text_title);
-
-            countText.setText(String.valueOf(getCount(lingTypes[i])));
-            titleText.setText(tabTitles[i]);
-        }
-    }
-
-    long getCount(int type) {
-        String selection = "";
-        switch (type) {
-            case ItemLineFragment.TYPE_HISTORY:
-                selection = ItemContract.Column.ITEM_IS_FINISHED + "=1";
-                break;
-            case ItemLineFragment.TYPE_PLAN:
-                selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + "=0";
-                break;
-            case ItemLineFragment.TYPE_REMINDER:
-                selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + ">0";
-                break;
-            default:
-                return -1;
-
-        }
-        Uri uri = ItemContract.CONTENT_URI;
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        if (cursor == null)
-            return -99;
-
-        int count = cursor.getCount();
-        cursor.close();
-        return count;
-
     }
 
     void setUpAlarmClock() {
@@ -351,8 +343,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         values.put(ItemContract.Column.ITEM_FINISHED_AT, new Date().getTime());
 
         int result = getContentResolver().update(ItemContract.CONTENT_URI, values, where, args);
-        if (result > 0)
-            updateCountOnTabs();
 
     }
 
@@ -363,8 +353,6 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         String where = ItemContract.Column.ITEM_ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
         int result = getContentResolver().delete(ItemContract.CONTENT_URI, where, args);
-        if (result > 0)
-            updateCountOnTabs();
     }
 
 
