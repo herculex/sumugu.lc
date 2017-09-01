@@ -1,6 +1,7 @@
 package com.sumugu.liubo.lc.simpleWay;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,6 +22,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -41,7 +44,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
     final static int REQUEST_CODE_ALARM = 0;
     View popupView;
     PopupWindow mPopupWindow;
-    EditText editText;
+    TextInputEditText editText;
     TextView alarmText;
     long mId = 0;
     long mOldAlarmClock = 0;
@@ -60,7 +63,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         //PopupWindow setup
         popupView = getLayoutInflater().inflate(R.layout.popup_window_dialog, null);
         mPopupWindow = new PopupWindow(popupView, CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT, true);
-        mPopupWindow.setFocusable(true);
+//        mPopupWindow.setFocusable(true);
         mPopupWindow.setTouchable(true);
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));//API 23 以下必须有才能点击外部或"back"键消失
@@ -71,7 +74,8 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                 //rest everything
                 mId = 0;
                 editText.setText("");
-                alarmText.setText("here set alarm ");
+                editText.clearFocus();
+                alarmText.setText(" here set alarm ");
                 mOldAlarmClock = 0;
                 mNewAlarmClock = 0;
                 mIsFinished = false;
@@ -83,7 +87,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         });
         //
         Button btnSave = (Button) popupView.findViewById(R.id.btn_press_save);
-        editText = (EditText) popupView.findViewById(R.id.edit_content);
+        editText = (TextInputEditText) popupView.findViewById(R.id.edit_content);
         alarmText = (TextView) popupView.findViewById(R.id.text_alarm);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +119,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         ////PopupWindow setup end.
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("A5");
         toolbar.inflateMenu(R.menu.menu_item);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -202,13 +207,26 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
     }
 
+    void turnSoftInputOn(boolean on, EditText edit) {
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (on)
+            //打开软键盘
+            mgr.showSoftInput(edit, InputMethodManager.SHOW_IMPLICIT);
+        else
+            //隐藏软键盘
+            mgr.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+    }
+
     void popupEditWindow() {
         View vi = findViewById(R.id.main_body);
         int[] location = new int[2];
         vi.getLocationInWindow(location);
         mPopupWindow.showAtLocation(vi, Gravity.TOP, 0, location[1]);
 
-        //
+        editText.setFocusable(true);
+        editText.requestFocus();
+        editText.setSelection(editText.length());
+
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.alpha = 0.5f;
         getWindow().setAttributes(lp);
