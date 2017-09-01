@@ -29,7 +29,6 @@ import android.widget.Toast;
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.contract.ItemContract;
-import com.sumugu.liubo.lc.notification.NotifyIntentService;
 import com.sumugu.liubo.lc.simpleWay.fragments.ItemLineFragment;
 
 import java.util.ArrayList;
@@ -270,11 +269,11 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                 result = 1;
 //                Toast.makeText(this, "created ok." + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
                 //
-                //test notification // TODO: 2017/8/31 删除测试
+/*                //test notification //
                 Intent noti = new Intent(ItemPackageActivity.this, NotifyIntentService.class);
                 noti.putExtra(ItemContract.Column.ITEM_ID, mId);
                 startService(noti);
-                //test end.
+                //test end.*/
             }
 
         }
