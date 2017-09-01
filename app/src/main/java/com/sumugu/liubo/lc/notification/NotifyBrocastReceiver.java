@@ -22,7 +22,6 @@ import java.util.Date;
 public class NotifyBrocastReceiver extends BroadcastReceiver {
     final static String ACTION_FINISH = "com.sumugu.liubo.lc.notification.ACTION_FINISH";
     final static String ACTION_SNOOZE = "com.sumugu.liubo.lc.notification.ACTION_SNOOZE";
-    final static int REQUEST_CODE = 354;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,21 +39,22 @@ public class NotifyBrocastReceiver extends BroadcastReceiver {
             //
             Log.d("Notify_snooze", String.valueOf(itemId));
             long oldAlarm = intent.getLongExtra(ItemContract.Column.ITEM_ALARM_CLOCK, 0);
-            update(context, itemId, oldAlarm);
+
+            //增加一个小时
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(new Date().getTime());
+            cal.add(Calendar.HOUR, 1);
+
+            update(context, itemId, oldAlarm, cal.getTimeInMillis());
         }
 
         notificationManager.cancel((int) itemId);
     }
 
-    void update(Context context, long id, long oldAlarm) {
+    void update(Context context, long id, long oldAlarm, long newAlarm) {
 
         ContentValues values = new ContentValues();
-        Date now = new Date();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(now.getTime());
-        cal.add(Calendar.HOUR, 1);
-
-        values.put(ItemContract.Column.ITEM_ALARM_CLOCK, cal.getTimeInMillis());
+        values.put(ItemContract.Column.ITEM_ALARM_CLOCK, newAlarm);
 
         Uri uri = Uri.withAppendedPath(ItemContract.CONTENT_URI, String.valueOf(id));
         String where = ItemContract.Column.ITEM_ID + "=?";
@@ -62,7 +62,7 @@ public class NotifyBrocastReceiver extends BroadcastReceiver {
 
         int result = context.getContentResolver().update(uri, values, where, paras);
         if (result > 0) {
-            setUpAlarmClock(context, cal.getTimeInMillis(), oldAlarm, id);
+            setUpAlarmClock(context, newAlarm, oldAlarm, id);
         }
 
     }

@@ -144,6 +144,9 @@ public class ItemLineFragment extends Fragment {
         void delete(long id);
     }
 
+    public interface OnItemLoaderFinishedCallback {
+
+    }
     class HistoryLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         Context mContext;

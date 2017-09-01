@@ -131,6 +131,7 @@ public class NotifyIntentService extends IntentService {
 //            InboxStyle.addLine(event);
 //        mBuilder.setStyle(InboxStyle);
 
+
 //        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
 //        bigTextStyle.setBigContentTitle("大视图BigText");
 //        bigTextStyle.bigText(mText);
@@ -141,12 +142,12 @@ public class NotifyIntentService extends IntentService {
         //action pendingIntents
         Intent intentFinish = new Intent(NotifyBrocastReceiver.ACTION_FINISH);
         intentFinish.putExtra(ItemContract.Column.ITEM_ID, mItemId);
-        PendingIntent pendingFinish = PendingIntent.getBroadcast(getBaseContext(), NotifyBrocastReceiver.REQUEST_CODE, intentFinish, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingFinish = PendingIntent.getBroadcast(getBaseContext(), (int) mItemId, intentFinish, PendingIntent.FLAG_UPDATE_CURRENT);  //Broadcast的requestCode 必须不同，否则会被updated掉
 
         Intent intentSnooze = new Intent(NotifyBrocastReceiver.ACTION_SNOOZE);
         intentSnooze.putExtra(ItemContract.Column.ITEM_ID, mItemId);
         intentSnooze.putExtra(ItemContract.Column.ITEM_ALARM_CLOCK, mAlarmClock);
-        PendingIntent pendingSnooze = PendingIntent.getBroadcast(getBaseContext(), NotifyBrocastReceiver.REQUEST_CODE, intentSnooze, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingSnooze = PendingIntent.getBroadcast(getBaseContext(), (int) mItemId, intentSnooze, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //remoteview
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_simpleway);
