@@ -7,6 +7,6 @@
     android:id="@+id/fragment_item_detail"
     android:name="com.sumugu.liubo.lc.ItemDetailFragment"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="match_parent" />
 
 </LinearLayout>
