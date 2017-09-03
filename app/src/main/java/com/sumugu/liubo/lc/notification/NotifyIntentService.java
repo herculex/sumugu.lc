@@ -116,7 +116,7 @@ public class NotifyIntentService extends IntentService {
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
-                        0,
+                        (int) mItemId,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 

@@ -104,7 +104,7 @@
         <activity
             android:name=".simpleWay.ItemPackageActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
