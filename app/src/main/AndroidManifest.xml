@@ -101,19 +101,21 @@
             android:name=".xdemo.Xdemo03"
             android:label="@string/title_activity_xdemo03"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".simpleWay.ItemPackageActivity">
+        <activity
+            android:name=".simpleWay.ItemPackageActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".simpleWay.ItemContentActivity" />
         <activity
             android:name=".simpleWay.DatePickerActivity"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog.MinWidth" />
         <activity android:name=".simpleWay.ItemHistoryActivity" />
-
+        <activity android:name=".simpleWay.ItemContentActivity" />
         <service
             android:name=".alarmclock.AlarmIntentService"
             android:exported="false"></service>
