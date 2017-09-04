@@ -189,7 +189,7 @@ public class ItemLineFragment extends Fragment {
                         break;
                     case TYPE_REMINDER:
                         selection = ItemContract.Column.ITEM_IS_FINISHED + "=0 and " + ItemContract.Column.ITEM_ALARM_CLOCK + ">0";
-                        order = ItemContract.Column.ITEM_ALARM_CLOCK;
+                        order = ItemContract.Column.ITEM_ALARM_CLOCK + " DESC";
                         break;
                 }
             }
