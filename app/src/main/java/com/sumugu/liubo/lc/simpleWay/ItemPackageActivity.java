@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -31,6 +33,8 @@ import android.widget.Toast;
 
 import com.sumugu.liubo.lc.R;
 import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
+import com.sumugu.liubo.lc.cloud.Upgrade;
+import com.sumugu.liubo.lc.cloud.UserActivities;
 import com.sumugu.liubo.lc.contract.ItemContract;
 import com.sumugu.liubo.lc.notification.NotifyIntentService;
 import com.sumugu.liubo.lc.simpleWay.fragments.ItemLineFragment;
@@ -56,10 +60,34 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
     ArrayList<Fragment> fragmentArrayList;
     TabLayout tabLayout;
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        UserActivities.trackActivity(this,"onResume");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_package_md);
+
+        //MARK: check upgrade and track
+        Upgrade.checkUpgradeInfoFromCloud(this, new Upgrade.OnCheckedListener() {
+
+            @Override
+            public void finished(int vercode, final String url) {
+                Snackbar.make(findViewById(R.id.main_body), "发现新版本", Snackbar.LENGTH_LONG).setAction("查看", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    }
+                }).setActionTextColor(Color.WHITE).setDuration(5500).show();
+            }
+        });
+        UserActivities.trackActivity(this, "onCreate");
+        //end.
 
         //PopupWindow setup
         popupView = getLayoutInflater().inflate(R.layout.popup_window_dialog, null);
