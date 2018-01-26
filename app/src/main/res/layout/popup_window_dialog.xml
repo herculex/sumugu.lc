@@ -11,7 +11,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="fast write in:"
+        android:hint="@string/popup_write_in_hint"
         android:paddingTop="8dp"
         app:counterEnabled="true"
         app:counterMaxLength="108">
@@ -39,14 +39,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="here set alarm" />
+            android:gravity="center"
+            android:text="@string/label_setting_alarm" />
 
         <Button
             android:id="@+id/btn_press_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="press to save" />
+            android:text="@string/button_press_to_save" />
     </LinearLayout>
 
 </LinearLayout>

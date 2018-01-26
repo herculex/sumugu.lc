@@ -103,7 +103,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                 mId = 0;
                 editText.setText("");
                 editText.clearFocus();
-                alarmText.setText(" here set alarm ");
+                alarmText.setText(R.string.label_setting_alarm);
                 mOldAlarmClock = 0;
                 mNewAlarmClock = 0;
                 mIsFinished = false;
@@ -161,19 +161,19 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
 
         ItemLineFragment frag1 = new ItemLineFragment();
         Bundle bundle1 = new Bundle();
-        bundle1.putString(ItemLineFragment.TITLE, "hiStory");
+        bundle1.putString(ItemLineFragment.TITLE, getString(R.string.fragment_title_history));
         bundle1.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_HISTORY);
         frag1.setArguments(bundle1);
 
         ItemLineFragment frag2 = new ItemLineFragment();
         Bundle bundle2 = new Bundle();
-        bundle2.putString(ItemLineFragment.TITLE, "plAn");
+        bundle2.putString(ItemLineFragment.TITLE, getString(R.string.fragment_title_plan));
         bundle2.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_PLAN);
         frag2.setArguments(bundle2);
 
         ItemLineFragment frag3 = new ItemLineFragment();
         Bundle bundle3 = new Bundle();
-        bundle3.putString(ItemLineFragment.TITLE, "reMinder");
+        bundle3.putString(ItemLineFragment.TITLE, getString(R.string.fragment_title_reminder));
         bundle3.putInt(ItemLineFragment.WHAT_TYPE, ItemLineFragment.TYPE_REMINDER);
         frag3.setArguments(bundle3);
 
@@ -359,7 +359,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
                 if (alarm == 0) {
 //                    Toast.makeText(this, "cancel alarm done.", Toast.LENGTH_SHORT).show();
                     mNewAlarmClock = alarm;
-                    textAlarm.setText("点击 '这里' 设置提醒闹钟");
+                    textAlarm.setText(R.string.label_setting_alarm);
                 } else {
                     mNewAlarmClock = alarm;
                     textAlarm.setText(DateFormat.format("yyyy-MM-dd HH:mm 提醒", alarm));

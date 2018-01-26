@@ -27,34 +27,46 @@
     <string name="title_activity_xdemo03">Xdemo03</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_simple">simpleActivity</string>
+    <string name="fragment_title_history">过去</string>
+    <string name="fragment_title_plan">当下</string>　
+    <string name="fragment_title_reminder">闹钟</string>
+    <string name="sheet_action_edit">修改</string>
+    <string name="sheet_action_delete">删掉</string>
+    <string name="sheet_action_finish">完成</string>
+    <string name="sheet_action_close">等等..</string>
+    <string name="button_press_to_save">记好了</string>
+    <string name="label_setting_alarm">调下闹钟</string>
     <string name="long_content_testing">
-This is Header ,start here.
-        coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-    coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-coordinatorlayout toolbar
-    This is Footer,End.</string>
+            This is Header ,start here.
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            coordinatorlayout toolbar
+            This is Footer,End.
+    </string>
+    <string name="popup_write_in_hint">从此开始：</string>
+    <string name="sheet_action_title">对它，你想？</string>
 </resources>

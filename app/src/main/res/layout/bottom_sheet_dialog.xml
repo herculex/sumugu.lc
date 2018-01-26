@@ -14,15 +14,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:padding="16dp"
-            android:text="do what plz?"/>
+            android:text="@string/sheet_action_title"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/text_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="edit"
+            android:text="@string/sheet_action_edit"
             android:textSize="20sp" />
 
         <TextView
@@ -30,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="finish"
+            android:text="@string/sheet_action_finish"
             android:textSize="20sp" />
 
         <TextView
@@ -38,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="delete"
+            android:text="@string/sheet_action_delete"
             android:textSize="20sp" />
 
         <TextView
@@ -46,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="close"
+            android:text="@string/sheet_action_close"
             android:textSize="20sp" />
     </LinearLayout>
 
