@@ -36,7 +36,6 @@ import com.sumugu.liubo.lc.alarmclock.AlarmUntils;
 import com.sumugu.liubo.lc.cloud.Upgrade;
 import com.sumugu.liubo.lc.cloud.UserActivities;
 import com.sumugu.liubo.lc.contract.ItemContract;
-import com.sumugu.liubo.lc.notification.NotifyIntentService;
 import com.sumugu.liubo.lc.simpleWay.fragments.ItemLineFragment;
 
 import java.util.ArrayList;
@@ -148,7 +147,7 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
         ////PopupWindow setup end.
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("A5");
+        toolbar.setTitle(R.string.app_name);
         toolbar.inflateMenu(R.menu.menu_item);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -295,16 +294,17 @@ public class ItemPackageActivity extends AppCompatActivity implements ItemLineFr
             String[] paras = new String[]{String.valueOf(id)};
 
             result = getContentResolver().update(uri, values, where, paras);
+
             //test notification //
-            Intent noti = new Intent(ItemPackageActivity.this, NotifyIntentService.class);
-            noti.putExtra(ItemContract.Column.ITEM_ID, id);
-            startService(noti);
+//            Intent noti = new Intent(ItemPackageActivity.this, NotifyIntentService.class);
+//            noti.putExtra(ItemContract.Column.ITEM_ID, id);
+//            startService(noti);
             //test end.
 
         } else {
 
             //create (insert)
-            values.put(ItemContract.Column.ITEM_TITLE, "a5");
+            values.put(ItemContract.Column.ITEM_TITLE, R.string.app_name);
             values.put(ItemContract.Column.ITEM_CONTENT, content);
             values.put(ItemContract.Column.ITEM_CREATED_AT, new Date().getTime());
             values.put(ItemContract.Column.ITEM_CREATED_AT_DAY, DateFormat.format("yyyy-MM-dd", new Date().getTime()).toString());

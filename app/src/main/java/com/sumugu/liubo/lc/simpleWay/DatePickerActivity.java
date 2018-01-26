@@ -45,7 +45,7 @@ public class DatePickerActivity extends Activity {
 
     String[] minutes_5s = {"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
 
-    Integer year_default = 2017;
+    Integer year_default = 0;
 //    Integer[] monthss = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12};
 
 
@@ -57,6 +57,7 @@ public class DatePickerActivity extends Activity {
         setContentView(R.layout.activity_date_picker);
 
 //        DatePickerActivity.this.setFinishOnTouchOutside(false);
+        year_default = Calendar.getInstance().get(Calendar.YEAR);
 
         spinner_month = (Spinner) findViewById(R.id.spinner_month);
         spinner_day = (Spinner) findViewById(R.id.spinner_day);

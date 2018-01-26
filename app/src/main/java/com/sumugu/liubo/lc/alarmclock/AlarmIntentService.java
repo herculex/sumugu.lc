@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.sumugu.liubo.lc.contract.ItemContract;
 
@@ -24,9 +25,14 @@ public class AlarmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        checkAlarms();
+    }
+
+    void checkAlarms() {
+        long newdate = new Date().getTime();
         Uri uri = ItemContract.CONTENT_URI;
         String selection = ItemContract.Column.ITEM_ALARM_CLOCK + ">?";
-        String[] args = new String[]{String.valueOf(new Date().getTime())};
+        String[] args = new String[]{String.valueOf(newdate)};
 
         try {
             Cursor cursor = getContentResolver().query(uri, null, selection, args, ItemContract.DEFAULT_SORT);
@@ -42,12 +48,16 @@ public class AlarmIntentService extends IntentService {
                 }
                 cursor.close();
 
-                doInsert(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date()) + ",启动alarm数量：" + cursor.getCount());
-            } else
-                doInsert(DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date()) + ",无启动alarm");
+                Log.d(this.getClass().getName(), DateFormat.format("yyyy-MM-dd HH:mm:ss", newdate) + ",启动alarm数量：" + cursor.getCount() + "。at:" + newdate);
+//                doInsert(DateFormat.format("yyyy-MM-dd HH:mm:ss", newdate) + ",启动alarm数量：" + cursor.getCount() + "。at:" + newdate);
+            } else {
+                Log.d(this.getClass().getName(), DateFormat.format("yyyy-MM-dd HH:mm:ss", newdate) + ",无启动alarm。at:" + newdate);
+//                doInsert(DateFormat.format("yyyy-MM-dd HH:mm:ss", newdate) + ",无启动alarm。at:" + newdate);
+            }
 
         } catch (Exception e) {
-            doInsert(e.getMessage());
+            Log.d(this.getClass().getName(), e.getMessage());
+//            doInsert(e.getMessage());
         }
     }
 
