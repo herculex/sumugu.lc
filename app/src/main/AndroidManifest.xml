@@ -106,8 +106,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".simpleWay.ItemPackageActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance">
+            android:excludeFromRecents="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
